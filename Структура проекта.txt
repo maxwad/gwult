@@ -1,0 +1,36 @@
+1. node_modules\ 	- папка с установленными модулями node.js
+2. public\ 			- папка со статическими данными
+3. template\ 		- папка с шаблонами страниц
+4. app.js 			- главный файл приложения
+5. gwent.sql 		- выгруженая БД игры
+6. package.json 	- информация о версии приложения
+
+1. node_modules\
+		bcrypt-nodejs\
+		body-parser\
+		connect\
+		ejs-locals\
+		express\
+		express-mysql-session\
+		express-session\
+		method-override\
+		mysql\
+		
+2. public\ 
+		css\
+			app.css 		- главный файл стилей
+			
+		imgs\ 				- папка с картинками для приложения
+		
+		js\				
+			check.js   		- скрипт-проверка авторизации пользователя
+			jquery.min.js	- библиотека jquery
+			my_room.js		- скрипт-обработчик событий в кабинете пользователя
+			script.js		- скрипт-обработчик регистрационных форм
+			
+		auth.html			- страница регистрации и авторизации
+		my_room.html		- страница кабинета пользователя
+		card.html			- страница заполнения колод игровыми картами
+		
+3. template\
+		index.ejs			- общий шаблон вывода страниц

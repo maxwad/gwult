@@ -1,0 +1,330 @@
+* {
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing:    border-box;
+    box-sizing:         border-box;
+}
+
+article,
+aside,
+details,
+figcaption,
+figure,
+footer,
+header,
+nav,
+section,
+summary {
+    display: block;
+}
+
+audio,
+canvas,
+video {
+    display: inline-block;
+}
+
+audio:not([controls]) {
+    display: none;
+    height: 0;
+}
+
+html {
+    font-size: 100%;
+    overflow-y: scroll;
+    -webkit-text-size-adjust: 100%;
+    -ms-text-size-adjust: 100%;
+}
+
+html,
+button,
+input,
+select,
+textarea {
+    font-family: 'Roboto', HelveticaCyr,Helvetica,Arial,"Liberation Sans",FreeSans,sans-serif;
+}
+
+body {
+    background: #DFEB95;
+    margin: 0;
+    padding: 0;
+    min-width: 1000px;
+}
+
+ul {
+    margin: 0;
+    padding: 0;
+}
+
+/*======================= http://colorhunt.co/c/7403 =============================*/
+/*=================================    TOP NAV  =======================================*/
+
+.top_nav {
+    width: 100%;
+    list-style: none;
+    font-weight: bold;
+    margin-bottom: 30px;
+    background: #0B88A8;
+}
+
+.top_nav ul {
+    position: relative;
+    overflow: hidden;
+}
+
+.top_nav li {
+    width: 33.3333333333333%;
+    float: left;
+    box-sizing: border-box;
+    position: relative;
+    display: block;
+    cursor: pointer;
+}
+
+.top_nav li a {
+    display: block;
+    color: #000000;
+    padding: 10px;
+    text-decoration: none;
+    text-align: center;
+}
+
+.top_nav li a:hover{
+    color: #D5EEFF;
+}
+
+
+
+
+
+/*=================================     AUTHORIZATION PAGE  =======================================*/
+.auth {
+    position: relative;
+    overflow: hidden;
+}
+
+.auth .form_area {
+    width: 70%;
+    margin: 0 auto;
+}
+
+.login_block, .reg_block {
+    display: block;
+    float: left;
+    width: 50%;
+}
+
+.authorization, .registration {
+    width: 100%;
+    text-align: center;
+    margin: 20px auto;
+}
+
+#login_form, #reg_form {
+    width: 350px;
+    height: 190px;
+    margin: 20px auto;
+}
+
+.auth fieldset {
+    padding: 15px;
+    height: 100%;
+    border-color: #0B88A8;
+}
+
+#login_form fieldset {
+    padding-top: 20px;
+}
+
+.auth input[type=text], .auth input[type=password] {
+    display: inline-block;
+    width: 150px;
+    height: 24px;
+    padding: 2px 7px;
+}
+
+.auth label {
+    display: inline-block;
+    width: 120px;
+}
+
+.auth input, .auth button {
+    margin: 0 auto 15px auto;
+    outline: none;
+    border: none;
+}
+
+.auth #login_form input {
+    margin: 5px auto 25px auto;
+}
+
+.incorrect {
+    border: 1px solid red!important;
+}
+
+.auth button {
+    display: block;
+    margin: 5px auto 0 auto;
+    padding: 5px;
+    width: 200px;
+    cursor: pointer;
+    background: #A6DC8C;
+}
+
+.auth button:hover {
+    background: #89ba6f;
+}
+
+
+
+
+
+
+/*=================================     ROOM PAGE  =======================================*/
+
+.room .form_area {
+    width: 70%;
+    margin: 0 auto;
+    position: relative;
+    overflow: hidden;
+}
+
+.room .info_battles {
+    width: 40%;
+    margin: 0 auto;
+    padding: 10px 20px;
+    background: #0B88A8;
+    margin-top: 50px;
+}
+
+.create_block, .join_block {
+    display: block;
+    float: left;
+    width: 50%;
+}
+
+.creation, .joining {
+    width: 100%;
+    text-align: center;
+    margin: 20px auto;
+}
+
+#create_form, #join_form {
+    width: 350px;
+    height: 160px;
+    margin: 20px auto;
+}
+
+.room fieldset {
+    padding: 10px;
+    height: 100%;
+    border-color: #0B88A8;
+    text-align: center;
+}
+
+#create_form fieldset {
+    padding-top: 50px;
+}
+
+.room input {
+    display: block;
+    height: 24px;
+    padding: 2px 7px;
+}
+
+.room .create_block input {
+    width: 90%;
+    margin: 0 auto 30px auto;
+    border: 1px solid #89ba6f;
+}
+
+.room .join_block input {
+    width: 200px;
+    margin: 0 auto 10px auto;
+    border: 1px solid #89ba6f;
+}
+
+.room label {
+    display: block;
+    width: 100%;
+    margin-bottom: 5px;
+}
+
+.room input, .room button {
+    outline: none;
+    border: none;
+}
+
+.room .incorrect {
+    border: 1px solid red;
+}
+
+.room .form_area button {
+    display: block;
+    padding: 5px;
+    width: 200px;
+    cursor: pointer;
+    background: #A6DC8C;
+}
+
+.room .create_block button {
+    margin: 46px auto 0 auto;
+}
+
+.room .join_block button {
+    margin: 28px auto 0 auto;
+}
+
+.room button:hover {
+    cursor: pointer;
+    background: #89ba6f;
+}
+
+.room .info_battles h2 {
+    text-align: center;
+}
+
+.room .info_battles table {
+    text-align: center;
+    width: 90%;
+    margin: 0 auto;
+    border-spacing: 0;
+    border-collapse: collapse;
+}
+
+.room .info_battles table td {
+    width: 25%;
+    margin: 0 auto;
+}
+
+.room .info_battles table tr {
+    height: 30px;
+}
+
+.room .info_battles table tr:first-child {
+    font-weight: bold;
+    border-bottom: 2px solid #89ba6f;
+}
+
+.room .info_battles table tr:nth-child(3) {
+    background: #0B96B6;
+}
+
+.room .info_battles button {
+    width: 80%;
+}
+
+.room .del_battle {
+    background: #89ba6f;
+}
+
+.room .del_battle:hover {
+    background: #ff0000;
+}
+
+.room .go_battle {
+    background: #89ba6f;
+}
+
+.room .go_battle:hover {
+    background: #DFEB95;
+}

@@ -1,0 +1,11 @@
+{
+    "name": "gwult",
+    "version": "0.0.1",
+    "private": true,
+    "dependencies": {
+        "connect": "^2.25.7",
+        "express": "^4.8.5",
+        "express-mysql-session": "^0.2.0",
+        "express-session": "^1.7.6"
+    }
+}

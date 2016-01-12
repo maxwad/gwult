@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Хост: localhost
--- Время создания: Янв 08 2016 г., 17:27
+-- Время создания: Янв 12 2016 г., 21:37
 -- Версия сервера: 5.5.30-log
 -- Версия PHP: 5.4.12
 
@@ -23,17 +23,60 @@ SET time_zone = "+00:00";
 -- --------------------------------------------------------
 
 --
+-- Структура таблицы `abilities`
+--
+
+CREATE TABLE IF NOT EXISTS `abilities` (
+  `id_ability` int(11) NOT NULL AUTO_INCREMENT,
+  `name_ability` varchar(50) NOT NULL,
+  `name_function` varchar(50) NOT NULL,
+  `description_ability` text NOT NULL,
+  PRIMARY KEY (`id_ability`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
+
+-- --------------------------------------------------------
+
+--
+-- Структура таблицы `cards`
+--
+
+CREATE TABLE IF NOT EXISTS `cards` (
+  `id_card` int(11) NOT NULL AUTO_INCREMENT,
+  `name_card` varchar(100) DEFAULT NULL,
+  `id_race_card` int(11) DEFAULT NULL,
+  `id_class_card` int(11) DEFAULT NULL,
+  `strength_card` int(11) DEFAULT NULL,
+  `id_ability_card` int(11) DEFAULT NULL,
+  `description_card` text,
+  PRIMARY KEY (`id_card`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
+
+-- --------------------------------------------------------
+
+--
+-- Структура таблицы `classes`
+--
+
+CREATE TABLE IF NOT EXISTS `classes` (
+  `id_class` int(11) NOT NULL AUTO_INCREMENT,
+  `name_class` varchar(50) NOT NULL,
+  PRIMARY KEY (`id_class`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
+
+-- --------------------------------------------------------
+
+--
 -- Структура таблицы `list_of_battles`
 --
 
 CREATE TABLE IF NOT EXISTS `list_of_battles` (
   `id_battle` int(10) NOT NULL AUTO_INCREMENT,
-  `pl1` varchar(40) NOT NULL,
-  `pl2` varchar(40) NOT NULL,
-  `pass_battle` varchar(40) NOT NULL,
-  `start_battle` tinyint(1) NOT NULL DEFAULT '0',
-  `alias_battle` varchar(80) NOT NULL,
-  `date_battle` bigint(16) NOT NULL,
+  `pl1` varchar(40) DEFAULT NULL,
+  `pl2` varchar(40) DEFAULT NULL,
+  `pass_battle` varchar(40) DEFAULT NULL,
+  `start_battle` tinyint(1) DEFAULT '0',
+  `alias_battle` varchar(80) DEFAULT NULL,
+  `date_battle` bigint(16) DEFAULT NULL,
   UNIQUE KEY `id_battle` (`id_battle`),
   KEY `alias_battle` (`alias_battle`) USING BTREE,
   KEY `alias_battle_2` (`alias_battle`) USING BTREE
@@ -47,6 +90,19 @@ INSERT INTO `list_of_battles` (`id_battle`, `pl1`, `pl2`, `pass_battle`, `start_
 (56, 'qqqq', 'www', '34', 1, 'qqqq_www', 1452258008368),
 (55, 'www', 'qqqq', 'dh', 1, 'www_qqqq', 1452256989092),
 (54, 'www', 'qqqq', 'cv', 1, 'www_qqqq', 1452256985845);
+
+-- --------------------------------------------------------
+
+--
+-- Структура таблицы `races`
+--
+
+CREATE TABLE IF NOT EXISTS `races` (
+  `id_race` int(11) NOT NULL AUTO_INCREMENT,
+  `name_race` varchar(50) NOT NULL,
+  `description_race` text NOT NULL,
+  PRIMARY KEY (`id_race`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
 
 -- --------------------------------------------------------
 

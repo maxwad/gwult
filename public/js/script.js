@@ -3,12 +3,12 @@
  */
 $(document).ready(function () {
 
-    var input = $('input');
-    var auth_name = $('#login_name');
-    var auth_pass = $('#login_pass');
-    var reg_name = $('#reg_name');
-    var reg_pass = $('#reg_pass');
-    var conf_pass = $('#conf_pass');
+    var input       = $('input');
+    var auth_name   = $('#login_name');
+    var auth_pass   = $('#login_pass');
+    var reg_name    = $('#reg_name');
+    var reg_pass    = $('#reg_pass');
+    var conf_pass   = $('#conf_pass');
 
 
 

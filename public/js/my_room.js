@@ -1,9 +1,9 @@
 $(document).ready(function () {
 
-    var create_pass = $('#create_pass');
-    var info_battles =  $(".info_battles");
-    var join_number = $("#join_number");
-    var join_pass = $("#join_pass");
+    var create_pass     = $('#create_pass');
+    var info_battles    =  $(".info_battles");
+    var join_number     = $("#join_number");
+    var join_pass       = $("#join_pass");
 
     function list_of_battle () {
         $.ajax({

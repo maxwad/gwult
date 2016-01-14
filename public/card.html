@@ -1,12 +1,13 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <title>Комната пользователя</title>
+        <title>Генератор карт</title>
 
         <link rel="stylesheet" href="/css/app.css"/>
         <link href="http://fonts.googleapis.com/css?family=Roboto" rel="stylesheet" type="text/css">
         <script src="/js/jquery.min.js"></script>
         <script src="/js/check.js"></script>
+        <script src="/js/create_cards.js"></script>
     </head>
 
     <body class="card">
@@ -18,5 +19,113 @@
             </ul>
         </nav>
 
+        <div id="message_box"></div>
+
+        <div class="card_forms">
+            <div class="form_block">
+                <div class="race_block">
+                    <h3>Создать расу</h3>
+                    <form name="race_form" class="race_form" action="" enctype="multipart/form-data">
+                        <label for="name_race">Название расы</label>
+                        <input type="text" id="name_race"/>
+
+                        <label for="pict_race">Загрузите картинку расы</label>
+                        <input type="file" id="pict_race"/>
+
+                        <label for="description_race">Описание расы</label>
+                        <textarea id="description_race"></textarea>
+
+                        <button id="create_race">Добавить расу</button>
+                    </form>
+                    <div class="race_preview">
+                        <ul id="race_list"> </ul>
+                        <div id="race_description_block">
+                            <img src="" title="" alt="" id="race_description_pict"/>
+                            <p id="race_description_text"></p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="class_block">
+                    <h3>Создать класс</h3>
+                    <form name="class_form" class="class_form" action="" enctype="multipart/form-data">
+                        <label for="name_class">Название класса</label>
+                        <input type="text" id="name_class"/>
+
+                        <label for="pict_class">Загрузите картинку класса</label>
+                        <input type="file" id="pict_class"/>
+
+                        <label for="description_class">Описание класса</label>
+                        <textarea id="description_class"></textarea>
+
+                        <button id="create_class">Добавить класс</button>
+                    </form>
+                    <div class="class_preview">
+                        <ul id="class_list"> </ul>
+                        <div id="class_description_block">
+                            <img src="" title="" alt="" id="class_description_pict"/>
+                            <p id="class_description_text"></p>
+                        </div>
+                    </div>
+                </div>
+                <div class="ability_block">
+                    <h3>Создать способность</h3>
+                    <form name="ability_form" class="ability_form" action="" enctype="multipart/form-data">
+                        <label for="name_ability">Название способности</label>
+                        <input type="text" id="name_ability"/>
+
+                        <label for="function_ability">function способности</label>
+                        <input type="text" id="function_ability"/>
+
+                        <label for="pict_ability">Загрузите картинку способности</label>
+                        <input type="file" id="pict_ability"/>
+
+                        <label for="description_ability">Описание способности</label>
+                        <textarea id="description_ability"></textarea>
+
+                        <button id="create_ability">Добавить способностьу</button>
+                    </form>
+                    <div class="ability_preview">
+                        <ul id="ability_list"> </ul>
+                        <div id="ability_description_block">
+                            <img src="" title="" alt="" id="ability_description_pict"/>
+                            <p id="ability_description_text"></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="form_block">
+                <div class="card_block">
+                    <h3>Создать карту</h3>
+                    <form name="card_form" class="card_form" action="" enctype="multipart/form-data">
+                        <label for="name_card">Название карты</label>
+                        <input type="text" id="name_card"/>
+
+                        <label for="select_class">Выберите класс</label>
+                        <select id="select_class" name="select_class[]"></select>
+
+                        <label for="select_race">Выберите расу</label>
+                        <select id="select_race" name="select_race[]"></select>
+
+                        <label for="strength_card">Задайте силу карты</label>
+                        <input type="number" id="strength_card"/>
+
+                        <label for="select_ability">Выберите способность</label>
+                        <select id="select_ability" name="select_ability[]"></select>
+
+                        <label for="hero">Пометка "Герой"</label>
+                        <input type="checkbox" id="hero"/>
+
+                        <label for="pict_card">Загрузите картинку для карты</label>
+                        <input type="file" id="pict_card"/>
+
+                        <label for="description_card">Описание карты</label>
+                        <textarea id="description_card"></textarea>
+
+                        <button id="create_card">Добавить карту</button>
+                    </form>
+                </div>
+            </div>
+        </div>
     </body>
 </html>

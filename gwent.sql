@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Хост: localhost
--- Время создания: Янв 12 2016 г., 21:37
+-- Время создания: Янв 14 2016 г., 23:19
 -- Версия сервера: 5.5.30-log
 -- Версия PHP: 5.4.12
 
@@ -28,9 +28,10 @@ SET time_zone = "+00:00";
 
 CREATE TABLE IF NOT EXISTS `abilities` (
   `id_ability` int(11) NOT NULL AUTO_INCREMENT,
-  `name_ability` varchar(50) NOT NULL,
-  `name_function` varchar(50) NOT NULL,
-  `description_ability` text NOT NULL,
+  `name_ability` varchar(50) DEFAULT NULL,
+  `name_function` varchar(50) DEFAULT NULL,
+  `pict_ability` text,
+  `description_ability` text,
   PRIMARY KEY (`id_ability`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
 
@@ -47,6 +48,8 @@ CREATE TABLE IF NOT EXISTS `cards` (
   `id_class_card` int(11) DEFAULT NULL,
   `strength_card` int(11) DEFAULT NULL,
   `id_ability_card` int(11) DEFAULT NULL,
+  `hero_card` tinyint(1) NOT NULL DEFAULT '0',
+  `pict_card` text,
   `description_card` text,
   PRIMARY KEY (`id_card`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
@@ -60,6 +63,8 @@ CREATE TABLE IF NOT EXISTS `cards` (
 CREATE TABLE IF NOT EXISTS `classes` (
   `id_class` int(11) NOT NULL AUTO_INCREMENT,
   `name_class` varchar(50) NOT NULL,
+  `pict_class` text,
+  `description_class` text,
   PRIMARY KEY (`id_class`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
 
@@ -80,16 +85,7 @@ CREATE TABLE IF NOT EXISTS `list_of_battles` (
   UNIQUE KEY `id_battle` (`id_battle`),
   KEY `alias_battle` (`alias_battle`) USING BTREE,
   KEY `alias_battle_2` (`alias_battle`) USING BTREE
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=57 ;
-
---
--- Дамп данных таблицы `list_of_battles`
---
-
-INSERT INTO `list_of_battles` (`id_battle`, `pl1`, `pl2`, `pass_battle`, `start_battle`, `alias_battle`, `date_battle`) VALUES
-(56, 'qqqq', 'www', '34', 1, 'qqqq_www', 1452258008368),
-(55, 'www', 'qqqq', 'dh', 1, 'www_qqqq', 1452256989092),
-(54, 'www', 'qqqq', 'cv', 1, 'www_qqqq', 1452256985845);
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=59 ;
 
 -- --------------------------------------------------------
 
@@ -99,8 +95,9 @@ INSERT INTO `list_of_battles` (`id_battle`, `pl1`, `pl2`, `pass_battle`, `start_
 
 CREATE TABLE IF NOT EXISTS `races` (
   `id_race` int(11) NOT NULL AUTO_INCREMENT,
-  `name_race` varchar(50) NOT NULL,
-  `description_race` text NOT NULL,
+  `name_race` varchar(50) DEFAULT NULL,
+  `pict_race` text,
+  `description_race` text,
   PRIMARY KEY (`id_race`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
 
@@ -122,8 +119,8 @@ CREATE TABLE IF NOT EXISTS `sessions` (
 --
 
 INSERT INTO `sessions` (`session_id`, `expires`, `data`) VALUES
-('St6Sglf2-MZ8FYHHu0a8ME7k6ZDCIvB9', 1452858428, 0x7b22636f6f6b6965223a7b226f726967696e616c4d6178416765223a3630303030303030302c2265787069726573223a22323031362d30312d31355431313a34373a30372e3733385a222c22687474704f6e6c79223a747275652c2270617468223a222f227d2c2275736572223a22777777227d),
-('qqIFl5vn5XOVRCxEU_7ib1bvhv75v5kt', 1452858445, 0x7b22636f6f6b6965223a7b226f726967696e616c4d6178416765223a3630303030303030302c2265787069726573223a22323031362d30312d31355431313a34373a32352e3237375a222c22687474704f6e6c79223a747275652c2270617468223a222f227d2c2275736572223a2271717171227d);
+('GAHv8fdOyIn3LeRfyfvhh9N9cDKsNNkq', 1453399090, 0x7b22636f6f6b6965223a7b226f726967696e616c4d6178416765223a3539393939393939362c2265787069726573223a22323031362d30312d32315431373a35383a31302e3137355a222c22687474704f6e6c79223a747275652c2270617468223a222f227d2c2275736572223a22777777227d),
+('qqIFl5vn5XOVRCxEU_7ib1bvhv75v5kt', 1453300922, 0x7b22636f6f6b6965223a7b226f726967696e616c4d6178416765223a3630303030303030302c2265787069726573223a22323031362d30312d32305431343a34323a30312e3934305a222c22687474704f6e6c79223a747275652c2270617468223a222f227d2c2275736572223a2271717171227d);
 
 -- --------------------------------------------------------
 

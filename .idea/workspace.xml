@@ -26,25 +26,25 @@
       <file leaf-file-name="card.html" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/public/card.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="116" column="58" selection-start="5497" selection-end="5497" vertical-scroll-proportion="-10.230769" vertical-offset="1938" max-vertical-offset="2584">
+            <state line="21" column="30" selection-start="793" selection-end="793" vertical-scroll-proportion="-15.111111" vertical-offset="33" max-vertical-offset="2856">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="app.css" pinned="false" current="false" current-in-tab="false">
+      <file leaf-file-name="app.css" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/public/css/app.css">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="88" column="29" selection-start="1291" selection-end="1291" vertical-scroll-proportion="0.0" vertical-offset="1250" max-vertical-offset="6631">
+            <state line="87" column="22" selection-start="1291" selection-end="1291" vertical-scroll-proportion="0.8148148" vertical-offset="1365" max-vertical-offset="7329">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="create_cards.js" pinned="false" current="true" current-in-tab="true">
+      <file leaf-file-name="create_cards.js" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/public/js/create_cards.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="7" column="30" selection-start="197" selection-end="197" vertical-scroll-proportion="0.26706827" vertical-offset="0" max-vertical-offset="608">
+            <state line="5" column="20" selection-start="167" selection-end="172" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="1029">
               <folding />
             </state>
           </provider>
@@ -73,9 +73,9 @@
         <option value="$PROJECT_DIR$/app.js" />
         <option value="$PROJECT_DIR$/public/js/my_room.js" />
         <option value="$PROJECT_DIR$/public/js/script.js" />
+        <option value="$PROJECT_DIR$/public/js/create_cards.js" />
         <option value="$PROJECT_DIR$/public/card.html" />
         <option value="$PROJECT_DIR$/public/css/app.css" />
-        <option value="$PROJECT_DIR$/public/js/create_cards.js" />
       </list>
     </option>
   </component>
@@ -83,8 +83,8 @@
   <component name="ProjectFrameBounds">
     <option name="x" value="-8" />
     <option name="y" value="-8" />
-    <option name="width" value="1382" />
-    <option name="height" value="754" />
+    <option name="width" value="1616" />
+    <option name="height" value="886" />
   </component>
   <component name="ProjectInspectionProfilesVisibleTreeState">
     <entry key="Project Default">
@@ -327,7 +327,7 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="-8" y="-8" width="1382" height="754" extended-state="0" />
+    <frame x="-8" y="-8" width="1616" height="886" extended-state="6" />
     <editor active="true" />
     <layout>
       <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
@@ -335,19 +335,19 @@
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32876712" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.24967907" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.1317716" sideWeight="0.8111455" order="0" side_tool="false" content_ui="combo" x="692" y="193" width="216" height="483" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.1335045" sideWeight="0.8111455" order="0" side_tool="false" content_ui="combo" x="692" y="193" width="216" height="483" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.1890411" sideWeight="0.5" order="8" side_tool="true" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.18885449" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.18767123" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
-      <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32876712" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="SLIDING" type="SLIDING" visible="false" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
-      <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.24967907" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
+      <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.24967907" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
     </layout>
   </component>
   <component name="Vcs.Log.UiProperties">
@@ -367,6 +367,20 @@
     <breakpoint-manager />
   </component>
   <component name="editorHistoryManager">
+    <entry file="file://$PROJECT_DIR$/public/card.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="82" column="7" selection-start="4061" selection-end="4061" vertical-scroll-proportion="0.0" vertical-offset="1722" max-vertical-offset="1848">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/public/css/app.css">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="88" column="1" selection-start="1375" selection-end="1375" vertical-scroll-proportion="0.0" vertical-offset="1848" max-vertical-offset="6951">
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/node_modules/express-mysql-session/node_modules/express-session/session/store.js">
       <provider selected="true" editor-type-id="text-editor">
         <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="1710" />
@@ -419,42 +433,36 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/public/js/check.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="4" column="27" selection-start="102" selection-end="102" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="483">
-          <folding />
-        </state>
+        <state line="4" column="27" selection-start="102" selection-end="102" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="483" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/public/js/my_room.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="5" column="42" selection-start="212" selection-end="212" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="2869">
+        <state line="5" column="42" selection-start="212" selection-end="212" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="2869" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/public/js/script.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="16" column="7" selection-start="390" selection-end="390" vertical-scroll-proportion="0.30522087" vertical-offset="152" max-vertical-offset="2926" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/public/js/create_cards.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="5" column="20" selection-start="167" selection-end="172" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="1029">
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/public/card.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="116" column="58" selection-start="5497" selection-end="5497" vertical-scroll-proportion="-10.230769" vertical-offset="1938" max-vertical-offset="2584">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/public/js/script.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="16" column="7" selection-start="390" selection-end="390" vertical-scroll-proportion="0.30522087" vertical-offset="152" max-vertical-offset="2926">
+        <state line="21" column="30" selection-start="793" selection-end="793" vertical-scroll-proportion="-15.111111" vertical-offset="33" max-vertical-offset="2856">
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/public/css/app.css">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="88" column="29" selection-start="1291" selection-end="1291" vertical-scroll-proportion="0.0" vertical-offset="1250" max-vertical-offset="6631">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/public/js/create_cards.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="7" column="30" selection-start="197" selection-end="197" vertical-scroll-proportion="0.26706827" vertical-offset="0" max-vertical-offset="608">
+        <state line="87" column="22" selection-start="1291" selection-end="1291" vertical-scroll-proportion="0.8148148" vertical-offset="1365" max-vertical-offset="7329">
           <folding />
         </state>
       </provider>

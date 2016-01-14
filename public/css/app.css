@@ -55,7 +55,6 @@ ul {
     padding: 0;
 }
 
-
 .incorrect {
     border: 1px solid red!important;
 }
@@ -77,18 +76,19 @@ button:hover {
     color: #ffffff;
 }
 
-#message_box {
-    position: absolute;
-    top: 0;
-    right: 50%;
-    background: #ffffff;
-    display: none;
+#message_block {
+    position: fixed;
+    top: 39px;
+    left: 50%;
+    transform: translateX(-50%);
 }
 
-.hide_block {
-    display: block!important;
-    opacity: 0;
-    transition: all 3s ease;
+.message_box {
+    margin: 1px;
+    text-align: center;
+    padding: 10px 130px;
+    background: rgba(255, 255, 255, 0.7);
+    box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.2);
 }
 
 /*======================= http://colorhunt.co/c/7403 =============================*/

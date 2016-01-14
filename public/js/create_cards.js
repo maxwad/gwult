@@ -1,12 +1,29 @@
 $(document).ready(function () {
 
-    var message_box = $('#message_box');
     var message = '';
+    function notice (mes) {
+        var message_box = $('<div class="message_box"></div>');
+        $('#message_block').append(message_box);
+        message_box.html(mes);
+        setTimeout(function(){
+            message_box.fadeOut(2000,function(){
+                $(this).remove();
+            });
+        }, 2100);
+    }
 
     $("#create_race").click(function(e) {
         e.preventDefault();
         message = "It works!";
-        message_box.empty().addClass('hide_block').text(message);
+        notice(message);
+
+    });
+
+    $("#create_class").click(function(e) {
+        e.preventDefault();
+        message = "But not as it should...";
+        notice(message);
+
     });
 
 

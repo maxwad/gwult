@@ -9,6 +9,7 @@ $(document).ready(function () {
     var reg_name    = $('#reg_name');
     var reg_pass    = $('#reg_pass');
     var conf_pass   = $('#conf_pass');
+    var message     = '';
 
 
 
@@ -30,12 +31,16 @@ $(document).ready(function () {
                 user_data.pass = auth_pass.val();
             } else {
                 auth_pass.addClass('incorrect');
+                message = "Вы не ввели пароль.";
+                notice(message, 2);
                 return false;
             }
 
 
         } else {
             auth_name.addClass('incorrect');
+            message = "Вы не ввели имя пользователя.";
+            notice(message, 2);
             return false;
         }
         $.ajax({
@@ -46,9 +51,10 @@ $(document).ready(function () {
                 if(response.answer == true) {
                     window.location = "/";
                 } else {
-                    console.log("ЭРРОР");
                     auth_pass.addClass('incorrect');
                     auth_name.addClass('incorrect');
+                    message = "Вы ввели неправильное имя пользователя или пароль.";
+                    notice(message, 2);
                     return false;
                 }
             }
@@ -64,7 +70,6 @@ $(document).ready(function () {
         var user_data = {};
         if(reg_name.val()!="") {
             user_data.name = reg_name.val();
-            //ajax
 
 
             if(reg_pass.val()!="") {
@@ -73,20 +78,28 @@ $(document).ready(function () {
                         user_data.pass = reg_pass.val();
                     } else {
                         conf_pass.addClass('incorrect');
+                        message = "Пароли не совпадают. Попытайтесь ещё раз.";
+                        notice(message, 2);
                         return false;
                     }
                 } else {
                     conf_pass.addClass('incorrect');
+                    message = "Подтвердите пароль.";
+                    notice(message, 2);
                     return false;
                 }
             } else {
                 reg_pass.addClass('incorrect');
+                message = "Вы не ввели желаемый пароль.";
+                notice(message, 2);
                 return false;
             }
 
 
         } else {
             reg_name.addClass('incorrect');
+            message = "Вы не ввели желаемое имя пользователя.";
+            notice(message, 2);
             return false;
         }
         $.ajax({
@@ -96,7 +109,8 @@ $(document).ready(function () {
             success: function(response) {
                 console.log(response.answer);
                 if(response.answer == true) {
-                    console.log("Имя доступно");
+                    message = "Имя доступно.";
+                    notice(message, 1);
                     $('#reg_button').prop('disabled', false);
                     $.ajax({
                         url: "reg",
@@ -107,13 +121,15 @@ $(document).ready(function () {
                             if(resp.answer == true) {
                                 window.location = "/";
                             } else {
-                                console.log("ЭРРОР");
+                                message = "Ошибка сервера. Обновите страницу и попытайтесь ещё раз.";
+                                notice(message, 2);
                                 return false;
                             }
                         }
                     });
                 } else {
-                    console.log("Имя уже занято");
+                    message = "Имя уже занято. Попробуйте другое.";
+                    notice(message, 2);
                     reg_name.addClass('incorrect');
                     $('#reg_button').prop('disabled', true);
                 }
@@ -134,10 +150,12 @@ $(document).ready(function () {
                 success: function(response) {
                     console.log(response.answer);
                     if(response.answer == true) {
-                        console.log("Имя доступно");
+                        message = "Имя доступно.";
+                        notice(message, 1);
                         $('#reg_button').prop('disabled', false);
                     } else {
-                        console.log("Имя уже занято");
+                        message = "Имя уже занято. Попробуйте другое.";
+                        notice(message, 2);
                         reg_name.addClass('incorrect');
                         $('#reg_button').prop('disabled', true);
                     }

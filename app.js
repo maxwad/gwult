@@ -8,7 +8,7 @@ var methodOverride = require('method-override');
 var path           = require('path');
 var bodyParser     = require('body-parser');
 var bcrypt         = require('bcrypt-nodejs');
-
+var multer         = require('multer');
 
 var query_to_db;
 var app = express();
@@ -71,6 +71,16 @@ function HelloUser(req) {
         }
     return USER;
 }
+
+// функция, которая переопределяет место записи файлов на сервере
+
+function getStorage(imgSrc) {
+    return multer.diskStorage({
+        destination: function (req, file, cb) { cb(null, imgSrc);},
+        filename: function (req, file, cb) { cb(null, file.originalname)}
+    });
+}
+
 
 app.get('/', function(req, res, next) {
     console.log("4. "+req.session.user);
@@ -299,6 +309,18 @@ app.post('/join_game', function(req, res) {
     });
 
 });
+
+//         тест загрузки
+app.post('/test',multer({ storage: getStorage('public/imgs/test') }).any(), function(req, res) {
+
+    var name_field1 = req.body.name_race;
+    var name_field2 = req.body.description_race;
+    var name_field3 = req.files[0].path;
+    console.log(name_field1 + "  " + name_field2 + "  " + name_field3);
+    res.send({answer:"Ok"});
+
+});
+
 
 http.createServer(app).listen(app.get('port'), function(){
     console.log('Express server listening on port ' + app.get('port'));

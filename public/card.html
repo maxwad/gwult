@@ -25,17 +25,17 @@
             <div class="form_block">
                 <div class="race_block">
                     <h3>Создать расу</h3>
-                    <form name="race_form" class="race_form" action="" enctype="multipart/form-data">
+                    <form name="race_form" id="race_form" action="/test" method="post" enctype="multipart/form-data">
                         <label for="name_race">Название расы</label>
-                        <input type="text" id="name_race"/>
+                        <input type="text" id="name_race" name="name_race"/>
 
                         <label for="pict_race">Загрузите картинку расы</label>
-                        <input type="file" id="pict_race"/>
+                        <input type="file" id="pict_race" name="pict_race"/>
 
                         <label for="description_race">Описание расы</label>
-                        <textarea id="description_race"></textarea>
+                        <textarea id="description_race" name="description_race"></textarea>
 
-                        <button id="create_race">Добавить расу</button>
+                        <button id="create_race" type="submit">Добавить расу</button>
                     </form>
                     <div class="race_preview">
                         <ul id="race_list"> </ul>
@@ -48,7 +48,7 @@
 
                 <div class="class_block">
                     <h3>Создать класс</h3>
-                    <form name="class_form" class="class_form" action="" enctype="multipart/form-data">
+                    <form name="class_form" id="class_form" action="" enctype="multipart/form-data">
                         <label for="name_class">Название класса</label>
                         <input type="text" id="name_class"/>
 
@@ -70,7 +70,7 @@
                 </div>
                 <div class="ability_block">
                     <h3>Создать способность</h3>
-                    <form name="ability_form" class="ability_form" action="" enctype="multipart/form-data">
+                    <form name="ability_form" id="ability_form" action="" enctype="multipart/form-data">
                         <label for="name_ability">Название способности</label>
                         <input type="text" id="name_ability"/>
 
@@ -97,7 +97,7 @@
             <div class="form_block">
                 <div class="card_block">
                     <h3>Создать карту</h3>
-                    <form name="card_form" class="card_form" action="" enctype="multipart/form-data">
+                    <form name="card_form" id="card_form" action="" enctype="multipart/form-data">
                         <label for="name_card">Название карты</label>
                         <input type="text" id="name_card"/>
 

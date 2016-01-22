@@ -44,10 +44,11 @@ textarea {
 }
 
 body {
-    background: #DFEB95;
+    background: #CC984E;
     margin: 0;
     padding: 0;
     min-width: 1000px;
+    color: #ffffff;
 }
 
 ul {
@@ -65,17 +66,15 @@ button {
     padding: 5px;
     width: 200px;
     cursor: pointer;
-    background: #6fb22c;#6fb22c
+    background: #267599;
     box-shadow: inset 0 1px 0 0 rgba(255,255,255,.3),inset 0 -1px 0 0 rgba(0,0,0,.1),0 1px 0 0 rgba(0,0,0,.2);
     border: none;
     outline: none;
+    color: #ffffff;
 }
 
-
-
 button:hover {
-    background: #267599;
-    color: #ffffff;
+    box-shadow: inset 1px 1px 1px 0 rgba(255,255,255,.3),inset 1px -1px 1px 0 rgba(0,0,0,.2),1px 2px 1px 0 rgba(0,0,0,.3);
 }
 
 #message_block {
@@ -89,7 +88,7 @@ button:hover {
     margin: 1px;
     text-align: center;
     padding: 10px 130px;
-    background: rgba(255, 255, 255, 0.7);
+    background: rgba(255, 255, 255, 1);
     box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.2);
 }
 
@@ -213,7 +212,7 @@ button:hover {
 .room .info_battles {
     width: 40%;
     margin: 0 auto;
-    padding: 10px 20px;
+    padding: 10px 0;
     background: #0B88A8;
     margin-top: 50px;
 }
@@ -305,7 +304,7 @@ button:hover {
 
 .room .info_battles table {
     text-align: center;
-    width: 90%;
+    width: 100%;
     margin: 0 auto;
     border-spacing: 0;
     border-collapse: collapse;
@@ -322,7 +321,7 @@ button:hover {
 
 .room .info_battles table tr:first-child {
     font-weight: bold;
-    border-bottom: 2px solid #89ba6f;
+    border-bottom: 2px solid #CC984E;
 }
 
 .room .info_battles table tr:nth-child(3) {

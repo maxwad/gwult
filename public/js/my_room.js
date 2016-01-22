@@ -4,6 +4,7 @@ $(document).ready(function () {
     var info_battles    =  $(".info_battles");
     var join_number     = $("#join_number");
     var join_pass       = $("#join_pass");
+    var message         = '';
 
     function list_of_battle () {
         $.ajax({
@@ -12,10 +13,10 @@ $(document).ready(function () {
             data: '',
             success: function(response) {
                 if (response.answer == false) {
-                    console.log("Записей о созданных играх не обнаружено.");
+                    message = "У Вас нет созданных комнат.";
+                    notice(message, 1);
                     $(info_battles).empty();
                 } else {
-                    console.log(response.data_rows.length);
                     $(info_battles).empty();
                     $(info_battles).append("<h2>Список созданных комнат</h2>" +
                         "<table><tr><td>Номер комнаты</td><td>Пароль</td><td>Действие</td><td>Ссылка</td></tr></table>");
@@ -58,10 +59,13 @@ $(document).ready(function () {
             data: user_data,
             success: function(response) {
                 if (response.answer == false) {
-                    alert("Не удалось создать комнату. Обновите страницу и попытайтесь снова.");
+                    message = "Не удалось создать комнату. Обновите страницу и попытайтесь снова.";
+                    notice(message, 2);
                     $(create_pass).val('');
                 } else {
                     list_of_battle();
+                    message = "Комната успешно создана.";
+                    notice(message, 1);
                 }
             }
         });
@@ -73,6 +77,8 @@ $(document).ready(function () {
         e.preventDefault();
         if (join_number.val() == '') {
             join_number.addClass('incorrect');
+            message = "Введите номер комнаты.";
+            notice(message, 2);
             return false;
         } else { //возможно тут стоит добавить проверку на то, что введено число
             var user_data = {};
@@ -85,24 +91,30 @@ $(document).ready(function () {
                 success: function(response) {
                     switch (response.answer) {
                         case "1":
-                            console.log('Ошибка: Проверьте введённый номер игры');
+                            message = "Ошибка: Проверьте введённый номер игры.";
+                            notice(message, 2);
                             join_number.addClass('incorrect');
                             break;
                         case "2":
-                            console.log('Ошибка: Не найдено комнаты с таким номером');
+                            message = "Ошибка: Не найдено комнаты с таким номером.";
+                            notice(message, 2);
                             join_number.addClass('incorrect');
                             break;
                         case "3":
-                            console.log('Ошибка: Вы не можете играть сам с собой');
+                            message = "Ошибка: Вы не можете играть сами с собой.";
+                            notice(message, 2);
                             break;
                         case "4":
-                            console.log('Ошибка: Комната уже укомплектована игроками');
+                            message = "Ошибка: Комната уже укомплектована игроками.";
+                            notice(message, 2);
                             break;
                         case "5":
-                            console.log('Ошибка: Вы указали неверный пароль от комнаты');
+                            message = "Ошибка: Вы указали неверный пароль от комнаты.";
+                            notice(message, 2);
                             break;
                         case "6":
-                            console.log('Ошибка: Не удалось подключится к комнате');
+                            message = "Ошибка: Не удалось подключится к комнате.";
+                            notice(message, 2);
                             break;
                         case "7":
                             var addr_room = "/" + join_number.val();
@@ -126,10 +138,13 @@ $(document).ready(function () {
             data: user_data,
             success: function(response) {
                 if (response.answer == false) {
-                    alert("Не удалось удалить комнату. Обновите страницу и попытайтесь снова.");
+                    message = "Не удалось удалить комнату. Обновите страницу и попытайтесь снова.";
+                    notice(message, 2);
                     list_of_battle();
                 } else {
                     list_of_battle();
+                    message = "Комната успешно удалена.";
+                    notice(message, 1);
                 }
             }
         });

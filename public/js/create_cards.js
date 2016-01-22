@@ -2,11 +2,22 @@ $(document).ready(function () {
 
     var message = '';
 
-    $("#create_race").click(function(e) {
-        e.preventDefault();
-        message = "It works!";
-        notice(message, 1);
+    $("#race_form").submit(function(e) {
 
+        var form_data = new FormData(this);
+        $.ajax({
+            url: "test",
+            method: "POST",
+            data: form_data,
+            contentType: false,
+            cache: false,
+            processData:false,
+            success: function(response) {
+                console.log(response.answer);
+            }
+        });
+        e.preventDefault(); //Prevent Default action.
+        return false;
     });
 
     $("#create_class").click(function(e) {

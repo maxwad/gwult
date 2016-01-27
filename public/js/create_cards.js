@@ -2,44 +2,56 @@ $(document).ready(function () {
 
     var message = '';
 
-    $("#race_form").submit(function(e) {
+    $("#fraction_form").submit(function(e) {
 
         var form_data = new FormData(this);
         $.ajax({
-            url: "test",
+            url: "take_fraction",
             method: "POST",
             data: form_data,
             contentType: false,
             cache: false,
             processData:false,
             success: function(response) {
-                console.log(response.answer);
+                if(response.answer == true) {
+                    message = "Фракция успешно добавлена";
+                    notice(message, 1);
+                } else {
+                    message = "Ошибка при добавлении фракции";
+                    notice(message, 2);
+                    return false;
+                }
             }
         });
+        this.reset();
         e.preventDefault(); //Prevent Default action.
         return false;
     });
 
-    $("#create_class").click(function(e) {
-        e.preventDefault();
-        message = "But not as it should...";
-        notice(message, 2);
+    $("#class_form").submit(function(e) {
 
+        var form_data = new FormData(this);
+        $.ajax({
+            url: "take_class",
+            method: "POST",
+            data: form_data,
+            contentType: false,
+            cache: false,
+            processData:false,
+            success: function(response) {
+                if(response.answer == true) {
+                    message = "Класс успешно добавлен";
+                    notice(message, 1);
+                } else {
+                    message = "Ошибка при добавлении класса";
+                    notice(message, 2);
+                    return false;
+                }
+            }
+        });
+        this.reset();
+        e.preventDefault(); //Prevent Default action.
+        return false;
     });
 
-
-    /*$.ajax({
-        url: "check_session",
-        method: "POST",
-        data: "",
-        success: function(response) {
-            if (response.answer == false) {
-                $(hello).text($(hello).text()+", гость");
-            } else {
-                console.log(response.answer);
-                $(hello).text($(hello).text()+", "+response.answer);
-                $('.login_page').html('<a href="/logout" title=""><span>Выйти</span></a>');
-            }
-        }
-    });   */
 });

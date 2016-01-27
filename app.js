@@ -115,6 +115,13 @@ app.post('/check_session', function(req, res, next) {
 });
 
 
+
+/////////////////////////////////////////////////////////////
+// обработка страницы "Регистрация и авторизация"
+/////////////////////////////////////////////////////////////
+
+
+
 //       запрос на регистрацию юзера
 app.post('/reg', function(req, res) {
 
@@ -182,6 +189,10 @@ app.post('/check_name', function(req, res) {
     });
 });
 
+
+/////////////////////////////////////////////////////////////
+// обработка страницы "Комната пользователя"
+/////////////////////////////////////////////////////////////
 
 //         запрос на создание комнаты
 app.post('/take_pass', function(req, res) {
@@ -292,7 +303,7 @@ app.post('/join_game', function(req, res) {
                             console.log("36. "+query_to_db);
                             connection.query(query_to_db, [req.session.user, alias_battle, req.body.numb], function(err, rows, fields) {
                                 if (err) {
-                                    console.log("36. Ошибка при заполнении данных в таблице list_of_battles: "+err);
+                                    console.log("37. Ошибка при заполнении данных в таблице list_of_battles: "+err);
                                     res.send({answer:"6"});
                                 } else {
                                     res.send({answer:"7"});
@@ -310,14 +321,58 @@ app.post('/join_game', function(req, res) {
 
 });
 
-//         тест загрузки
-app.post('/test',multer({ storage: getStorage('public/imgs/test') }).any(), function(req, res) {
 
-    var name_field1 = req.body.name_race;
-    var name_field2 = req.body.description_race;
-    var name_field3 = req.files[0].path;
-    console.log(name_field1 + "  " + name_field2 + "  " + name_field3);
-    res.send({answer:"Ok"});
+
+/////////////////////////////////////////////////////////////
+// обработка страницы "Генератор карт"
+/////////////////////////////////////////////////////////////
+
+
+//         Добавление фракций
+app.post('/take_fraction', multer({ storage: getStorage('public/imgs/fractions') }).any(), function(req, res) {
+
+    var path_pict='';
+    var path_cover='';
+    if(req.files[0] != undefined) {
+        path_pict = (req.files[0].destination + "/" + req.files[0].filename).replace('public/','');
+    }
+    if(req.files[1] != undefined) {
+        path_cover = (req.files[1].destination + "/" + req.files[1].filename).replace('public/','');
+    }
+    query_to_db = "INSERT INTO fractions (name_fraction, ability_fraction, pict_fraction, pict_fraction_cover, description_fraction) VALUES( ?, ?, ?, ?, ?)";
+    console.log("38. "+query_to_db);
+    connection.query(query_to_db, [req.body.name_fraction, req.body.ability_fraction, path_pict, path_cover, req.body.description_fraction], function(err, rows, fields) {
+        if(err) {
+            console.log("39. Ошибка при записи новой фракции: " + err);
+            res.send({answer:false});
+        } else {
+            res.send({answer:true});
+        }
+    });
+
+});
+
+//         Добавление класса
+app.post('/take_fraction', multer({ storage: getStorage('public/imgs/fractions') }).any(), function(req, res) {
+
+    var path_pict='';
+    var path_cover='';
+    if(req.files[0] != undefined) {
+        path_pict = (req.files[0].destination + "/" + req.files[0].filename).replace('public/','');
+    }
+    if(req.files[1] != undefined) {
+        path_cover = (req.files[1].destination + "/" + req.files[1].filename).replace('public/','');
+    }
+    query_to_db = "INSERT INTO fractions (name_fraction, ability_fraction, pict_fraction, pict_fraction_cover, description_fraction) VALUES( ?, ?, ?, ?, ?)";
+    console.log("38. "+query_to_db);
+    connection.query(query_to_db, [req.body.name_fraction, req.body.ability_fraction, path_pict, path_cover, req.body.description_fraction], function(err, rows, fields) {
+        if(err) {
+            console.log("39. Ошибка при записи новой фракции: " + err);
+            res.send({answer:false});
+        } else {
+            res.send({answer:true});
+        }
+    });
 
 });
 

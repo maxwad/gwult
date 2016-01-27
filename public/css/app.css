@@ -44,7 +44,7 @@ textarea {
 }
 
 body {
-    background: #CC984E;
+    background: #000000;
     margin: 0;
     padding: 0;
     min-width: 1000px;
@@ -66,15 +66,16 @@ button {
     padding: 5px;
     width: 200px;
     cursor: pointer;
-    background: #267599;
-    box-shadow: inset 0 1px 0 0 rgba(255,255,255,.3),inset 0 -1px 0 0 rgba(0,0,0,.1),0 1px 0 0 rgba(0,0,0,.2);
+    background: #9a733d;
+    box-shadow: inset 0 1px 3px 0 rgba(255,255,255,.5),inset 0 -1px 0 0 rgba(0,0,0,.3),0 1px 0 0 rgba(0,0,0,.2);
     border: none;
     outline: none;
-    color: #ffffff;
+    color: #000000;
 }
 
 button:hover {
-    box-shadow: inset 1px 1px 1px 0 rgba(255,255,255,.3),inset 1px -1px 1px 0 rgba(0,0,0,.2),1px 2px 1px 0 rgba(0,0,0,.3);
+    box-shadow: inset 1px 1px 3px 0 rgba(255,255,255,.3),inset 1px -1px 1px 0 rgba(0,0,0,.2),1px 2px 1px 0 rgba(0,0,0,.3);
+    color: #000000;
 }
 
 #message_block {
@@ -82,6 +83,7 @@ button:hover {
     top: 39px;
     left: 50%;
     transform: translateX(-50%);
+    z-index: 10;
 }
 
 .message_box {
@@ -89,7 +91,6 @@ button:hover {
     text-align: center;
     padding: 10px 130px;
     background: rgba(255, 255, 255, 1);
-    box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.2);
 }
 
 /*======================= http://colorhunt.co/c/7403 ==================================*/
@@ -100,7 +101,7 @@ button:hover {
     list-style: none;
     font-weight: bold;
     margin-bottom: 30px;
-    background: #0B88A8;
+    background: #000000;
 }
 
 .top_nav ul {
@@ -119,7 +120,7 @@ button:hover {
 
 .top_nav li a {
     display: block;
-    color: #000000;
+    color: #f2f2f2;
     padding: 10px;
     text-decoration: none;
     text-align: center;
@@ -165,7 +166,7 @@ button:hover {
 .auth fieldset {
     padding: 15px;
     height: 100%;
-    border-color: #0B88A8;
+    border-color: #9a733d;
 }
 
 #login_form fieldset {
@@ -213,7 +214,7 @@ button:hover {
     width: 40%;
     margin: 0 auto;
     padding: 10px 0;
-    background: #0B88A8;
+    background: #9a733d;
     margin-top: 50px;
 }
 
@@ -238,7 +239,7 @@ button:hover {
 .room fieldset {
     padding: 10px;
     height: 100%;
-    border-color: #0B88A8;
+    border-color: #9a733d;
     text-align: center;
 }
 
@@ -321,11 +322,11 @@ button:hover {
 
 .room .info_battles table tr:first-child {
     font-weight: bold;
-    border-bottom: 2px solid #CC984E;
+    border-bottom: 2px solid #9a733d;
 }
 
 .room .info_battles table tr:nth-child(3) {
-    background: #0B96B6;
+    background: #ba8b48;
 }
 
 .room .info_battles button {
@@ -342,3 +343,72 @@ button:hover {
 
 
 /*=================================   CARD PAGE  =======================================*/
+
+
+.card .form_block {
+    box-sizing: border-box;
+    padding: 30px 50px;
+    width: 50%;
+    float: left;
+    position: relative;
+    overflow: hidden;
+
+}
+
+.card .fraction_preview, .card .class_preview, .card .ability_preview {
+    box-sizing: border-box;
+    width: 65%;
+    float: left;
+}
+
+.card h3 {
+    text-align: center;
+}
+
+.card #fraction_form, .card #class_form, .card #ability_form {
+    box-sizing: border-box;
+    width: 35%;
+    float: left;
+}
+
+.card .fraction_block, .card .class_block,
+.card .ability_block, .card .card_block {
+    border: 1px solid #9a733d;
+    padding: 0 10px 25px 10px;
+    margin-bottom: 20px;
+    position: relative;
+    overflow: hidden;
+}
+
+.card label, .card input, .card textarea {
+    display: block;
+    margin-bottom: 15px;
+    outline: none;
+    width: 100%;
+}
+
+.card label {
+    margin-bottom: 5px;
+}
+
+.card input, .card textarea {
+    background: #ba8b48;
+    border: none;
+}
+
+.card input[type=text], .card textarea {
+    padding: 5px 10px;
+    box-shadow: inset 1px 1px 4px 0 rgb(39, 39, 39);
+}
+
+.card input[type=text] {
+    height: 20px;
+}
+
+.card textarea {
+    height: 100px;
+}
+
+.card button {
+    width: 85%;
+}

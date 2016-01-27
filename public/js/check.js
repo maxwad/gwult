@@ -26,9 +26,9 @@ function notice (mes, type) {
     $('#message_block').append(message_box);
     var color = '';
     if (type == 2) {
-        color = 'rgba(255, 200, 200, 0.8)';
+        color = 'rgba(190, 4, 4, 1)';
     } else {
-        color = 'rgba(30, 230, 60, 0.3)';
+        color = 'rgba(5, 170, 20, 1)';
     }
     message_box.html(mes).css('background', color);
     setTimeout(function(){

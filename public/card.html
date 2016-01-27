@@ -23,32 +23,39 @@
 
         <div class="card_forms">
             <div class="form_block">
-                <div class="race_block">
-                    <h3>Создать расу</h3>
-                    <form name="race_form" id="race_form" action="/test" method="post" enctype="multipart/form-data">
-                        <label for="name_race">Название расы</label>
-                        <input type="text" id="name_race" name="name_race"/>
+                <div class="fraction_block">
+                    <form name="fraction_form" id="fraction_form" action="" method="post" enctype="multipart/form-data">
+                        <h3>Создать фракцию</h3>
+                        <label for="name_fraction">Название фракции</label>
+                        <input type="text" id="name_fraction" name="name_fraction" required/>
 
-                        <label for="pict_race">Загрузите картинку расы</label>
-                        <input type="file" id="pict_race" name="pict_race"/>
+                        <label for="ability_fraction">Способность фракции</label>
+                        <input type="text" id="ability_fraction" name="ability_fraction"/>
 
-                        <label for="description_race">Описание расы</label>
-                        <textarea id="description_race" name="description_race"></textarea>
+                        <label for="pict_fraction">Загрузите картинку фракции</label>
+                        <input type="file" id="pict_fraction" name="pict_fraction"/>
 
-                        <button id="create_race" type="submit">Добавить расу</button>
+                        <label for="pict_fraction_cover">Загрузите обложку фракции</label>
+                        <input type="file" id="pict_fraction_cover" name="pict_fraction_cover"/>
+
+                        <label for="description_fraction">Описание фракции</label>
+                        <textarea id="description_fraction" name="description_fraction"></textarea>
+
+                        <button id="create_fraction" type="submit">Добавить фракцию</button>
                     </form>
-                    <div class="race_preview">
-                        <ul id="race_list"> </ul>
-                        <div id="race_description_block">
-                            <img src="" title="" alt="" id="race_description_pict"/>
-                            <p id="race_description_text"></p>
+                    <div class="fraction_preview">
+                        <h3>Созданные фракции</h3>
+                        <ul id="fraction_list"> </ul>
+                        <div id="fraction_description_block">
+                            <img src="" title="" alt="" id="fraction_description_pict"/>
+                            <p id="fraction_description_text"></p>
                         </div>
                     </div>
                 </div>
 
                 <div class="class_block">
-                    <h3>Создать класс</h3>
                     <form name="class_form" id="class_form" action="" enctype="multipart/form-data">
+                        <h3>Создать класс</h3>
                         <label for="name_class">Название класса</label>
                         <input type="text" id="name_class"/>
 
@@ -61,6 +68,7 @@
                         <button id="create_class">Добавить класс</button>
                     </form>
                     <div class="class_preview">
+                        <h3>Созданные классы</h3>
                         <ul id="class_list"> </ul>
                         <div id="class_description_block">
                             <img src="" title="" alt="" id="class_description_pict"/>
@@ -69,8 +77,8 @@
                     </div>
                 </div>
                 <div class="ability_block">
-                    <h3>Создать способность</h3>
                     <form name="ability_form" id="ability_form" action="" enctype="multipart/form-data">
+                        <h3>Создать способность</h3>
                         <label for="name_ability">Название способности</label>
                         <input type="text" id="name_ability"/>
 
@@ -83,9 +91,10 @@
                         <label for="description_ability">Описание способности</label>
                         <textarea id="description_ability"></textarea>
 
-                        <button id="create_ability">Добавить способностьу</button>
+                        <button id="create_ability">Добавить способность</button>
                     </form>
                     <div class="ability_preview">
+                        <h3>Созданные способности</h3>
                         <ul id="ability_list"> </ul>
                         <div id="ability_description_block">
                             <img src="" title="" alt="" id="ability_description_pict"/>
@@ -96,15 +105,15 @@
             </div>
             <div class="form_block">
                 <div class="card_block">
-                    <h3>Создать карту</h3>
                     <form name="card_form" id="card_form" action="" enctype="multipart/form-data">
+                        <h3>Создать карту</h3>
                         <label for="name_card">Название карты</label>
                         <input type="text" id="name_card"/>
 
                         <label for="select_class">Выберите класс</label>
                         <select id="select_class" name="select_class[]"></select>
 
-                        <label for="select_race">Выберите расу</label>
+                        <label for="select_race">Выберите фракцию</label>
                         <select id="select_race" name="select_race[]"></select>
 
                         <label for="strength_card">Задайте силу карты</label>

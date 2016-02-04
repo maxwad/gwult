@@ -128,7 +128,7 @@ $(document).ready(function () {
 
 
     //Удаление игровой комнаты
-    $("body").on('click', '.del_battle', function() {
+    $(".room").on('click', '.del_battle', function() {
 
         var user_data = {};
         user_data.numb = $(this).parent().parent().find(".numb_room").text();

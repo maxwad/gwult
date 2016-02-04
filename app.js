@@ -74,9 +74,9 @@ function HelloUser(req) {
 
 // функция, которая переопределяет место записи файлов на сервере
 
-function getStorage(imgSrc) {
+function getStorage() {
     return multer.diskStorage({
-        destination: function (req, file, cb) { cb(null, imgSrc);},
+        destination: function (req, file, cb) { cb(null, 'public/imgs/'+req.body.name_form);},
         filename: function (req, file, cb) { cb(null, file.originalname)}
     });
 }
@@ -328,22 +328,68 @@ app.post('/join_game', function(req, res) {
 /////////////////////////////////////////////////////////////
 
 
-//         Добавление фракций
-app.post('/take_fraction', multer({ storage: getStorage('public/imgs/fractions') }).any(), function(req, res) {
+//         Добавление карт и способностей
 
-    var path_pict='';
-    var path_cover='';
+app.post('/take_form', multer({ storage: getStorage() }).any(), function(req, res) {
+
+    query_to_db = '';
+    var path_pict = '';
+    var path_cover = '';
+    var hero_flag = '';
+    var query_var = [];
+
     if(req.files[0] != undefined) {
         path_pict = (req.files[0].destination + "/" + req.files[0].filename).replace('public/','');
     }
     if(req.files[1] != undefined) {
         path_cover = (req.files[1].destination + "/" + req.files[1].filename).replace('public/','');
     }
-    query_to_db = "INSERT INTO fractions (name_fraction, ability_fraction, pict_fraction, pict_fraction_cover, description_fraction) VALUES( ?, ?, ?, ?, ?)";
-    console.log("38. "+query_to_db);
-    connection.query(query_to_db, [req.body.name_fraction, req.body.ability_fraction, path_pict, path_cover, req.body.description_fraction], function(err, rows, fields) {
+
+    if(req.body.hero) {
+        hero_flag = true;
+    } else {
+        hero_flag = false;
+    }
+
+    switch (req.body.name_form) {
+        case "units":
+            query_to_db = "INSERT INTO unit_cards (name_unit, id_fraction_unit, id_class_unit, strength_unit, id_ability_unit, hero_unit, pict_unit, description_unit) VALUES( ?, ?, ?, ?, ?, ?, ?, ?)";
+            query_var = [req.body.name_unit, req.body.select_fraction, req.body.select_class, req.body.strength_unit, req.body.select_ability, hero_flag, path_pict, req.body.description_unit];
+            break;
+
+        case "specials":
+            query_to_db = "INSERT INTO special_cards (name_special, function_special, pict_special, description_special) VALUES( ?, ?, ?, ?)";
+            query_var = [req.body.name_special, req.body.ability_special, path_pict, req.body.description_special];
+            break;
+
+        case "leaders":
+            query_to_db = "INSERT INTO leader_cards (name_leader, function_leader, desc_func_leader, pict_leader, description_leader) VALUES( ?, ?, ?, ?, ?)";
+            query_var = [req.body.name_leader, req.body.function_leader, req.body.desc_func_leader, path_pict, req.body.description_leader];
+            break;
+
+        case "classes":
+            query_to_db = "INSERT INTO classes (name_class, pict_class, description_class) VALUES( ?, ?, ?)";
+            query_var = [req.body.name_class, path_pict, req.body.description_class];
+            break;
+
+        case "abilities":
+            query_to_db = "INSERT INTO abilities (name_ability, name_function, pict_ability, description_ability) VALUES( ?, ?, ?, ?)";
+            query_var = [req.body.name_ability, req.body.function_ability, path_pict, req.body.description_ability];
+            break;
+
+        case "fractions":
+            query_to_db = "INSERT INTO fractions (name_fraction, ability_fraction, pict_fraction, pict_fraction_cover, description_fraction) VALUES( ?, ?, ?, ?, ?)";
+            query_var = [req.body.name_fraction, req.body.ability_fraction, path_pict, path_cover, req.body.description_fraction];
+            break;
+
+        default:
+            console.log("38. Не найдено такой формы");
+    }
+
+    console.log("40. "+query_to_db);
+    connection.query(query_to_db, query_var, function(err, rows, fields) {
         if(err) {
-            console.log("39. Ошибка при записи новой фракции: " + err);
+            console.log("41. Ошибка при записи в БД: " + err);
             res.send({answer:false});
         } else {
             res.send({answer:true});
@@ -352,30 +398,114 @@ app.post('/take_fraction', multer({ storage: getStorage('public/imgs/fractions')
 
 });
 
-//         Добавление класса
-app.post('/take_fraction', multer({ storage: getStorage('public/imgs/fractions') }).any(), function(req, res) {
 
-    var path_pict='';
-    var path_cover='';
-    if(req.files[0] != undefined) {
-        path_pict = (req.files[0].destination + "/" + req.files[0].filename).replace('public/','');
-    }
-    if(req.files[1] != undefined) {
-        path_cover = (req.files[1].destination + "/" + req.files[1].filename).replace('public/','');
-    }
-    query_to_db = "INSERT INTO fractions (name_fraction, ability_fraction, pict_fraction, pict_fraction_cover, description_fraction) VALUES( ?, ?, ?, ?, ?)";
-    console.log("38. "+query_to_db);
-    connection.query(query_to_db, [req.body.name_fraction, req.body.ability_fraction, path_pict, path_cover, req.body.description_fraction], function(err, rows, fields) {
-        if(err) {
-            console.log("39. Ошибка при записи новой фракции: " + err);
+//         запрос заполнение формы "Специальные карты"
+app.post('/give_me_special', function(req, res) {
+
+    query_to_db = "SELECT id_ability, name_ability FROM abilities";
+    console.log("42. "+query_to_db);
+    connection.query(query_to_db, function(err, rows, fields) {
+        if (err) {
+            console.log("43. Ошибка при выборе способностей: "+err);
             res.send({answer:false});
         } else {
-            res.send({answer:true});
+            if(rows.length > 0) {
+                console.log('44. Способности выбраны успешно');
+                res.send({answer:true, data_rows:rows});
+            } else {
+                console.log('45. Не найдено ни одной способности');
+                res.send({answer:false});
+            }
         }
     });
 
 });
 
+app.post('/give_me_unit', function(req, res) {
+    var data_block = {};
+    query_to_db = "SELECT id_class, name_class FROM classes";
+    console.log("46. "+query_to_db);
+    connection.query(query_to_db, function(err, rows, fields) {
+        if (err) {
+            console.log("47. Ошибка при выводе классов: "+err);
+            res.send(data_block.answer = false);
+        } else {
+            if(rows.length > 0) {
+                console.log('48. Классы успешно обработаны');
+                data_block.classes_rows = rows;
+
+
+                query_to_db = "SELECT id_fraction, name_fraction FROM fractions";
+                console.log("50. "+query_to_db);
+                connection.query(query_to_db, function(err, rows, fields) {
+                    if (err) {
+                        console.log("51. Ошибка при выводе фракций: "+err);
+                        res.send(data_block.answer = false);
+                    } else {
+                        if(rows.length > 0) {
+                            console.log('52. Фракции успешно обработаны');
+                            data_block.fractions_rows = rows;
+
+
+                            query_to_db = "SELECT id_ability, name_ability FROM abilities";
+                            console.log("53. "+query_to_db);
+                            connection.query(query_to_db, function(err, rows, fields) {
+                                if (err) {
+                                    console.log("54. Ошибка при выборе способностей: "+err);
+                                    res.send(data_block.answer = false);
+                                } else {
+                                    if(rows.length > 0) {
+                                        console.log('55. Способности выбраны успешно');
+                                        data_block.abilities_rows = rows;
+                                        data_block.answer = true;
+
+
+                                        query_to_db = "SELECT id_unit, name_unit FROM unit_cards ORDER BY id_fraction_unit, strength_unit";
+                                        console.log("57. "+query_to_db);
+                                        connection.query(query_to_db, function(err, rows, fields) {
+                                            if (err) {
+                                                console.log("58. Ошибка при выборе юнитов: "+err);
+                                                res.send(data_block.cards_answer = false);
+                                            } else {
+                                                if(rows.length > 0) {
+                                                    console.log('59. Юниты выбраны успешно');
+                                                    data_block.units_rows = rows;
+                                                    data_block.cards_answer = true;
+                                                    res.send(data_block);
+                                                } else {
+                                                    console.log('56. Не найдено ни одного юнита');
+                                                    data_block.cards_answer = false;
+                                                    res.send(data_block);
+                                                }
+                                            }
+                                        });
+
+
+                                    } else {
+                                        console.log('56. Не найдено ни одной способности');
+                                        res.send(data_block.answer = false);
+                                    }
+                                }
+                            });
+
+
+
+                        } else {
+                            console.log('49. Не найдено данных о фракциях');
+                            res.send(data_block.answer = false);
+                        }
+                    }
+                });
+
+
+            } else {
+                console.log('49. Не найдено данных о классах');
+                res.send(data_block.answer = false);
+            }
+        }
+    });
+
+});
 
 http.createServer(app).listen(app.get('port'), function(){
     console.log('Express server listening on port ' + app.get('port'));

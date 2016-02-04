@@ -26,7 +26,7 @@
       <file leaf-file-name="card.html" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/public/card.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="56" column="42" selection-start="2629" selection-end="2639" vertical-scroll-proportion="-6.769231" vertical-offset="888" max-vertical-offset="2755">
+            <state line="90" column="80" selection-start="4448" selection-end="4465" vertical-scroll-proportion="-9.5" vertical-offset="1463" max-vertical-offset="4693">
               <folding />
             </state>
           </provider>
@@ -35,7 +35,7 @@
       <file leaf-file-name="create_cards.js" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/public/js/create_cards.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="55" column="0" selection-start="1619" selection-end="1619" vertical-scroll-proportion="0.0" vertical-offset="558" max-vertical-offset="1178">
+            <state line="63" column="38" selection-start="1642" selection-end="1642" vertical-scroll-proportion="0.0" vertical-offset="1068" max-vertical-offset="2641">
               <folding />
             </state>
           </provider>
@@ -44,7 +44,7 @@
       <file leaf-file-name="app.js" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/app.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="354" column="28" selection-start="12767" selection-end="12767" vertical-scroll-proportion="0.2032258" vertical-offset="6638" max-vertical-offset="7429">
+            <state line="361" column="72" selection-start="13057" selection-end="13057" vertical-scroll-proportion="0.49591836" vertical-offset="6673" max-vertical-offset="9956">
               <folding />
             </state>
           </provider>
@@ -53,7 +53,7 @@
       <file leaf-file-name="app.css" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/public/css/app.css">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="378" column="15" selection-start="6063" selection-end="6063" vertical-scroll-proportion="0.0" vertical-offset="7182" max-vertical-offset="7961">
+            <state line="453" column="1" selection-start="7348" selection-end="7348" vertical-scroll-proportion="0.0" vertical-offset="8607" max-vertical-offset="8968">
               <folding />
             </state>
           </provider>
@@ -78,12 +78,12 @@
         <option value="$PROJECT_DIR$/template/layout/page.ejs" />
         <option value="$PROJECT_DIR$/public/auth.html" />
         <option value="$PROJECT_DIR$/public/my_room.html" />
-        <option value="$PROJECT_DIR$/public/js/my_room.js" />
         <option value="$PROJECT_DIR$/public/js/script.js" />
         <option value="$PROJECT_DIR$/public/js/check.js" />
+        <option value="$PROJECT_DIR$/public/js/my_room.js" />
         <option value="$PROJECT_DIR$/public/css/app.css" />
-        <option value="$PROJECT_DIR$/public/card.html" />
         <option value="$PROJECT_DIR$/public/js/create_cards.js" />
+        <option value="$PROJECT_DIR$/public/card.html" />
         <option value="$PROJECT_DIR$/app.js" />
       </list>
     </option>
@@ -166,38 +166,6 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
-              <option name="myItemId" value="template" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="gwult" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="gwult" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="template" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="layout" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="gwult" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="gwult" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
               <option name="myItemId" value="public" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
@@ -217,24 +185,6 @@
             </PATH_ELEMENT>
             <PATH_ELEMENT>
               <option name="myItemId" value="js" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="gwult" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="gwult" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="public" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="css" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -336,7 +286,7 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="-8" y="-8" width="1382" height="754" extended-state="0" />
+    <frame x="-8" y="-8" width="1382" height="754" extended-state="6" />
     <editor active="true" />
     <layout>
       <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
@@ -344,11 +294,11 @@
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32876712" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.24967907" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.13762811" sideWeight="0.7105263" order="0" side_tool="false" content_ui="combo" x="692" y="193" width="216" height="483" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.13909224" sideWeight="0.7987616" order="0" side_tool="false" content_ui="combo" x="692" y="193" width="216" height="483" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
-      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.29102167" sideWeight="0.5" order="8" side_tool="true" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.28947368" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.28328174" sideWeight="0.5" order="8" side_tool="true" content_ui="tabs" x="0" y="275" width="1366" height="188" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.2012384" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
@@ -373,7 +323,9 @@
     </option>
   </component>
   <component name="XDebuggerManager">
-    <breakpoint-manager />
+    <breakpoint-manager>
+      <option name="time" value="1" />
+    </breakpoint-manager>
   </component>
   <component name="editorHistoryManager">
     <entry file="file://$PROJECT_DIR$/node_modules/express-mysql-session/node_modules/express-session/session/cookie.js">
@@ -411,16 +363,6 @@
         <state line="24" column="0" selection-start="870" selection-end="870" vertical-scroll-proportion="0.0" vertical-offset="456" max-vertical-offset="1007" />
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/public/my_room.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="25" column="0" selection-start="882" selection-end="882" vertical-scroll-proportion="0.0" vertical-offset="475" max-vertical-offset="1045" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/public/js/my_room.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="160" column="3" selection-start="6171" selection-end="6171" vertical-scroll-proportion="0.0" vertical-offset="3040" max-vertical-offset="3154" />
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/public/js/script.js">
       <provider selected="true" editor-type-id="text-editor">
         <state line="65" column="0" selection-start="1733" selection-end="1733" vertical-scroll-proportion="0.04408353" vertical-offset="1216" max-vertical-offset="3268" />
@@ -431,35 +373,47 @@
         <state line="30" column="28" selection-start="837" selection-end="837" vertical-scroll-proportion="0.0" vertical-offset="432" max-vertical-offset="924" />
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/public/css/app.css">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="378" column="15" selection-start="6063" selection-end="6063" vertical-scroll-proportion="0.0" vertical-offset="7938" max-vertical-offset="8799">
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/node_modules/multer/node_modules/busboy/node_modules/dicer/lib/Dicer.js">
       <provider selected="true" editor-type-id="text-editor">
         <state line="61" column="27" selection-start="1636" selection-end="1636" vertical-scroll-proportion="0.33256352" vertical-offset="1015" max-vertical-offset="4674" />
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/public/my_room.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="25" column="0" selection-start="882" selection-end="882" vertical-scroll-proportion="-0.23110151" vertical-offset="582" max-vertical-offset="1045" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/public/css/app.css">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="453" column="1" selection-start="7348" selection-end="7348" vertical-scroll-proportion="0.0" vertical-offset="8607" max-vertical-offset="8968">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/public/js/my_room.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="28" column="61" selection-start="1269" selection-end="1277" vertical-scroll-proportion="0.0" vertical-offset="328" max-vertical-offset="3154">
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/public/card.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="56" column="42" selection-start="2629" selection-end="2639" vertical-scroll-proportion="-6.769231" vertical-offset="888" max-vertical-offset="2755">
+        <state line="90" column="80" selection-start="4448" selection-end="4465" vertical-scroll-proportion="-9.5" vertical-offset="1463" max-vertical-offset="4693">
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/public/js/create_cards.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="55" column="0" selection-start="1619" selection-end="1619" vertical-scroll-proportion="0.0" vertical-offset="558" max-vertical-offset="1178">
+        <state line="63" column="38" selection-start="1642" selection-end="1642" vertical-scroll-proportion="0.0" vertical-offset="1068" max-vertical-offset="2641">
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/app.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="354" column="28" selection-start="12767" selection-end="12767" vertical-scroll-proportion="0.2032258" vertical-offset="6638" max-vertical-offset="7429">
+        <state line="361" column="72" selection-start="13057" selection-end="13057" vertical-scroll-proportion="0.49591836" vertical-offset="6673" max-vertical-offset="9956">
           <folding />
         </state>
       </provider>

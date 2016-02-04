@@ -22,117 +22,219 @@
         <div id="message_block"></div>
 
         <div class="card_forms">
-            <div class="form_block">
-                <div class="fraction_block">
-                    <form name="fraction_form" id="fraction_form" action="" method="post" enctype="multipart/form-data">
-                        <h3>Создать фракцию</h3>
-                        <label for="name_fraction">Название фракции</label>
-                        <input type="text" id="name_fraction" name="name_fraction" required/>
+            <div class="tab_block">
+                <div class="list">
+                    <ul>
+                        <li class="tab unit_tab">Карты юнитов</li>
+                        <li class="tab special_tab">Специальные карты</li>
+                        <li class="tab leader_tab">Карты лидеров</li>
+                        <li class="tab agility_tab">Способности</li>
+                        <li class="tab class_tab">Классы</li>
+                        <li class="tab fraction_tab">Фракции</li>
+                    </ul>
+                </div>
+                <div class="tab_cont">
+                    <div class="unit_block">
+                        <form name="unit_form" id="unit_form" action="" enctype="multipart/form-data">
+                            <h3>Создать карту юнита</h3>
 
-                        <label for="ability_fraction">Способность фракции</label>
-                        <input type="text" id="ability_fraction" name="ability_fraction"/>
+                            <input type="hidden" name="name_form" value="units"/>
+                            <!--данное поле используется для формирования пути сохранения картинок -->
 
-                        <label for="pict_fraction">Загрузите картинку фракции</label>
-                        <input type="file" id="pict_fraction" name="pict_fraction"/>
+                            <label for="name_unit">Название юнита</label>
+                            <input type="text" id="name_unit" name="name_unit" required/>
 
-                        <label for="pict_fraction_cover">Загрузите обложку фракции</label>
-                        <input type="file" id="pict_fraction_cover" name="pict_fraction_cover"/>
+                            <label for="select_fraction">Выберите фракцию</label>
+                            <select id="select_fraction" name="select_fraction[]"></select>
 
-                        <label for="description_fraction">Описание фракции</label>
-                        <textarea id="description_fraction" name="description_fraction"></textarea>
+                            <label for="select_class">Выберите класс</label>
+                            <select id="select_class" name="select_class[]"></select>
 
-                        <button id="create_fraction" type="submit">Добавить фракцию</button>
-                    </form>
-                    <div class="fraction_preview">
-                        <h3>Созданные фракции</h3>
-                        <ul id="fraction_list"> </ul>
-                        <div id="fraction_description_block">
-                            <img src="" title="" alt="" id="fraction_description_pict"/>
-                            <p id="fraction_description_text"></p>
+                            <label for="strength_unit">Задайте силу юнита</label>
+                            <input type="number" id="strength_unit" name="strength_unit" required/>
+
+                            <label for="select_ability">Выберите способность</label>
+                            <select id="select_ability" name="select_ability[]"></select>
+
+                            <label for="hero">Пометка "Герой"</label>
+                            <input type="checkbox" id="hero" name="hero"/>
+
+                            <label for="pict_unit">Загрузите картинку для юнита</label>
+                            <input type="file" id="pict_unit" name="pict_unit"/>
+
+                            <label for="description_unit">Описание карты</label>
+                            <textarea id="description_unit" name="description_unit"></textarea>
+
+                            <button id="create_unit">Добавить юнита</button>
+                        </form>
+                        <div class="unit_preview">
+                            <h3>Созданные юниты</h3>
+                            <ul id="unit_list"> </ul>
+                            <div id="unit_description_block">
+                                <img src="" title="" alt="" id="unit_description_pict"/>
+                                <p id="unit_description_text"></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="tab_cont">
+                    <div class="special_block">
+                        <form name="special_form" id="special_form" action="" enctype="multipart/form-data">
+                            <h3>Создать специальную карту</h3>
+
+                            <input type="hidden" name="name_form" value="specials"/>
+
+                            <label for="name_special">Название карты</label>
+                            <input type="text" id="name_special" name="name_special" required/>
+
+                            <label for="ability_special">Выберите способность</label>
+                            <select id="ability_special" name="ability_special[]"></select>
+
+                            <label for="pict_special">Загрузите картинку для карты</label>
+                            <input type="file" id="pict_special" name="pict_special"/>
+
+                            <label for="description_special">Описание карты</label>
+                            <textarea id="description_special" name="description_special"></textarea>
+
+                            <button id="create_special">Добавить карту</button>
+                        </form>
+                        <div class="special_preview">
+                            <h3>Созданные карты</h3>
+                            <ul id="special_list"> </ul>
+                            <div id="special_description_block">
+                                <img src="" title="" alt="" id="special_description_pict"/>
+                                <p id="special_description_text"></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="tab_cont">
+                    <div class="leader_block">
+                        <form name="leader_form" id="leader_form" action="" enctype="multipart/form-data">
+                            <h3>Создать карту лидера</h3>
+
+                            <input type="hidden" name="name_form" value="leaders"/>
+
+                            <label for="name_leader">Имя лидера</label>
+                            <input type="text" id="name_leader" name="name_leader" required/>
+
+                            <label for="function_leader">function лидера</label>
+                            <input type="text" id="function_leader" name="function_leader" required/>
+
+                            <label for="desc_func_leader">Описание function</label>
+                            <textarea id="desc_func_leader" name="desc_func_leader" required></textarea>
+
+                            <label for="pict_leader">Загрузите картинку лидера</label>
+                            <input type="file" id="pict_leader" name="pict_leader"/>
+
+                            <label for="description_leader">Описание лидера</label>
+                            <textarea id="description_leader" name="description_leader"></textarea>
+
+                            <button id="create_leader">Добавить лидера</button>
+                        </form>
+                        <div class="leader_preview">
+                            <h3>Созданные лидеры</h3>
+                            <ul id="leader_list"> </ul>
+                            <div id="leader_description_block">
+                                <img src="" title="" alt="" id="leader_description_pict"/>
+                                <p id="leader_description_text"></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="tab_cont">
+                    <div class="ability_block">
+                        <form name="ability_form" id="ability_form" action="" enctype="multipart/form-data">
+                            <h3>Создать способность</h3>
+
+                            <input type="hidden" name="name_form" value="abilities"/>
+
+                            <label for="name_ability">Название способности</label>
+                            <input type="text" id="name_ability" name="name_ability" required/>
+
+                            <label for="function_ability">function способности</label>
+                            <input type="text" id="function_ability" name="function_ability"/>
+
+                            <label for="pict_ability">Загрузите картинку способности</label>
+                            <input type="file" id="pict_ability" name="pict_ability"/>
+
+                            <label for="description_ability">Описание способности</label>
+                            <textarea id="description_ability" name="description_ability" required></textarea>
+
+                            <button id="create_ability">Добавить способность</button>
+                        </form>
+                        <div class="ability_preview">
+                            <h3>Созданные способности</h3>
+                            <ul id="ability_list"> </ul>
+                            <div id="ability_description_block">
+                                <img src="" title="" alt="" id="ability_description_pict"/>
+                                <p id="ability_description_text"></p>
+                            </div>
                         </div>
                     </div>
                 </div>
 
-                <div class="class_block">
-                    <form name="class_form" id="class_form" action="" enctype="multipart/form-data">
-                        <h3>Создать класс</h3>
-                        <label for="name_class">Название класса</label>
-                        <input type="text" id="name_class"/>
+                <div class="tab_cont">
+                    <div class="class_block">
+                        <form name="class_form" id="class_form" action="" enctype="multipart/form-data">
+                            <h3>Создать класс</h3>
 
-                        <label for="pict_class">Загрузите картинку класса</label>
-                        <input type="file" id="pict_class"/>
+                            <input type="hidden" name="name_form" value="classes"/>
 
-                        <label for="description_class">Описание класса</label>
-                        <textarea id="description_class"></textarea>
+                            <label for="name_class">Название класса</label>
+                            <input type="text" id="name_class" name="name_class" required/>
 
-                        <button id="create_class">Добавить класс</button>
-                    </form>
-                    <div class="class_preview">
-                        <h3>Созданные классы</h3>
-                        <ul id="class_list"> </ul>
-                        <div id="class_description_block">
-                            <img src="" title="" alt="" id="class_description_pict"/>
-                            <p id="class_description_text"></p>
+                            <label for="pict_class">Загрузите картинку класса</label>
+                            <input type="file" id="pict_class" name="pict_class"/>
+
+                            <label for="description_class">Описание класса</label>
+                            <textarea id="description_class" name="description_class"></textarea>
+
+                            <button id="create_class">Добавить класс</button>
+                        </form>
+                        <div class="class_preview">
+                            <h3>Созданные классы</h3>
+                            <ul id="class_list"> </ul>
+                            <div id="class_description_block">
+                                <img src="" title="" alt="" id="class_description_pict"/>
+                                <p id="class_description_text"></p>
+                            </div>
                         </div>
                     </div>
                 </div>
-                <div class="ability_block">
-                    <form name="ability_form" id="ability_form" action="" enctype="multipart/form-data">
-                        <h3>Создать способность</h3>
-                        <label for="name_ability">Название способности</label>
-                        <input type="text" id="name_ability"/>
+                <div class="tab_cont">
+                    <div class="fraction_block">
+                        <form name="fraction_form" id="fraction_form" action="" method="post" enctype="multipart/form-data">
+                            <h3>Создать фракцию</h3>
 
-                        <label for="function_ability">function способности</label>
-                        <input type="text" id="function_ability"/>
+                            <input type="hidden" name="name_form" value="fractions"/>
 
-                        <label for="pict_ability">Загрузите картинку способности</label>
-                        <input type="file" id="pict_ability"/>
+                            <label for="name_fraction">Название фракции</label>
+                            <input type="text" id="name_fraction" name="name_fraction" required/>
 
-                        <label for="description_ability">Описание способности</label>
-                        <textarea id="description_ability"></textarea>
+                            <label for="ability_fraction">Способность фракции</label>
+                            <input type="text" id="ability_fraction" name="ability_fraction"/>
 
-                        <button id="create_ability">Добавить способность</button>
-                    </form>
-                    <div class="ability_preview">
-                        <h3>Созданные способности</h3>
-                        <ul id="ability_list"> </ul>
-                        <div id="ability_description_block">
-                            <img src="" title="" alt="" id="ability_description_pict"/>
-                            <p id="ability_description_text"></p>
+                            <label for="pict_fraction">Загрузите картинку фракции</label>
+                            <input type="file" id="pict_fraction" name="pict_fraction"/>
+
+                            <label for="pict_fraction_cover">Загрузите обложку фракции</label>
+                            <input type="file" id="pict_fraction_cover" name="pict_fraction_cover"/>
+
+                            <label for="description_fraction">Описание фракции</label>
+                            <textarea id="description_fraction" name="description_fraction"></textarea>
+
+                            <button id="create_fraction" type="submit">Добавить фракцию</button>
+                        </form>
+                        <div class="fraction_preview">
+                            <h3>Созданные фракции</h3>
+                            <ul id="fraction_list"> </ul>
+                            <div id="fraction_description_block">
+                                <img src="" title="" alt="" id="fraction_description_pict"/>
+                                <p id="fraction_description_text"></p>
+                            </div>
                         </div>
                     </div>
-                </div>
-            </div>
-            <div class="form_block">
-                <div class="card_block">
-                    <form name="card_form" id="card_form" action="" enctype="multipart/form-data">
-                        <h3>Создать карту</h3>
-                        <label for="name_card">Название карты</label>
-                        <input type="text" id="name_card"/>
-
-                        <label for="select_class">Выберите класс</label>
-                        <select id="select_class" name="select_class[]"></select>
-
-                        <label for="select_race">Выберите фракцию</label>
-                        <select id="select_race" name="select_race[]"></select>
-
-                        <label for="strength_card">Задайте силу карты</label>
-                        <input type="number" id="strength_card"/>
-
-                        <label for="select_ability">Выберите способность</label>
-                        <select id="select_ability" name="select_ability[]"></select>
-
-                        <label for="hero">Пометка "Герой"</label>
-                        <input type="checkbox" id="hero"/>
-
-                        <label for="pict_card">Загрузите картинку для карты</label>
-                        <input type="file" id="pict_card"/>
-
-                        <label for="description_card">Описание карты</label>
-                        <textarea id="description_card"></textarea>
-
-                        <button id="create_card">Добавить карту</button>
-                    </form>
                 </div>
             </div>
         </div>

@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Хост: localhost
--- Время создания: Фев 04 2016 г., 16:24
+-- Время создания: Фев 09 2016 г., 16:18
 -- Версия сервера: 5.5.44-log
 -- Версия PHP: 5.4.41
 
@@ -27,25 +27,27 @@ SET time_zone = "+00:00";
 --
 
 CREATE TABLE IF NOT EXISTS `abilities` (
-  `id_ability` int(11) NOT NULL,
-  `name_ability` varchar(50) DEFAULT NULL,
-  `name_function` varchar(50) DEFAULT NULL,
-  `pict_ability` text,
-  `description_ability` text
-) ENGINE=MyISAM AUTO_INCREMENT=10 DEFAULT CHARSET=utf8;
+  `id` int(11) NOT NULL,
+  `name` varchar(50) DEFAULT NULL,
+  `func` varchar(50) DEFAULT NULL,
+  `pict` text,
+  `description` text
+) ENGINE=MyISAM AUTO_INCREMENT=13 DEFAULT CHARSET=utf8;
 
 --
 -- Дамп данных таблицы `abilities`
 --
 
-INSERT INTO `abilities` (`id_ability`, `name_ability`, `name_function`, `pict_ability`, `description_ability`) VALUES
-(1, 'Проворство', 'agility', 'imgs/abilities/agility.png', 'Вы можете выбрать этой карте класс  и положить в любую строку.'),
+INSERT INTO `abilities` (`id`, `name`, `func`, `pict`, `description`) VALUES
+(11, 'Проворство', 'agility', 'imgs/abilities/agility.png', 'Вы можете выбрать этой карте класс  и положить в любую строку.'),
 (3, 'Двойник', 'double', 'imgs/abilities/double.png', 'Вместе с этой картой на поле будут выложены  карты с таким же названием.'),
 (4, 'Прилив сил', 'gain', 'imgs/abilities/gain.png', 'Карта дает прибавку +1 к силе карт в этой строке.'),
 (5, 'Медик', 'medic', 'imgs/abilities/medic.png', 'Оказавшись на поле, восстанавливает одну  карту из отбоя.'),
 (6, 'Шпион', 'spy', 'imgs/abilities/spy.png', 'Выкладывается на поле врага, добавляя ему свою силу, но при этом вы получаете две дополнительные карты из колоды.'),
 (7, 'Прочная связь', 'support', 'imgs/abilities/support.png', 'Положив в один ряд две  карты с одинаковым названием и этой способностью, вы получите двойное усиление этих карт.'),
-(9, 'Чучело', 'dummy', 'imgs/abilities/dummy.png', 'Замените этой картой любого своего юнита (не героя).');
+(9, 'Чучело', 'dummy', 'imgs/abilities/dummy.png', 'Замените этой картой любого своего юнита (не героя).'),
+(1, 'Нет способности', 'none', '', 'Уникальная способность отсутствует'),
+(12, 'Горн', 'commander_horn', 'imgs/abilities/commander_horn.png', 'Сила юнитов в выбранной строке удваивается.');
 
 -- --------------------------------------------------------
 
@@ -54,17 +56,17 @@ INSERT INTO `abilities` (`id_ability`, `name_ability`, `name_function`, `pict_ab
 --
 
 CREATE TABLE IF NOT EXISTS `classes` (
-  `id_class` int(11) NOT NULL,
-  `name_class` varchar(50) DEFAULT NULL,
-  `pict_class` text,
-  `description_class` text
-) ENGINE=MyISAM AUTO_INCREMENT=6 DEFAULT CHARSET=utf8;
+  `id` int(11) NOT NULL,
+  `name` varchar(50) DEFAULT NULL,
+  `pict` text,
+  `description` text
+) ENGINE=MyISAM AUTO_INCREMENT=7 DEFAULT CHARSET=utf8;
 
 --
 -- Дамп данных таблицы `classes`
 --
 
-INSERT INTO `classes` (`id_class`, `name_class`, `pict_class`, `description_class`) VALUES
+INSERT INTO `classes` (`id`, `name`, `pict`, `description`) VALUES
 (2, 'Рукопашный отряд', 'imgs/classes/close_combat.png', 'Карта выкладывается в верхней строчке игрового поля.'),
 (3, 'Дальнобойный отряд', 'imgs/classes/ranges_combat.png', 'Карта выкладывается в средней строке игрового поля.'),
 (4, 'Осадный отряд', 'imgs/classes/siege.png', 'Карта выкладывается в нижней строке игрового поля.');
@@ -76,19 +78,19 @@ INSERT INTO `classes` (`id_class`, `name_class`, `pict_class`, `description_clas
 --
 
 CREATE TABLE IF NOT EXISTS `fractions` (
-  `id_fraction` int(11) NOT NULL,
-  `name_fraction` varchar(50) DEFAULT NULL,
-  `ability_fraction` varchar(50) DEFAULT NULL,
-  `pict_fraction` text,
-  `pict_fraction_cover` text,
-  `description_fraction` text
-) ENGINE=MyISAM AUTO_INCREMENT=8 DEFAULT CHARSET=utf8;
+  `id` int(11) NOT NULL,
+  `name` varchar(50) DEFAULT NULL,
+  `ability` varchar(50) DEFAULT NULL,
+  `pict` text,
+  `pict_cover` text,
+  `description` text
+) ENGINE=MyISAM AUTO_INCREMENT=9 DEFAULT CHARSET=utf8;
 
 --
 -- Дамп данных таблицы `fractions`
 --
 
-INSERT INTO `fractions` (`id_fraction`, `name_fraction`, `ability_fraction`, `pict_fraction`, `pict_fraction_cover`, `description_fraction`) VALUES
+INSERT INTO `fractions` (`id`, `name`, `ability`, `pict`, `pict_cover`, `description`) VALUES
 (6, 'Нейтральная', 'neutral', 'imgs/fractions/Default.png', 'imgs/fractions/Default_cover.png', 'Нейтральная фракция. \r\n\r\nНе имеет особых способностей.'),
 (2, 'Северные Королевства', 'take_a_card_if_you_won', 'imgs/fractions/Norths.png', 'imgs/fractions/Norths_cover.png', 'Северные королевства всегда любили хорошую войну. Огромные баллисты, гигантские требушеты, монументальные осадные башни - вот она, сила! Помимо осадных орудий в ход идут шпионы, чародеи и конечно же закалённые в боях герои.\r\n\r\nИгроки этой фракции берут карту из колоды после каждого выигранного раунда.'),
 (3, 'Нильфгаард', 'win_if_dead_heat', 'imgs/fractions/Nilfs.png', 'imgs/fractions/Nilfs_cover.png', 'Нильфгаард - мощнейшая империя в истории мира "Ведьмак". Благодаря достижениям в области военной инженерии их осадные и стрелковые орудия имеют большую разрушительную мощь. Также благодаря достижениям в области медицины многие бойцы (карты) имеют умение "Медик". Но если по какой-то невообразимой причине не удаётся повергнуть нордлингов, то в ход идут шпионы и различные уловки.\r\n\r\nИгроки этой фракции побеждаю в случае ничьей.'),
@@ -98,17 +100,25 @@ INSERT INTO `fractions` (`id_fraction`, `name_fraction`, `ability_fraction`, `pi
 -- --------------------------------------------------------
 
 --
--- Структура таблицы `leader_cards`
+-- Структура таблицы `leaders`
 --
 
-CREATE TABLE IF NOT EXISTS `leader_cards` (
-  `id_leader` int(11) NOT NULL,
-  `name_leader` varchar(50) DEFAULT NULL,
-  `function_leader` varchar(50) DEFAULT NULL,
-  `desc_func_leader` text,
-  `pict_leader` text,
-  `description_leader` text
-) ENGINE=MyISAM AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
+CREATE TABLE IF NOT EXISTS `leaders` (
+  `id` int(11) NOT NULL,
+  `name` varchar(50) DEFAULT NULL,
+  `id_fraction` int(11) NOT NULL,
+  `func` varchar(50) DEFAULT NULL,
+  `desc_func` text,
+  `pict` text,
+  `description` text
+) ENGINE=MyISAM AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
+
+--
+-- Дамп данных таблицы `leaders`
+--
+
+INSERT INTO `leaders` (`id`, `name`, `id_fraction`, `func`, `desc_func`, `pict`, `description`) VALUES
+(2, 'Фольтест Завоеватель', 2, 'siege_power', 'Удваивает силу всех ваших осадных отрядов (при условии, что не использован в ряду Командирский рог).', 'imgs/leaders/lid_k1.png', 'Точный выстрел из баллисты сокрушит не только укрепления врага, но и его дух.');
 
 -- --------------------------------------------------------
 
@@ -143,54 +153,55 @@ CREATE TABLE IF NOT EXISTS `sessions` (
 --
 
 INSERT INTO `sessions` (`session_id`, `expires`, `data`) VALUES
-('FHgCmccqkf0Ab1ueHEoc0d27JILgDmqb', 1455191871, '{"cookie":{"originalMaxAge":599999994,"expires":"2016-02-11T11:57:50.784Z","httpOnly":true,"path":"/"},"user":"www"}'),
-('SE9bRplZkHEjhKMaD84yLdrzcoOsRD-2', 1454947031, '{"cookie":{"originalMaxAge":599999999,"expires":"2016-02-08T15:57:10.993Z","httpOnly":true,"path":"/"},"user":"www"}');
+('FHgCmccqkf0Ab1ueHEoc0d27JILgDmqb', 1455623777, '{"cookie":{"originalMaxAge":599999994,"expires":"2016-02-16T11:56:17.254Z","httpOnly":true,"path":"/"},"user":"www"}');
 
 -- --------------------------------------------------------
 
 --
--- Структура таблицы `special_cards`
+-- Структура таблицы `specials`
 --
 
-CREATE TABLE IF NOT EXISTS `special_cards` (
-  `id_special` int(11) NOT NULL,
-  `name_special` varchar(50) DEFAULT NULL,
-  `function_special` varchar(50) DEFAULT NULL,
-  `pict_special` text,
-  `description_special` text
-) ENGINE=MyISAM AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
+CREATE TABLE IF NOT EXISTS `specials` (
+  `id` int(11) NOT NULL,
+  `name` varchar(50) DEFAULT NULL,
+  `func` varchar(50) DEFAULT NULL,
+  `pict` text,
+  `description` text
+) ENGINE=MyISAM AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
 
 --
--- Дамп данных таблицы `special_cards`
+-- Дамп данных таблицы `specials`
 --
 
-INSERT INTO `special_cards` (`id_special`, `name_special`, `function_special`, `pict_special`, `description_special`) VALUES
-(1, 'Чучело', '9', 'imgs/specials/spec_1.png', 'Пусть стреляют по крестьянам. А нет крестьян - поставьте чучело!');
+INSERT INTO `specials` (`id`, `name`, `func`, `pict`, `description`) VALUES
+(1, 'Чучело', '9', 'imgs/specials/spec_1.png', 'Пусть стреляют по крестьянам. А нет крестьян - поставьте чучело!'),
+(2, 'Командирский рог', '12', 'imgs/specials/spec_2.png', 'Плюс один к морали, минус три к слуху.');
 
 -- --------------------------------------------------------
 
 --
--- Структура таблицы `unit_cards`
+-- Структура таблицы `units`
 --
 
-CREATE TABLE IF NOT EXISTS `unit_cards` (
-  `id_unit` int(11) NOT NULL,
-  `name_unit` varchar(100) DEFAULT NULL,
-  `id_fraction_unit` int(11) DEFAULT NULL,
-  `id_class_unit` int(11) DEFAULT NULL,
-  `strength_unit` int(11) DEFAULT NULL,
-  `id_ability_unit` int(11) DEFAULT NULL,
-  `hero_unit` tinyint(1) NOT NULL DEFAULT '0',
-  `pict_unit` text,
-  `description_unit` text
-) ENGINE=MyISAM AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
+CREATE TABLE IF NOT EXISTS `units` (
+  `id` int(11) NOT NULL,
+  `name` varchar(100) DEFAULT NULL,
+  `id_fraction` int(11) DEFAULT NULL,
+  `id_class` int(11) DEFAULT NULL,
+  `strength` int(11) DEFAULT NULL,
+  `id_ability` int(11) DEFAULT NULL,
+  `hero` tinyint(1) NOT NULL DEFAULT '0',
+  `pict` text,
+  `description` text
+) ENGINE=MyISAM AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
 
 --
--- Дамп данных таблицы `unit_cards`
+-- Дамп данных таблицы `units`
 --
 
-INSERT INTO `unit_cards` (`id_unit`, `name_unit`, `id_fraction_unit`, `id_class_unit`, `strength_unit`, `id_ability_unit`, `hero_unit`, `pict_unit`, `description_unit`) VALUES
-(1, 'Грёбаная пехтура', 2, 2, 1, 7, 0, 'imgs/units/sev_1.png', 'Пожертвуйте грошик ветерану Бренны!');
+INSERT INTO `units` (`id`, `name`, `id_fraction`, `id_class`, `strength`, `id_ability`, `hero`, `pict`, `description`) VALUES
+(1, 'Грёбаная пехтура', 2, 2, 1, 7, 0, 'imgs/units/sev_1.png', 'Пожертвуйте грошик ветерану Бренны!'),
+(2, 'Реданский пехотинец', 2, 2, 1, 1, 0, 'imgs/units/sev_2.png', 'Ради Редании я пойду на всё! Пока мне платят жалование.');
 
 -- --------------------------------------------------------
 
@@ -223,25 +234,25 @@ INSERT INTO `users` (`id`, `user_name`, `user_pass`, `battles`) VALUES
 -- Индексы таблицы `abilities`
 --
 ALTER TABLE `abilities`
-  ADD PRIMARY KEY (`id_ability`);
+  ADD PRIMARY KEY (`id`);
 
 --
 -- Индексы таблицы `classes`
 --
 ALTER TABLE `classes`
-  ADD PRIMARY KEY (`id_class`);
+  ADD PRIMARY KEY (`id`);
 
 --
 -- Индексы таблицы `fractions`
 --
 ALTER TABLE `fractions`
-  ADD PRIMARY KEY (`id_fraction`);
+  ADD PRIMARY KEY (`id`);
 
 --
--- Индексы таблицы `leader_cards`
+-- Индексы таблицы `leaders`
 --
-ALTER TABLE `leader_cards`
-  ADD PRIMARY KEY (`id_leader`);
+ALTER TABLE `leaders`
+  ADD PRIMARY KEY (`id`);
 
 --
 -- Индексы таблицы `list_of_battles`
@@ -258,16 +269,16 @@ ALTER TABLE `sessions`
   ADD PRIMARY KEY (`session_id`);
 
 --
--- Индексы таблицы `special_cards`
+-- Индексы таблицы `specials`
 --
-ALTER TABLE `special_cards`
-  ADD PRIMARY KEY (`id_special`);
+ALTER TABLE `specials`
+  ADD PRIMARY KEY (`id`);
 
 --
--- Индексы таблицы `unit_cards`
+-- Индексы таблицы `units`
 --
-ALTER TABLE `unit_cards`
-  ADD PRIMARY KEY (`id_unit`);
+ALTER TABLE `units`
+  ADD PRIMARY KEY (`id`);
 
 --
 -- Индексы таблицы `users`
@@ -284,37 +295,37 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT для таблицы `abilities`
 --
 ALTER TABLE `abilities`
-  MODIFY `id_ability` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=10;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=13;
 --
 -- AUTO_INCREMENT для таблицы `classes`
 --
 ALTER TABLE `classes`
-  MODIFY `id_class` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=6;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=7;
 --
 -- AUTO_INCREMENT для таблицы `fractions`
 --
 ALTER TABLE `fractions`
-  MODIFY `id_fraction` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=8;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=9;
 --
--- AUTO_INCREMENT для таблицы `leader_cards`
+-- AUTO_INCREMENT для таблицы `leaders`
 --
-ALTER TABLE `leader_cards`
-  MODIFY `id_leader` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=2;
+ALTER TABLE `leaders`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=3;
 --
 -- AUTO_INCREMENT для таблицы `list_of_battles`
 --
 ALTER TABLE `list_of_battles`
   MODIFY `id_battle` int(10) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=70;
 --
--- AUTO_INCREMENT для таблицы `special_cards`
+-- AUTO_INCREMENT для таблицы `specials`
 --
-ALTER TABLE `special_cards`
-  MODIFY `id_special` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=2;
+ALTER TABLE `specials`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=3;
 --
--- AUTO_INCREMENT для таблицы `unit_cards`
+-- AUTO_INCREMENT для таблицы `units`
 --
-ALTER TABLE `unit_cards`
-  MODIFY `id_unit` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=2;
+ALTER TABLE `units`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=3;
 --
 -- AUTO_INCREMENT для таблицы `users`
 --

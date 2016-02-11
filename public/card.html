@@ -25,12 +25,12 @@
             <div class="tab_block">
                 <div class="list">
                     <ul>
-                        <li class="tab unit_tab">Карты юнитов</li>
-                        <li class="tab special_tab">Специальные карты</li>
-                        <li class="tab leader_tab">Карты лидеров</li>
-                        <li class="tab agility_tab">Способности</li>
-                        <li class="tab class_tab">Классы</li>
-                        <li class="tab fraction_tab">Фракции</li>
+                        <li id="units_tab" class="tab unit_tab">Карты юнитов</li>
+                        <li id="specials_tab" class="tab special_tab">Специальные карты</li>
+                        <li id="leaders_tab" class="tab leader_tab">Карты лидеров</li>
+                        <li id="abilities_tab" class="tab agility_tab">Способности</li>
+                        <li id="classes_tab" class="tab class_tab">Классы</li>
+                        <li id="fractions_tab" class="tab fraction_tab">Фракции</li>
                     </ul>
                 </div>
                 <div class="tab_cont">
@@ -67,12 +67,13 @@
 
                             <button id="create_unit">Добавить юнита</button>
                         </form>
-                        <div class="unit_preview">
+                        <div class="units_preview preview">
                             <h3>Созданные юниты</h3>
-                            <ul id="unit_list"> </ul>
-                            <div id="unit_description_block">
-                                <img src="" title="" alt="" id="unit_description_pict"/>
-                                <p id="unit_description_text"></p>
+                            <h4 class="to_cards" >Выберите фракцию</h4>
+                            <ul id="units_list"> </ul>
+                            <div id="units_desc_block" class="desc_block">
+                                <img src="" title="" alt="" id="units_desc_pict" class="desc_pict"/>
+                                <p id="units_desc_text" class="desc_text"></p>
                             </div>
                         </div>
                     </div>
@@ -87,8 +88,8 @@
                             <label for="name_special">Название карты</label>
                             <input type="text" id="name_special" name="name_special" required/>
 
-                            <label for="ability_special">Выберите способность</label>
-                            <select id="ability_special" name="ability_special[]"></select>
+                            <label for="select_ability_s">Выберите способность</label>
+                            <select id="select_ability_s" name="select_ability[]"></select>
 
                             <label for="pict_special">Загрузите картинку для карты</label>
                             <input type="file" id="pict_special" name="pict_special"/>
@@ -98,12 +99,12 @@
 
                             <button id="create_special">Добавить карту</button>
                         </form>
-                        <div class="special_preview">
+                        <div class="specials_preview preview">
                             <h3>Созданные карты</h3>
-                            <ul id="special_list"> </ul>
-                            <div id="special_description_block">
-                                <img src="" title="" alt="" id="special_description_pict"/>
-                                <p id="special_description_text"></p>
+                            <ul id="specials_list"> </ul>
+                            <div id="specials_desc_block"  class="desc_block">
+                                <img src="" title="" alt="" id="specials_desc_pict" class="desc_pict"/>
+                                <p id="specials_desc_text" class="desc_text"></p>
                             </div>
                         </div>
                     </div>
@@ -117,6 +118,9 @@
 
                             <label for="name_leader">Имя лидера</label>
                             <input type="text" id="name_leader" name="name_leader" required/>
+
+                            <label for="select_fraction_l">Выберите фракцию</label>
+                            <select id="select_fraction_l" name="select_fraction[]"></select>
 
                             <label for="function_leader">function лидера</label>
                             <input type="text" id="function_leader" name="function_leader" required/>
@@ -132,12 +136,12 @@
 
                             <button id="create_leader">Добавить лидера</button>
                         </form>
-                        <div class="leader_preview">
+                        <div class="leaders_preview preview">
                             <h3>Созданные лидеры</h3>
-                            <ul id="leader_list"> </ul>
-                            <div id="leader_description_block">
-                                <img src="" title="" alt="" id="leader_description_pict"/>
-                                <p id="leader_description_text"></p>
+                            <ul id="leaders_list"> </ul>
+                            <div id="leaders_desc_block"  class="desc_block">
+                                <img src="" title="" alt="" id="leaders_desc_pict" class="desc_pict"/>
+                                <p id="leaders_desc_text" class="desc_text"></p>
                             </div>
                         </div>
                     </div>
@@ -163,12 +167,12 @@
 
                             <button id="create_ability">Добавить способность</button>
                         </form>
-                        <div class="ability_preview">
+                        <div class="abilities_preview preview">
                             <h3>Созданные способности</h3>
-                            <ul id="ability_list"> </ul>
-                            <div id="ability_description_block">
-                                <img src="" title="" alt="" id="ability_description_pict"/>
-                                <p id="ability_description_text"></p>
+                            <ul id="abilities_list"> </ul>
+                            <div id="abilities_desc_block"  class="desc_block">
+                                <img src="" title="" alt="" id="abilities_desc_pict" class="desc_pict"/>
+                                <p id="abilities_desc_text" class="desc_text"></p>
                             </div>
                         </div>
                     </div>
@@ -192,12 +196,12 @@
 
                             <button id="create_class">Добавить класс</button>
                         </form>
-                        <div class="class_preview">
+                        <div class="classes_preview preview">
                             <h3>Созданные классы</h3>
-                            <ul id="class_list"> </ul>
-                            <div id="class_description_block">
-                                <img src="" title="" alt="" id="class_description_pict"/>
-                                <p id="class_description_text"></p>
+                            <ul id="classes_list"> </ul>
+                            <div id="classes_desc_block"  class="desc_block">
+                                <img src="" title="" alt="" id="classes_desc_pict" class="desc_pict"/>
+                                <p id="classes_desc_text" class="desc_text"></p>
                             </div>
                         </div>
                     </div>
@@ -226,12 +230,12 @@
 
                             <button id="create_fraction" type="submit">Добавить фракцию</button>
                         </form>
-                        <div class="fraction_preview">
+                        <div class="fractions_preview preview">
                             <h3>Созданные фракции</h3>
-                            <ul id="fraction_list"> </ul>
-                            <div id="fraction_description_block">
-                                <img src="" title="" alt="" id="fraction_description_pict"/>
-                                <p id="fraction_description_text"></p>
+                            <ul id="fractions_list"> </ul>
+                            <div id="fractions_desc_block"  class="desc_block">
+                                <img src="" title="" alt="" id="fractions_desc_pict" class="desc_pict"/>
+                                <p id="fractions_desc_text" class="desc_text"></p>
                             </div>
                         </div>
                     </div>

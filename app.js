@@ -335,7 +335,7 @@ app.post('/take_form', multer({ storage: getStorage() }).any(), function(req, re
     query_to_db = '';
     var path_pict = '';
     var path_cover = '';
-    var hero_flag = '';
+    var hero_flag = false;
     var query_var = [];
 
     if(req.files[0] != undefined) {
@@ -347,38 +347,36 @@ app.post('/take_form', multer({ storage: getStorage() }).any(), function(req, re
 
     if(req.body.hero) {
         hero_flag = true;
-    } else {
-        hero_flag = false;
     }
 
     switch (req.body.name_form) {
         case "units":
-            query_to_db = "INSERT INTO unit_cards (name_unit, id_fraction_unit, id_class_unit, strength_unit, id_ability_unit, hero_unit, pict_unit, description_unit) VALUES( ?, ?, ?, ?, ?, ?, ?, ?)";
+            query_to_db = "INSERT INTO units (name, id_fraction, id_class, strength, id_ability, hero, pict, description) VALUES( ?, ?, ?, ?, ?, ?, ?, ?)";
             query_var = [req.body.name_unit, req.body.select_fraction, req.body.select_class, req.body.strength_unit, req.body.select_ability, hero_flag, path_pict, req.body.description_unit];
             break;
 
         case "specials":
-            query_to_db = "INSERT INTO special_cards (name_special, function_special, pict_special, description_special) VALUES( ?, ?, ?, ?)";
-            query_var = [req.body.name_special, req.body.ability_special, path_pict, req.body.description_special];
+            query_to_db = "INSERT INTO specials (name, func, pict, description) VALUES( ?, ?, ?, ?)";
+            query_var = [req.body.name_special, req.body.select_ability, path_pict, req.body.description_special];
             break;
 
         case "leaders":
-            query_to_db = "INSERT INTO leader_cards (name_leader, function_leader, desc_func_leader, pict_leader, description_leader) VALUES( ?, ?, ?, ?, ?)";
-            query_var = [req.body.name_leader, req.body.function_leader, req.body.desc_func_leader, path_pict, req.body.description_leader];
+            query_to_db = "INSERT INTO leaders (name, id_fraction, func, desc_func, pict, description) VALUES( ?, ?, ?, ?, ?, ?)";
+            query_var = [req.body.name_leader, req.body.select_fraction, req.body.function_leader, req.body.desc_func_leader, path_pict, req.body.description_leader];
             break;
 
         case "classes":
-            query_to_db = "INSERT INTO classes (name_class, pict_class, description_class) VALUES( ?, ?, ?)";
+            query_to_db = "INSERT INTO classes (name, pict, description) VALUES( ?, ?, ?)";
             query_var = [req.body.name_class, path_pict, req.body.description_class];
             break;
 
         case "abilities":
-            query_to_db = "INSERT INTO abilities (name_ability, name_function, pict_ability, description_ability) VALUES( ?, ?, ?, ?)";
+            query_to_db = "INSERT INTO abilities (name, func, pict, description) VALUES( ?, ?, ?, ?)";
             query_var = [req.body.name_ability, req.body.function_ability, path_pict, req.body.description_ability];
             break;
 
         case "fractions":
-            query_to_db = "INSERT INTO fractions (name_fraction, ability_fraction, pict_fraction, pict_fraction_cover, description_fraction) VALUES( ?, ?, ?, ?, ?)";
+            query_to_db = "INSERT INTO fractions (name, ability, pict, pict_cover, description) VALUES( ?, ?, ?, ?, ?)";
             query_var = [req.body.name_fraction, req.body.ability_fraction, path_pict, path_cover, req.body.description_fraction];
             break;
 
@@ -399,112 +397,123 @@ app.post('/take_form', multer({ storage: getStorage() }).any(), function(req, re
 });
 
 
-//         запрос заполнение формы "Специальные карты"
-app.post('/give_me_special', function(req, res) {
+//         запрос заполнение форм и вывод введённых карт
+app.post('/give_me_data', function(req, res) {
+    query_to_db         = '';
+    var data_block      = {};
+    data_block.options_answer   = true;
 
-    query_to_db = "SELECT id_ability, name_ability FROM abilities";
-    console.log("42. "+query_to_db);
-    connection.query(query_to_db, function(err, rows, fields) {
+    query_to_db = "SELECT * FROM ?? ORDER BY id";
+    console.log("64. "+query_to_db);
+    connection.query(query_to_db, [req.body.id_tab], function(err, rows) {
         if (err) {
-            console.log("43. Ошибка при выборе способностей: "+err);
-            res.send({answer:false});
+            console.log("65. Ошибка при выборе данных из БД: "+err);
+            res.send(data_block.data_answer = false);
         } else {
             if(rows.length > 0) {
-                console.log('44. Способности выбраны успешно');
-                res.send({answer:true, data_rows:rows});
+                console.log('66. Данные выбраны успешно');
+                data_block.data_rows = rows;
+                data_block.data_answer = true;
+
             } else {
-                console.log('45. Не найдено ни одной способности');
-                res.send({answer:false});
+                console.log('67. В таблице отсутствуют записи');
+                data_block.data_answer = false;
             }
-        }
-    });
 
-});
-
-app.post('/give_me_unit', function(req, res) {
-    var data_block = {};
-    query_to_db = "SELECT id_class, name_class FROM classes";
-    console.log("46. "+query_to_db);
-    connection.query(query_to_db, function(err, rows, fields) {
-        if (err) {
-            console.log("47. Ошибка при выводе классов: "+err);
-            res.send(data_block.answer = false);
-        } else {
-            if(rows.length > 0) {
-                console.log('48. Классы успешно обработаны');
-                data_block.classes_rows = rows;
-
-
-                query_to_db = "SELECT id_fraction, name_fraction FROM fractions";
-                console.log("50. "+query_to_db);
-                connection.query(query_to_db, function(err, rows, fields) {
+            if (req.body.classes == 1 || req.body.fractions == 1 || req.body.abilities == 1) {
+                query_to_db = "SELECT id, name FROM fractions ORDER BY id";
+                console.log("68. "+query_to_db);
+                connection.query(query_to_db, function(err, rows) {
                     if (err) {
-                        console.log("51. Ошибка при выводе фракций: "+err);
-                        res.send(data_block.answer = false);
+                        console.log("69. Ошибка при выборе фракций: "+err);
+                        res.send(data_block.options_answer = false);
                     } else {
                         if(rows.length > 0) {
-                            console.log('52. Фракции успешно обработаны');
-                            data_block.fractions_rows = rows;
-
-
-                            query_to_db = "SELECT id_ability, name_ability FROM abilities";
-                            console.log("53. "+query_to_db);
-                            connection.query(query_to_db, function(err, rows, fields) {
-                                if (err) {
-                                    console.log("54. Ошибка при выборе способностей: "+err);
-                                    res.send(data_block.answer = false);
-                                } else {
-                                    if(rows.length > 0) {
-                                        console.log('55. Способности выбраны успешно');
-                                        data_block.abilities_rows = rows;
-                                        data_block.answer = true;
-
-
-                                        query_to_db = "SELECT id_unit, name_unit FROM unit_cards ORDER BY id_fraction_unit, strength_unit";
-                                        console.log("57. "+query_to_db);
-                                        connection.query(query_to_db, function(err, rows, fields) {
-                                            if (err) {
-                                                console.log("58. Ошибка при выборе юнитов: "+err);
-                                                res.send(data_block.cards_answer = false);
-                                            } else {
-                                                if(rows.length > 0) {
-                                                    console.log('59. Юниты выбраны успешно');
-                                                    data_block.units_rows = rows;
-                                                    data_block.cards_answer = true;
-                                                    res.send(data_block);
-                                                } else {
-                                                    console.log('56. Не найдено ни одного юнита');
-                                                    data_block.cards_answer = false;
-                                                    res.send(data_block);
-                                                }
-                                            }
-                                        });
-
-
-                                    } else {
-                                        console.log('56. Не найдено ни одной способности');
-                                        res.send(data_block.answer = false);
-                                    }
-                                }
-                            });
-
-
-
+                            console.log('70. Фракции выбраны успешно');
+                            data_block.data_fractions = rows;
                         } else {
-                            console.log('49. Не найдено данных о фракциях');
-                            res.send(data_block.answer = false);
+                            console.log('71. Не найдено ни одной фракции');
+                            data_block.options_answer = false;
                         }
+
+                        query_to_db = "SELECT id, name FROM classes ORDER BY id";
+                        console.log("72. "+query_to_db);
+                        connection.query(query_to_db, function(err, rows) {
+                            if (err) {
+                                console.log("73. Ошибка при выборе классов: "+err);
+                                res.send(data_block.options_answer = false);
+                            } else {
+                                if(rows.length > 0) {
+                                    console.log('74. Классы выбраны успешно');
+                                    data_block.data_classes = rows;
+                                } else {
+                                    console.log('75. Не найдено ни одного класса');
+                                    data_block.options_answer = false;
+                                }
+
+                                query_to_db = "SELECT id, name FROM abilities ORDER BY id";
+                                console.log("76. "+query_to_db);
+                                connection.query(query_to_db, function(err, rows) {
+                                    if (err) {
+                                        console.log("77. Ошибка при выборе способностей: "+err);
+                                        res.send(data_block.options_answer = false);
+                                    } else {
+                                        if(rows.length > 0) {
+                                            console.log('78. Фракции выбраны успешно');
+                                            data_block.data_abilities = rows;
+                                        } else {
+                                            console.log('79. Не найдено ни одной фракции');
+                                            data_block.options_answer = false;
+                                        }
+                                        res.send(data_block);
+                                    }
+                                });
+                            }
+                        });
                     }
                 });
-
-
             } else {
-                console.log('49. Не найдено данных о классах');
-                res.send(data_block.answer = false);
+                res.send(data_block);
             }
         }
     });
+});
 
+
+//         запрос на вывод нужных карт
+app.post('/give_me_units', function(req, res) {
+    query_to_db         = '';
+    var query_var       = [];
+    var data_block      = {};
+    data_block.data_answer   = true;
+
+
+    if(req.body.type_query == "prepare") {
+        query_to_db = "SELECT id, name FROM units WHERE id_fraction = ? ORDER BY strength, name";
+        query_var = [req.body.id_query];
+        data_block.answer_type   = 1;
+    } else {
+        query_to_db = "SELECT * FROM ?? WHERE id = ?";
+        query_var = [req.body.list_name , req.body.id_query];
+        data_block.answer_type   = 2;
+    }
+    console.log("80. "+query_to_db);
+    connection.query(query_to_db, query_var, function(err, rows) {
+        if (err) {
+            console.log("81. Ошибка при выборе данных из БД: "+err);
+            res.send(data_block.data_answer = false);
+        } else {
+            if(rows.length > 0) {
+                console.log('82. Данные выбраны успешно');
+                data_block.data_rows = rows;
+
+            } else {
+                console.log('83. В таблице отсутствуют записи');
+                data_block.data_answer = false;
+            }
+            res.send(data_block);
+        }
+    });
 });
 
 http.createServer(app).listen(app.get('port'), function(){

@@ -8,6 +8,7 @@ var methodOverride = require('method-override');
 var path           = require('path');
 var bodyParser     = require('body-parser');
 var bcrypt         = require('bcrypt-nodejs');
+var fs             = require('fs');
 var multer         = require('multer');
 
 var query_to_db;
@@ -37,7 +38,9 @@ var options = {
 };
 
 
-//        стартуем сессию
+/////////////////////////////////////////////////////////////
+// Старт сессии
+/////////////////////////////////////////////////////////////
 app.use(session({
     key: 'session_cookie_name',
     secret: 'session_cookie_secret',
@@ -52,42 +55,76 @@ var connection = mysql.createConnection(options);
 connection.connect();
 
 
-// функция проверки, залогинен ли пользователь
-// если переменная USER не определена, то проверяется объект сессии
+/////////////////////////////////////////////////////////////
+// Функция проверки, залогинен ли пользователь.
+// Если переменная USER не определена, то проверяется объект сессии,
 // данные записываются в переменную USER
+/////////////////////////////////////////////////////////////
 function HelloUser(req) {
     var USER = false;
         if(!('user' in req.session)) {
-            console.log("1. нет юзера в сессии");
+            console.log("1. Нет юзера в сессии");
             USER = false;
         } else {
             if (req.session.user == false) {
-                console.log("2. нет юзера в сессии");
+                console.log("2. Нет юзера в сессии");
                 USER = false;
             } else {
-                console.log("3. есть юзер в сессии - "+req.session.user);
+                console.log("3. Есть юзер в сессии - " + req.session.user);
                 USER = req.session.user;
             }
         }
     return USER;
 }
 
-// функция, которая переопределяет место записи файлов на сервере
 
+/////////////////////////////////////////////////////////////
+// Функция, которая переопределяет место записи файлов на сервере
+/////////////////////////////////////////////////////////////
 function getStorage() {
     return multer.diskStorage({
-        destination: function (req, file, cb) { cb(null, 'public/imgs/'+req.body.name_form);},
+        destination: function (req, file, cb) { cb(null, 'public/imgs/' + req.body.name_form);},
         filename: function (req, file, cb) { cb(null, file.originalname)}
     });
 }
 
+/////////////////////////////////////////////////////////////
+// Функция, удаляющая картинки с сервера
+//
+// БАГ: если при редактировании картинки выбрать картинку с таким же именем,
+// то картинка не отобразится, т.к. скрипт успевает скопировать новую картинку
+// на сервер и только потом удаляет старую. А картинки с одинаковым именем
+// просто перезаписываются. В итоге картинка заменилась и удалилась.
+/////////////////////////////////////////////////////////////
+function delete_pict (prop, name_table, id_card) {
+    var query_to_delete = "SELECT ?? FROM ?? WHERE id=?";
+    connection.query(query_to_delete, [prop, name_table, id_card], function(err, rows) {
+        if (err) {
+            console.log("84. Ошибка при выборе файла для удаления: " + err);
+        } else {
+            fs.unlink("public/" + rows[0][prop], function (err) {
+                if (err) {
+                    console.log("85. Ошибка при удалении файла: " + err);
+                } else {
+                    console.log("86. Файл успешно удалён");
+                }
+            });
+        }
+    });
+}
 
+/////////////////////////////////////////////////////////////
+// Заглушка для главной страницы
+/////////////////////////////////////////////////////////////
 app.get('/', function(req, res, next) {
-    console.log("4. "+req.session.user);
+    console.log("4. " + req.session.user);
     res.render('index', {});
     next();
 });
 
+/////////////////////////////////////////////////////////////
+// Разлогивание пользователя
+/////////////////////////////////////////////////////////////
 app.get('/logout', function(req, res, next) {
     req.session.user = false;
     req.session.destroy(function(err) {
@@ -103,26 +140,32 @@ app.get('/logout', function(req, res, next) {
 });
 
 
-//        обрабатываем AJAX-запросы со страниц
-//        запрос-проверка на то, залогинен ли юзер
-app.post('/check_session', function(req, res, next) {
+/////////////////////////////////////////////////////////////
+// Запрос-проверка на то, залогинен ли юзер
+// Если да, то продлеваем срок жизни coockie
+/////////////////////////////////////////////////////////////
+app.post('/check_session', function(req, res) {
     var answer = HelloUser(req);
     if (answer != false) {
         req.session.touch();
     }
-    console.log("5. "+req.session.user);
+    console.log("5. " + req.session.user);
     res.send({answer:answer});
 });
 
 
 
 /////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////
 // обработка страницы "Регистрация и авторизация"
+/////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////
 
 
 
-//       запрос на регистрацию юзера
+/////////////////////////////////////////////////////////////
+// Регистрация пользователя
+/////////////////////////////////////////////////////////////
 app.post('/reg', function(req, res) {
 
     var hash = bcrypt.hashSync(req.body.pass);
@@ -139,28 +182,29 @@ app.post('/reg', function(req, res) {
     });
 });
 
-//       запрос на авторизацию юзера
+/////////////////////////////////////////////////////////////
+// Авторизация пользователя
+/////////////////////////////////////////////////////////////
 app.post('/login', function(req, res) {
     query_to_db = "SELECT user_pass FROM users WHERE user_name=?";
     console.log("7. "+query_to_db);
-    connection.query(query_to_db, [req.body.name], function(err, rows, fields) {
+    connection.query(query_to_db, [req.body.name], function(err, rows) {
         if (err) {
             console.log("8. Непредвиденная ошибка авторизации");
         } else {
             if (rows.length == 0) {
-                console.log('9. такого имени не существует');
+                console.log('9. Такого имени не существует');
                 res.send({answer:false});
             } else {
-                console.log('10. есть такой пользователь');
+                console.log('10. Такой пользователь есть');
                 console.log(rows[0].user_pass);
                 var test_pass =  rows[0].user_pass;
-                console.log("11. "+test_pass);
                 if(!bcrypt.compareSync(req.body.pass, test_pass)) {
-                    console.log("12. Не совпадают"+test_pass+" + "+req.body.pass);
+                    console.log("12. Не совпадают пароли");
                     req.session.user = false;
                     res.send({answer:false});
                 } else {
-                    console.log("13. Cовпадают"+test_pass+" + "+req.body.pass);
+                    console.log("13. Пароли совпадают");
                     req.session.user = req.body.name;
                     res.send({answer:true});
                 }
@@ -169,11 +213,13 @@ app.post('/login', function(req, res) {
     });
 });
 
-//           запрос на проверку вакантности никнейма
+/////////////////////////////////////////////////////////////
+// Проверка на доступность никнэйма при регистрации
+/////////////////////////////////////////////////////////////
 app.post('/check_name', function(req, res) {
     query_to_db = "SELECT * FROM users WHERE user_name=?";
     console.log("14. "+query_to_db);
-    connection.query(query_to_db, [req.body.name], function(err, rows, fields) {
+    connection.query(query_to_db, [req.body.name], function(err, rows) {
         if (err) {
             console.log("15. Ошибка при проверке наличия пользователя "+err);
             res.send({answer:false});
@@ -190,21 +236,27 @@ app.post('/check_name', function(req, res) {
 });
 
 
+
+/////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////
 // обработка страницы "Комната пользователя"
 /////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////
 
-//         запрос на создание комнаты
+
+
+/////////////////////////////////////////////////////////////
+// Создание комнаты
+/////////////////////////////////////////////////////////////
 app.post('/take_pass', function(req, res) {
-
     query_to_db = "SELECT * FROM list_of_battles WHERE pl1=?";
     console.log("25. "+query_to_db);
-    connection.query(query_to_db, [req.session.user], function(err, rows, fields) {
+    connection.query(query_to_db, [req.session.user], function(err, rows) {
         if (err) {
             console.log("26. Ошибка при обращении к таблице игр: "+err);
             res.send({answer:false});
         } else {
-            // проверка на число созданных комнату одного пользователя
+            // Проверка на число созданных комнат одного пользователя
             if (rows.length < 3) {
                 console.log('27. Допустимо создать ещё комнату');
                 query_to_db = "INSERT INTO list_of_battles (pl1, pass_battle, date_battle) VALUES( ?, ?, ?)";
@@ -218,7 +270,7 @@ app.post('/take_pass', function(req, res) {
                     }
                 });
             } else {
-                console.log('30. Уже создано 3 комнаты - максимальное количество');
+                console.log('30. Уже создано максимальное количество комнат');
                 res.send({answer:false});
             }
         }
@@ -227,8 +279,9 @@ app.post('/take_pass', function(req, res) {
 });
 
 
-
-//         запрос на вывод игры пользователя
+/////////////////////////////////////////////////////////////
+// Вывод данных о созданных комнатах пользователя
+/////////////////////////////////////////////////////////////
 app.post('/give_me_battle', function(req, res) {
     query_to_db = "SELECT * FROM list_of_battles WHERE pl1=?";
     console.log("20. "+query_to_db);
@@ -238,11 +291,12 @@ app.post('/give_me_battle', function(req, res) {
             res.send({answer:false});
         } else {
             console.log("22. "+rows[0].id_battle+"  "+rows[0].pass_battle+"  "+rows[0].date_battle);
-            //         проверка срока давности битвы
+            // Проверка срока давности битвы.
+            // Удаление комнат, которым больше суток
             var check_date = new Date().getTime() - rows[0].date_battle;
             if (check_date >= 1000*60*60*24) {
                 query_to_db = "DELETE FROM list_of_battles WHERE pl1=?";
-                connection.query(query_to_db, [req.session.user], function(err, rows) {
+                connection.query(query_to_db, [req.session.user], function(err) {
                     if (err) {
                         console.log("23. Ошибка при попытке удаления устаревших комнат: "+err);
                         res.send({answer:false});
@@ -253,18 +307,19 @@ app.post('/give_me_battle', function(req, res) {
                 });
             } else {
                 res.send({answer:true, data_rows:rows});
-                //res.send({answer:true, id_battle:rows[0].id_battle, pass_battle:rows[0].pass_battle});
             }
         }
     });
 });
 
-//         запрос на удаление комнаты
-app.post('/del_room', function(req, res) {
 
+/////////////////////////////////////////////////////////////
+// Удаление комнаты
+/////////////////////////////////////////////////////////////
+app.post('/del_room', function(req, res) {
     query_to_db = "DELETE FROM list_of_battles WHERE pl1=? AND id_battle=?";
     console.log("31. "+query_to_db);
-    connection.query(query_to_db, [req.session.user, req.body.numb], function(err, rows, fields) {
+    connection.query(query_to_db, [req.session.user, req.body.numb], function(err) {
         if (err) {
             console.log("31. Ошибка при удалении комнаты: "+err);
             res.send({answer:false});
@@ -276,9 +331,11 @@ app.post('/del_room', function(req, res) {
 
 });
 
-//         запрос на переход в "свою" комнату
-app.post('/join_game', function(req, res) {
 
+/////////////////////////////////////////////////////////////
+// Переход в "свою" комнату
+/////////////////////////////////////////////////////////////
+app.post('/join_game', function(req, res) {
     query_to_db = "SELECT * FROM list_of_battles WHERE id_battle=?";
     console.log("33. "+query_to_db);
     connection.query(query_to_db, [req.body.numb], function(err, rows, fields) {
@@ -287,21 +344,21 @@ app.post('/join_game', function(req, res) {
             res.send({answer:"1"});
         } else {
             if (rows.length == 1) {
-                //проверяем есть ли у игры пароль, т.е. игра приватная или общедоступная
+                // Проверяем есть ли у игры пароль, т.е. игра приватная или общедоступная
                 var row_battle = rows[0];
-                if (row_battle.pl1 == req.session.user) {   //  исключаем игру с самим собой
+                if (row_battle.pl1 == req.session.user) {   //  Исключаем игру с самим собой
                     res.send({answer:"3"});
                 } else {
-                    if (row_battle.start_battle == 1) {   //   проверяем, не занята ли уже комната
+                    if (row_battle.start_battle == 1) {   //   Проверяем, не занята ли уже комната
                         res.send({answer:"4"});
                     } else {
-                        if (row_battle.pass_battle != req.body.pass) {    //    сверяем введённые пароли
+                        if (row_battle.pass_battle != req.body.pass) {    //    Сверяем введённые пароли
                             res.send({answer:"5"});
-                        } else {                                         //    заполняем таблицу
+                        } else {                                         //    Заполняем таблицу
                             var alias_battle = row_battle.pl1 + "_" + req.session.user;
                             query_to_db = "UPDATE list_of_battles SET pl2=?, start_battle='1', alias_battle=? WHERE id_battle=?";
                             console.log("36. "+query_to_db);
-                            connection.query(query_to_db, [req.session.user, alias_battle, req.body.numb], function(err, rows, fields) {
+                            connection.query(query_to_db, [req.session.user, alias_battle, req.body.numb], function(err) {
                                 if (err) {
                                     console.log("37. Ошибка при заполнении данных в таблице list_of_battles: "+err);
                                     res.send({answer:"6"});
@@ -318,74 +375,95 @@ app.post('/join_game', function(req, res) {
             }
         }
     });
-
 });
 
 
-
+/////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////
 // обработка страницы "Генератор карт"
+///////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////
 
 
-//         Добавление карт и способностей
-
+////////////////////////////////////////////////////////////////
+// Обработка форм: создание карт и редактирование
+////////////////////////////////////////////////////////////////
 app.post('/take_form', multer({ storage: getStorage() }).any(), function(req, res) {
 
     query_to_db = '';
-    var path_pict = '';
-    var path_cover = '';
-    var hero_flag = false;
     var query_var = [];
+    var query_action;
+    var name_fields = [];
+    var value_fields = [];
+    var name_table = req.body.name_form;
+    var type_query = req.body.type_query;
+    var id_card = req.body.id_card;
 
-    if(req.files[0] != undefined) {
-        path_pict = (req.files[0].destination + "/" + req.files[0].filename).replace('public/','');
+    // Свойства объекта удаляются для того, чтобы они не участвовали
+    // в циклической обработке объекта ниже
+    delete req.body.name_form;
+    delete req.body.type_query;
+    delete req.body.id_card;
+
+    // Чтобы удалить старую картинку, нужно сначала запомнить её путь,
+    // иначе он будет перезаписан в процессе сохранения новых данных в БД
+    if(req.files) {
+        if(req.files[0] != undefined) {
+            req.body.pict = (req.files[0].destination + "/" + req.files[0].filename).replace('public/','');
+            if (id_card != 'undefined'){
+                delete_pict ("pict", name_table, id_card);
+            }
+        }
+        if(req.files[1] != undefined) {
+            req.body.pict_cover = (req.files[1].destination + "/" + req.files[1].filename).replace('public/','');
+            if (id_card != 'undefined'){
+                delete_pict ("pict_cover", name_table, id_card);
+            }
+        }
     }
-    if(req.files[1] != undefined) {
-        path_cover = (req.files[1].destination + "/" + req.files[1].filename).replace('public/','');
+
+    // Данные поля hero приводится к нужному формату
+    if(name_table == "units") {
+        if(req.body.hero) {
+            req.body.hero = true;
+        } else {
+            req.body.hero = false;
+        }
     }
 
-    if(req.body.hero) {
-        hero_flag = true;
-    }
-
-    switch (req.body.name_form) {
-        case "units":
-            query_to_db = "INSERT INTO units (name, id_fraction, id_class, strength, id_ability, hero, pict, description) VALUES( ?, ?, ?, ?, ?, ?, ?, ?)";
-            query_var = [req.body.name_unit, req.body.select_fraction, req.body.select_class, req.body.strength_unit, req.body.select_ability, hero_flag, path_pict, req.body.description_unit];
+    switch (type_query) {
+        case "submit":
+            query_action = "INSERT INTO ";
+            for (var prop in req.body) {
+                name_fields.push(prop);
+                value_fields.push("?");
+                query_var.push(req.body[prop]);
+            }
+            query_to_db = query_action + name_table + " (" + name_fields +") " + "VALUES (" + value_fields + ")";
             break;
 
-        case "specials":
-            query_to_db = "INSERT INTO specials (name, func, pict, description) VALUES( ?, ?, ?, ?)";
-            query_var = [req.body.name_special, req.body.select_ability, path_pict, req.body.description_special];
+        case "edit":
+            query_action = "UPDATE ";
+            for (var prop in req.body) {
+                name_fields.push(prop+"=?");
+                query_var.push(req.body[prop]);
+            }
+            query_to_db = query_action + name_table + " SET " + name_fields + " WHERE id=" + id_card;
             break;
 
-        case "leaders":
-            query_to_db = "INSERT INTO leaders (name, id_fraction, func, desc_func, pict, description) VALUES( ?, ?, ?, ?, ?, ?)";
-            query_var = [req.body.name_leader, req.body.select_fraction, req.body.function_leader, req.body.desc_func_leader, path_pict, req.body.description_leader];
-            break;
+        case "delete":
+            delete_pict ("pict", name_table, id_card);
+            if(name_table == "fractions") {
+                delete_pict ("pict_cover", name_table, id_card);
+            }
+            query_action = "DELETE FROM ";
+            query_to_db = query_action + name_table + " WHERE id=" + id_card;
 
-        case "classes":
-            query_to_db = "INSERT INTO classes (name, pict, description) VALUES( ?, ?, ?)";
-            query_var = [req.body.name_class, path_pict, req.body.description_class];
             break;
-
-        case "abilities":
-            query_to_db = "INSERT INTO abilities (name, func, pict, description) VALUES( ?, ?, ?, ?)";
-            query_var = [req.body.name_ability, req.body.function_ability, path_pict, req.body.description_ability];
-            break;
-
-        case "fractions":
-            query_to_db = "INSERT INTO fractions (name, ability, pict, pict_cover, description) VALUES( ?, ?, ?, ?, ?)";
-            query_var = [req.body.name_fraction, req.body.ability_fraction, path_pict, path_cover, req.body.description_fraction];
-            break;
-
-        default:
-            console.log("38. Не найдено такой формы");
     }
 
     console.log("40. "+query_to_db);
-    connection.query(query_to_db, query_var, function(err, rows, fields) {
+    connection.query(query_to_db, query_var, function(err) {
         if(err) {
             console.log("41. Ошибка при записи в БД: " + err);
             res.send({answer:false});
@@ -393,11 +471,12 @@ app.post('/take_form', multer({ storage: getStorage() }).any(), function(req, re
             res.send({answer:true});
         }
     });
-
 });
 
 
-//         запрос заполнение форм и вывод введённых карт
+/////////////////////////////////////////////////////////////
+// Заполнение форм и вывод карт
+/////////////////////////////////////////////////////////////
 app.post('/give_me_data', function(req, res) {
     query_to_db         = '';
     var data_block      = {};
@@ -420,7 +499,11 @@ app.post('/give_me_data', function(req, res) {
                 data_block.data_answer = false;
             }
 
-            if (req.body.classes == 1 || req.body.fractions == 1 || req.body.abilities == 1) {
+            // Если в запросе присутствует флаг опций, то выбираем нужные данные.
+            // Для уверенности, что ответ не будет отправлен до того, как все нужные данные
+            // в него попадут, очередная функция запускается в колбэке предыдущей и только
+            // в самой "внутренней" отправляется ответ
+            if (req.body.select == 1) {
                 query_to_db = "SELECT id, name FROM fractions ORDER BY id";
                 console.log("68. "+query_to_db);
                 connection.query(query_to_db, function(err, rows) {
@@ -451,7 +534,7 @@ app.post('/give_me_data', function(req, res) {
                                     data_block.options_answer = false;
                                 }
 
-                                query_to_db = "SELECT id, name FROM abilities ORDER BY id";
+                                query_to_db = "SELECT id, name, description FROM abilities ORDER BY id";
                                 console.log("76. "+query_to_db);
                                 connection.query(query_to_db, function(err, rows) {
                                     if (err) {
@@ -480,13 +563,14 @@ app.post('/give_me_data', function(req, res) {
 });
 
 
-//         запрос на вывод нужных карт
-app.post('/give_me_units', function(req, res) {
+/////////////////////////////////////////////////////////////
+// Вывод запрошенных карт
+/////////////////////////////////////////////////////////////
+app.post('/give_me_cards', function(req, res) {
     query_to_db         = '';
     var query_var       = [];
     var data_block      = {};
     data_block.data_answer   = true;
-
 
     if(req.body.type_query == "prepare") {
         query_to_db = "SELECT id, name FROM units WHERE id_fraction = ? ORDER BY strength, name";

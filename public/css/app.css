@@ -345,20 +345,10 @@ button:hover {
 
 /*=================================   CARD PAGE  =======================================*/
 
-
-.card .form_block {
-    box-sizing: border-box;
-    padding: 30px 50px;
-    width: 50%;
-    float: left;
-    position: relative;
-    overflow: hidden;
-
-}
-
 .card .tab_block {
     display: block;
-    width: 70%;
+    width: 90%;
+    max-width: 1300px;
     margin: 10px auto;
     padding: 20px;
 }
@@ -384,19 +374,26 @@ button:hover {
     color: #959595;
 }
 
+.card .list li:hover {
+    color: #ffffff;
+}
+
 .card .list .active_li{
     color: #ffffff;
 }
 
 .card .tab_cont {
     display: none;
+    position: relative;
+    overflow: hidden;
 }
+
 .card .not_visible {
     display: none;
 }
+
 .card .visible {
     display: block;
-    z-index: -1;
 }
 
 .card .fraction_preview, .card .class_preview, .card .ability_preview,
@@ -408,16 +405,19 @@ button:hover {
 
 .card h3 {
     text-align: center;
+    color: #ffffff;
 }
 
 .card form {
     box-sizing: border-box;
-    width: 33.333333333%;
+    width: 25%;
     float: left;
+    color: #959595;
 }
 
 .card .fraction_block, .card .class_block,
-.card .ability_block, .card .card_block {
+.card .ability_block, .card .unit_block,
+.card .leader_block, .card .special_block{
     padding: 0 10px 35px 10px;
     margin-bottom: 20px;
     position: relative;
@@ -456,6 +456,7 @@ button:hover {
 
 .card input[type=file] {
     padding: 0;
+    color: #ffffff;
 }
 
 .card input[type=checkbox] {
@@ -476,10 +477,10 @@ button:hover {
 }
 
 .card .preview {
-    padding: 0 30px;
+    padding: 0 10px 0 30px;
     box-sizing: border-box;
     float: left;
-    width: 66.6666666666666%;
+    width: 75%;
 }
 
 .card .to_cards {
@@ -501,6 +502,123 @@ button:hover {
 
 .card .tab_cont li:hover {
     display: block;
-    color: #ba8b48;
+    color: #ffffff;
     cursor: pointer;
+}
+
+.card .desc_block {
+    opacity: 0;
+    float: left;
+    width: 60%;
+    padding-left: 10px;
+    font-size: 18px;
+    color: #ba8b48;
+    position: relative;
+    overflow: hidden;
+}
+
+.card .desc_data {
+    float: left;
+    width: 60%;
+    padding-right: 10px;
+    box-sizing: border-box;
+    position: relative;
+    overflow: hidden;
+}
+
+.card .desc_data div {
+    margin: 0 0 20px 0;
+}
+
+.card .desc_visible {
+    opacity: 1!important;
+}
+
+.card .marked {
+    color: #ffffff!important;
+}
+
+.card .desc_name {
+    text-align: center;
+    margin-top: 0;
+}
+
+#units_desc_block {
+    margin-top: -50px;
+}
+
+.card .desc_block span {
+    color: #959595;
+}
+
+.card .desc_pict {
+    float: left;
+    width: 40%;
+    position: relative;
+    overflow: hidden;
+}
+
+.card .desc_block .desc_description {
+    width: 100%;
+    position: relative;
+    overflow: hidden;
+}
+
+.card .desc_block .desc_description span {
+    display: block;
+    margin: 20px 0;
+    text-align: center;
+    color: #ba8b48;
+}
+
+.card #fractions_desc_text span {
+    text-align: justify;
+}
+
+.card #abilities_list li:first-child {
+    display: none;
+}
+
+.card #abilities_desc_block .desc_func, .card #fractions_desc_block .desc_func {
+    width: 100%;
+    text-align: center;
+    margin: 20px 0;
+}
+
+.card #abilities_desc_pict {
+    display: block;
+    float: none;
+    width: 50px;
+    margin: 0 auto;
+}
+
+.card #classes_desc_pict {
+    display: block;
+    float: none;
+    width: 60px;
+    margin: 0 auto 20px auto;
+}
+
+.card .pict_block {
+    display:flex;
+    flex-direction: row;
+    justify-content: space-around;
+    align-items: center;
+}
+
+
+.card .pict_block img {
+    width: 75px;
+}
+
+.card .edit, .card .delete {
+    display: inline-block;
+}
+
+.card .delete {
+    width: 40px!important;
+}
+
+.card .control_block {
+    text-align: center;
 }

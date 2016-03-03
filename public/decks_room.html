@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Генератор колод</title>
+
+        <link rel="stylesheet" href="/css/app.css"/>
+        <link href="http://fonts.googleapis.com/css?family=Roboto" rel="stylesheet" type="text/css">
+        <script src="/js/jquery.min.js"></script>
+        <script src="/js/check.js"></script>
+        <script src="/js/script.js"></script>
+        <script src="/js/create_decks.js"></script>
+    </head>
+
+    <body class="deck">
+        <nav class="top_nav">
+            <ul>
+                <li class="home_page"><a href="/" title=""><span>Главная</span></a></li>
+                <li class="some_page"><a href="my_room.html"><span>Мой профиль</span></a></li>
+                <li class="login_page"><a href="auth.html"><span>Войти</span></a></li>
+            </ul>
+        </nav>
+        <div id="message_block"></div>
+
+        <div class="decks_block">
+            <div class="fraction_choice">
+                <label for="select_fraction">Фракция вашей колоды:</label>
+                <select id="select_fraction" name="id_fraction[]"></select>
+                <div class="desc_fraction"></div>
+            </div>
+            <section class="available_card deck_col">
+                <h3>Доступные карты выбранной фракции:</h3>
+                <div class="filter_left">
+                    <ul>
+                        <li class="filter_li selected" data-filter="1">1</li>
+                        <li class="filter_li" data-filter="2">2</li>
+                        <li class="filter_li" data-filter="3">3</li>
+                        <li class="filter_li" data-filter="4">4</li>
+                        <li class="filter_li" data-filter="5">5</li>
+                        <li class="filter_li" data-filter="6">6</li>
+                    </ul>
+                </div>
+                <div class="all_cards" id="all_cards"></div>
+            </section>
+            <section class="info_deck deck_col">
+                <h5>Лидер</h5>
+                <div class="leader_block">
+                    <img class="leader" src="" title="" alt="">
+                </div>
+                <div class="info">
+                    <div>Карт всего:</div>
+                    <div class="numb_of_cards"></div>
+                    <div>Юнитов:</div>
+                    <div class="numb_of_units"></div>
+                    <div>Специальных карт:</div>
+                    <div class="numb_of_specials"></div>
+                    <div>Героев:</div>
+                    <div class="numb_of_heroes"></div>
+                    <div>Сила колоды:</div>
+                    <div class="strength_deck"></div>
+                    <button class="change_leader">Поменять лидера</button>
+                    <button class="clean_deck">Удалить все карты</button>
+                    <button class="save_deck">Сохранить изменения</button>
+                </div>
+            </section>
+            <section class="selected_card deck_col">
+                <h3>Карты в вашей колоде:</h3>
+                <div class="filter_right">
+                    <ul>
+                        <li class="filter_li selected" data-filter="1">1</li>
+                        <li class="filter_li" data-filter="2">2</li>
+                        <li class="filter_li" data-filter="3">3</li>
+                        <li class="filter_li" data-filter="4">4</li>
+                        <li class="filter_li" data-filter="5">5</li>
+                        <li class="filter_li" data-filter="6">6</li>
+                    </ul>
+                </div>
+                <div class="deck" id="deck"></div>
+            </section>
+        </div>
+
+        <div class="leader_choice">
+            <div class="item_leader">
+                <input class="id_leader" type="hidden" value="">
+                <img class="pict_leader" src="" title="" alt="">
+                <div class="desc_leader"></div>
+            </div>
+            <div class="item_leader">
+                <input class="id_leader" type="hidden" value="">
+                <img class="pict_leader" src="" title="" alt="">
+                <div class="desc_leader"></div>
+            </div>
+            <div class="item_leader">
+                <input class="id_leader" type="hidden" value="">
+                <img class="pict_leader" src="" title="" alt="">
+                <div class="desc_leader"></div>
+            </div>
+            <div class="item_leader">
+                <input class="id_leader" type="hidden" value="">
+                <img class="pict_leader" src="" title="" alt="">
+                <div class="desc_leader"></div>
+            </div>
+        </div>
+
+        <div class="card_view">
+            <img class="pict_unit" src="" title="" alt="">
+            <div class="desc_unit"></div>
+            <button class="close_unit">Закрыть</button>
+        </div>
+
+    </body>
+</html>

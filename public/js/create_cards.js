@@ -131,7 +131,7 @@ $(document).ready(function () {
         data_options.id_tab = id_tab;
         data_options.select = 0;
         if(id_tab == "units" || id_tab == "leaders" || id_tab == "specials") {
-            data_options.select = 1; //признак "пришли данные для заполнения select'ов"
+            data_options.select = 1; //признак "пришли мне данные для заполнения select'ов"
         }
         $.ajax({
             url: "give_me_data",

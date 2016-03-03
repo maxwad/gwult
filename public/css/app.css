@@ -49,6 +49,7 @@ body {
     padding: 0;
     min-width: 1000px;
     color: #ffffff;
+    font-size: 16px;
 }
 
 ul {
@@ -58,6 +59,12 @@ ul {
 
 .incorrect {
     border: 1px solid red!important;
+}
+
+a {
+    text-decoration: none;
+    text-align: center;
+    color: #ffffff;
 }
 
 button {
@@ -123,8 +130,6 @@ button:hover {
     display: block;
     color: #f2f2f2;
     padding: 10px;
-    text-decoration: none;
-    text-align: center;
 }
 
 .top_nav li a:hover{
@@ -622,3 +627,41 @@ button:hover {
 .card .control_block {
     text-align: center;
 }
+
+/*=================================   DECKS_ROOM PAGE  =======================================*/
+
+.deck .decks_block {
+    width: 90%;
+    margin: 0 auto;
+    max-width: 1300px;
+}
+
+.deck .fraction_choice {
+    text-align: center;
+    background-size: contain;
+}
+
+.deck .fraction_choice label,
+.deck .fraction_choice select {
+    display: block;
+    margin: 0 auto;
+    height: 25px;
+    outline: none;
+}
+
+.deck .fraction_choice label {
+    font-size: 20px;
+}
+
+.deck .fraction_choice select {
+    background: #ba8b48;
+    font-size: 16px;
+    margin: 10px auto 15px auto;
+}
+
+
+.deck .desc_fraction {
+    width: 50%;
+    margin: 0 auto;
+}
+

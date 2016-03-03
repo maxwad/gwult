@@ -10,6 +10,7 @@ var bodyParser     = require('body-parser');
 var bcrypt         = require('bcrypt-nodejs');
 var fs             = require('fs');
 var multer         = require('multer');
+var Q              = require('q');
 
 var query_to_db;
 var app = express();
@@ -113,6 +114,40 @@ function delete_pict (prop, name_table, id_card) {
     });
 }
 
+
+/////////////////////////////////////////////////////////////
+// Функция, которая отсылает пользователю массив данных:
+// фракции, спецкарты, юниты и лидеры его фракции
+/////////////////////////////////////////////////////////////
+function rows_cards (result, table, id) {
+    var deferred = Q.defer();
+
+    switch (table) {
+        case "specials":
+        case "fractions":
+            query_to_db = "SELECT * FROM " + table;
+            break;
+
+        case "leaders":
+        case "units":
+        default:
+            query_to_db = "SELECT * FROM " + table + " WHERE id_fraction IN (?, 6)";
+            break;
+    }
+    connection.query(query_to_db, [id], function(err, rows) {
+        if (err) {
+            console.log("88. Ошибка при выборе карт: " + err);
+            result.data_error = true;
+            deferred.reject(result);
+        } else {
+            result.data_error = false;
+            result[table] = rows;
+            deferred.resolve(result);
+        }
+    });
+
+    return deferred.promise;
+}
 /////////////////////////////////////////////////////////////
 // Заглушка для главной страницы
 /////////////////////////////////////////////////////////////
@@ -487,7 +522,8 @@ app.post('/give_me_data', function(req, res) {
     connection.query(query_to_db, [req.body.id_tab], function(err, rows) {
         if (err) {
             console.log("65. Ошибка при выборе данных из БД: "+err);
-            res.send(data_block.data_answer = false);
+            data_block.data_answer = false;
+            res.send(data_block);
         } else {
             if(rows.length > 0) {
                 console.log('66. Данные выбраны успешно');
@@ -509,7 +545,8 @@ app.post('/give_me_data', function(req, res) {
                 connection.query(query_to_db, function(err, rows) {
                     if (err) {
                         console.log("69. Ошибка при выборе фракций: "+err);
-                        res.send(data_block.options_answer = false);
+                        data_block.options_answer = false;
+                        res.send(data_block);
                     } else {
                         if(rows.length > 0) {
                             console.log('70. Фракции выбраны успешно');
@@ -524,7 +561,8 @@ app.post('/give_me_data', function(req, res) {
                         connection.query(query_to_db, function(err, rows) {
                             if (err) {
                                 console.log("73. Ошибка при выборе классов: "+err);
-                                res.send(data_block.options_answer = false);
+                                data_block.options_answer = false;
+                                res.send(data_block);
                             } else {
                                 if(rows.length > 0) {
                                     console.log('74. Классы выбраны успешно');
@@ -539,7 +577,8 @@ app.post('/give_me_data', function(req, res) {
                                 connection.query(query_to_db, function(err, rows) {
                                     if (err) {
                                         console.log("77. Ошибка при выборе способностей: "+err);
-                                        res.send(data_block.options_answer = false);
+                                        data_block.options_answer = false;
+                                        res.send(data_block);
                                     } else {
                                         if(rows.length > 0) {
                                             console.log('78. Фракции выбраны успешно');
@@ -585,7 +624,8 @@ app.post('/give_me_cards', function(req, res) {
     connection.query(query_to_db, query_var, function(err, rows) {
         if (err) {
             console.log("81. Ошибка при выборе данных из БД: "+err);
-            res.send(data_block.data_answer = false);
+            data_block.data_answer = false;
+            res.send(data_block);
         } else {
             if(rows.length > 0) {
                 console.log('82. Данные выбраны успешно');
@@ -599,6 +639,106 @@ app.post('/give_me_cards', function(req, res) {
         }
     });
 });
+
+
+/////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////
+// обработка страницы "Генератор колод"
+/////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////
+
+
+
+/////////////////////////////////////////////////////////////
+//Получаем начальные данные из БД
+/////////////////////////////////////////////////////////////
+app.post('/give_me_fraction', function(req, res) {
+
+    var data_block      = {};
+    var deck_user       = {};
+    // Получаем id пользователя
+    function get_user_id () {
+        var deferred = Q.defer();
+        query_to_db = "SELECT id FROM users WHERE user_name = ?";
+        connection.query(query_to_db, [req.session.user], function(err, rows) {
+            if (err || rows.length == 0) {
+                console.log("84. Ошибка при поиске юзера в БД: " + err);
+                data_block.user_error = true;
+                deferred.reject(data_block);
+            } else {
+                data_block.id_user = rows[0].id;
+                deferred.resolve(data_block.id_user);
+            }
+        });
+        return deferred.promise;
+    }
+
+
+    // Проверяем наличие колод у пользователя
+    function check_user_deck (result) {
+        var deferred = Q.defer();
+        query_to_db = "SELECT * FROM card_decks WHERE id_user = ?";
+        connection.query(query_to_db, [result], function(err, rows) {
+            if (err) {
+                console.log("85. Ошибка при поиске юзера в БД: " + err);
+                data_block.user_error = true;
+                deferred.reject(data_block);
+            } else {
+                if(rows.length != 0) {
+                // признак "Пользователь есть в таблице"
+                    deck_user = rows[0];
+                    data_block.deck_user = deck_user;
+                    deferred.resolve(-1);
+                } else {
+                    deferred.resolve(result);
+                }
+            }
+        });
+        return deferred.promise;
+    }
+
+    // заносим пользователя в таблицу, если его там не было
+    // и берём данные из таблицы, если он там уже был
+    function insert_user_deck (result) {
+        var deferred = Q.defer();
+        if(result == -1) {
+            deferred.resolve(data_block);
+        } else {
+            query_to_db = "INSERT INTO card_decks (id_user, id_fraction) VALUES (?, '-1')";
+            connection.query(query_to_db, [result], function(err) {
+                if (err) {
+                    console.log("86. Ошибка при записи юзера в БД: " + err);
+                    data_block.user_error = true;
+                    deferred.reject(data_block);
+                } else {
+                    deferred.resolve(data_block);
+                }
+            });
+        }
+        return deferred.promise;
+    }
+
+    // Если пользователь авторизован - запускаем
+    if(req.session.user !== undefined) {
+        data_block.user = true;
+
+        get_user_id().
+            then(function(result) { return check_user_deck(result) }).
+            then(function(result) { return insert_user_deck(result) }).
+            then(function(result) { return rows_cards(result, "fractions", deck_user.id_fraction) }).
+            then(function(result) { return rows_cards(result, "units", deck_user.id_fraction) }).
+            then(function(result) { return rows_cards(result, "leaders", deck_user.id_fraction) }).
+            then(function(result) { return rows_cards(result, "specials", deck_user.id_fraction) }).
+            then(function(result) { res.send(result); }).
+            catch(function(result) { res.send(result); }).
+            done();
+    } else {
+        data_block.user = false;
+        res.send(data_block);
+    }
+});
+
+
 
 http.createServer(app).listen(app.get('port'), function(){
     console.log('Express server listening on port ' + app.get('port'));

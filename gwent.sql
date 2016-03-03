@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Хост: localhost
--- Время создания: Фев 22 2016 г., 14:44
+-- Время создания: Фев 26 2016 г., 13:40
 -- Версия сервера: 5.5.44-log
 -- Версия PHP: 5.4.41
 
@@ -53,6 +53,27 @@ INSERT INTO `abilities` (`id`, `name`, `func`, `pict`, `description`) VALUES
 (17, 'Ливень', 'downpour', 'imgs/abilities/downpour.png', 'Снижает силу осадных отрядов до 1.'),
 (16, 'Ясная погода', 'clear_wheather', 'imgs/abilities/clear_weather.png', 'Отменяет эффекты всех погодных карт.'),
 (18, 'Казнь', 'execution', 'imgs/abilities/execution.png', 'Уничтожает самую сильную карту (или карты) на поле. Действует как на противника, так и на вас.');
+
+-- --------------------------------------------------------
+
+--
+-- Структура таблицы `card_decks`
+--
+
+CREATE TABLE IF NOT EXISTS `card_decks` (
+  `id_user` int(11) NOT NULL,
+  `id_fraction` int(11) DEFAULT NULL,
+  `decks` text,
+  `specials` text,
+  `leader` int(11) DEFAULT NULL
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
+--
+-- Дамп данных таблицы `card_decks`
+--
+
+INSERT INTO `card_decks` (`id_user`, `id_fraction`, `decks`, `specials`, `leader`) VALUES
+(10, NULL, NULL, NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -150,13 +171,6 @@ CREATE TABLE IF NOT EXISTS `list_of_battles` (
   `date_battle` bigint(16) DEFAULT NULL
 ) ENGINE=MyISAM AUTO_INCREMENT=71 DEFAULT CHARSET=utf8;
 
---
--- Дамп данных таблицы `list_of_battles`
---
-
-INSERT INTO `list_of_battles` (`id_battle`, `pl1`, `pl2`, `pass_battle`, `start_battle`, `alias_battle`, `date_battle`) VALUES
-(70, 'www', NULL, '', 0, NULL, 1455553742350);
-
 -- --------------------------------------------------------
 
 --
@@ -174,7 +188,7 @@ CREATE TABLE IF NOT EXISTS `sessions` (
 --
 
 INSERT INTO `sessions` (`session_id`, `expires`, `data`) VALUES
-('3facG12ktv-zuuAs-a4ltdfa8uB9AzDT', 1456741215, '{"cookie":{"originalMaxAge":599999995,"expires":"2016-02-29T10:20:14.783Z","httpOnly":true,"path":"/"}}'),
+('LjDp9QG8IIZUKOKQG0p2whiTUKYgkysl', 1457082010, '{"cookie":{"originalMaxAge":600000000,"expires":"2016-03-04T09:00:10.137Z","httpOnly":true,"path":"/"},"user":"www"}'),
 ('XJCjrIKiMWy0WKj4irRqWHqi3_GUtdiJ', 1456676629, '{"cookie":{"originalMaxAge":599999992,"expires":"2016-02-28T16:23:48.959Z","httpOnly":true,"path":"/"},"user":"www"}'),
 ('wwMteHh77u0p9LHCmQFa0eSh5zl4AlZF', 1456728779, '{"cookie":{"originalMaxAge":599999999,"expires":"2016-02-29T06:52:58.918Z","httpOnly":true,"path":"/"}}');
 
@@ -330,10 +344,8 @@ CREATE TABLE IF NOT EXISTS `users` (
 --
 
 INSERT INTO `users` (`id`, `user_name`, `user_pass`, `battles`) VALUES
-(6, 'qqq', '$2a$10$nfUupzFnIIdJ1fuYyfiMAuGdCN5ZG819F2BCJwvWplGNMMnN9ks5S', NULL),
 (9, 'jenek04', '$2a$10$LNPVo8mGzPnjbqtGil07YeP8WeBkI9xyq1h3KCei.46KQ7Z.JlWmS', NULL),
-(10, 'www', '$2a$10$ZNdQhpRUyeVEWmyjuGy.VON7OuSFIKQCTqWl2gk64QmLKRFCutnKG', NULL),
-(11, 'qqqq', '$2a$10$iPOZvHJiBi2BpwP1PIf3yuT22n05mdyWgOFhyYDBqzJ9txCS2x..O', NULL);
+(10, 'www', '$2a$10$ZNdQhpRUyeVEWmyjuGy.VON7OuSFIKQCTqWl2gk64QmLKRFCutnKG', NULL);
 
 --
 -- Индексы сохранённых таблиц
@@ -344,6 +356,12 @@ INSERT INTO `users` (`id`, `user_name`, `user_pass`, `battles`) VALUES
 --
 ALTER TABLE `abilities`
   ADD PRIMARY KEY (`id`);
+
+--
+-- Индексы таблицы `card_decks`
+--
+ALTER TABLE `card_decks`
+  ADD PRIMARY KEY (`id_user`);
 
 --
 -- Индексы таблицы `classes`

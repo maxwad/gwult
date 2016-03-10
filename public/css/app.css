@@ -2,6 +2,7 @@
     -webkit-box-sizing: border-box;
     -moz-box-sizing:    border-box;
     box-sizing:         border-box;
+    cursor: default;
 }
 
 article,
@@ -65,13 +66,17 @@ a {
     text-decoration: none;
     text-align: center;
     color: #ffffff;
+    cursor: pointer;
+}
+
+a * {
+    cursor: pointer;
 }
 
 button {
     display: block;
-    margin: 5px auto 0 auto;
+    margin: 5px auto;
     padding: 5px;
-    width: 200px;
     cursor: pointer;
     background: #9a733d;
     box-shadow: inset 0 1px 3px 0 rgba(255,255,255,.5),inset 0 -1px 0 0 rgba(0,0,0,.3),0 1px 0 0 rgba(0,0,0,.2);
@@ -630,38 +635,160 @@ button:hover {
 
 /*=================================   DECKS_ROOM PAGE  =======================================*/
 
-.deck .decks_block {
+.deck_room .decks_block {
     width: 90%;
     margin: 0 auto;
     max-width: 1300px;
+    position: relative;
+    overflow: hidden;
 }
 
-.deck .fraction_choice {
+.deck_room .fraction_choice {
     text-align: center;
     background-size: contain;
 }
 
-.deck .fraction_choice label,
-.deck .fraction_choice select {
+.deck_room .fraction_choice label,
+.deck_room .fraction_choice select {
     display: block;
     margin: 0 auto;
     height: 25px;
     outline: none;
 }
 
-.deck .fraction_choice label {
+.deck_room .fraction_choice label {
     font-size: 20px;
 }
 
-.deck .fraction_choice select {
-    background: #ba8b48;
+.deck_room .fraction_choice select {
+    background: #000000;
     font-size: 16px;
+    color: #ffffff;
+    border: none;
     margin: 10px auto 15px auto;
 }
 
-
-.deck .desc_fraction {
-    width: 50%;
-    margin: 0 auto;
+.deck_room .fraction_choice select option {
+    text-align: center;
 }
 
+
+.deck_room .desc_fraction {
+    width: 50%;
+    height: 50px;
+    margin: 0 auto;
+    color: #ba8b48;
+}
+
+.deck_room .deck_col {
+    float: left;
+    position: relative;
+    overflow: hidden;
+    text-align: center;
+}
+
+.deck_room .available_card, .deck_room .selected_card {
+    width: 40%;
+}
+
+.deck_room .info_deck {
+    width: 20%;
+}
+
+.deck_room .deck_col h3 {
+    font-weight: 500;
+}
+
+.deck_room .info div:nth-child(even) {
+    margin-bottom: 15px;
+}
+
+.deck_room .leader_block {
+    width: 150px;
+    height: 283px;
+    background: #272727;
+    margin: 20px auto;
+    border-radius: 10px;
+}
+
+.deck_room ul {
+    display: flex;
+    margin-bottom: 15px;
+}
+
+.deck_room .filter_li {
+    flex: 1;
+    list-style: none;
+    height: 30px;
+    cursor: pointer;
+    opacity: 0.3;
+}
+
+.deck_room .filter_li:hover, .deck_room .selected {
+    opacity: 1;
+}
+
+.deck_room .filter_li[data-filter='1'] {
+    background: url('../imgs/others/all.png') center center no-repeat;
+    background-size: contain;
+}
+
+.deck_room .filter_li[data-filter='2'] {
+    background: url('../imgs/others/sword.png') center center no-repeat;
+    background-size: contain;
+}
+.deck_room .filter_li[data-filter='3'] {
+    background: url('../imgs/others/bow.png') center center no-repeat;
+    background-size: contain;
+}
+.deck_room .filter_li[data-filter='4'] {
+    background: url('../imgs/others/catapult.png') center center no-repeat;
+    background-size: contain;
+}
+.deck_room .filter_li[data-filter='5'] {
+    background: url('../imgs/others/wheather.png') center center no-repeat;
+    background-size: contain;
+}
+.deck_room .filter_li[data-filter='6'] {
+    background: url('../imgs/others/hero.png') center center no-repeat;
+    background-size: contain;
+}
+.deck_room .filter_li[data-filter='7'] {
+    background: url('../imgs/others/neutral.png') center center no-repeat;
+    background-size: contain;
+}
+
+.deck_room .all_cards, .deck_room .deck {
+    position: relative;
+    overflow: hidden;
+}
+
+.deck_room .item_card {
+    width: 33.33333333333333%;
+    float: left;
+    padding: 5px;
+    border-radius: 5px;
+}
+
+.deck_room .item_card:hover {
+
+}
+
+.deck_room .item_card img {
+    width: 100%;
+    cursor: pointer;
+}
+
+.deck_room .item_card:hover img {
+    box-shadow: 0 0 7px 3px #ba8b48;
+    background: #ba8b48;
+}
+
+.deck_room .leader_img {
+    width: 100%;
+}
+
+.deck_room .info_deck button {
+    width: 50%!important;
+    margin: 25px auto;
+}

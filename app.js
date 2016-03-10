@@ -119,7 +119,7 @@ function delete_pict (prop, name_table, id_card) {
 // Функция, которая отсылает пользователю массив данных:
 // фракции, спецкарты, юниты и лидеры его фракции
 /////////////////////////////////////////////////////////////
-function rows_cards (result, table, id) {
+function rows_cards (result, table, id, sort) {
     var deferred = Q.defer();
 
     switch (table) {
@@ -131,9 +131,10 @@ function rows_cards (result, table, id) {
         case "leaders":
         case "units":
         default:
-            query_to_db = "SELECT * FROM " + table + " WHERE id_fraction IN (?, 6)";
+            query_to_db = "SELECT * FROM " + table + " WHERE id_fraction IN (?, 6)" + sort;
             break;
     }
+    console.log(query_to_db);
     connection.query(query_to_db, [id], function(err, rows) {
         if (err) {
             console.log("88. Ошибка при выборе карт: " + err);
@@ -652,7 +653,7 @@ app.post('/give_me_cards', function(req, res) {
 /////////////////////////////////////////////////////////////
 //Получаем начальные данные из БД
 /////////////////////////////////////////////////////////////
-app.post('/give_me_fraction', function(req, res) {
+app.post('/initial', function(req, res) {
 
     var data_block      = {};
     var deck_user       = {};
@@ -726,8 +727,8 @@ app.post('/give_me_fraction', function(req, res) {
             then(function(result) { return check_user_deck(result) }).
             then(function(result) { return insert_user_deck(result) }).
             then(function(result) { return rows_cards(result, "fractions", deck_user.id_fraction) }).
-            then(function(result) { return rows_cards(result, "units", deck_user.id_fraction) }).
-            then(function(result) { return rows_cards(result, "leaders", deck_user.id_fraction) }).
+            then(function(result) { return rows_cards(result, "units", deck_user.id_fraction, " ORDER BY strength DESC") }).
+            then(function(result) { return rows_cards(result, "leaders", deck_user.id_fraction,"") }).
             then(function(result) { return rows_cards(result, "specials", deck_user.id_fraction) }).
             then(function(result) { res.send(result); }).
             catch(function(result) { res.send(result); }).
@@ -738,6 +739,15 @@ app.post('/give_me_fraction', function(req, res) {
     }
 });
 
+
+app.post('/give_me_fraction', function(req, res) {
+    var data_block      = {};
+    rows_cards(data_block, "units", req.body.fraction, " ORDER BY strength DESC").
+        then(function(result) { return rows_cards(result, "leaders", req.body.fraction,"") }).
+        then(function(result) { res.send(result); }).
+        catch(function(result) { res.send(result); }).
+        done();
+});
 
 
 http.createServer(app).listen(app.get('port'), function(){

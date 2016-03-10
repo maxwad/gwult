@@ -11,7 +11,7 @@
         <script src="/js/create_decks.js"></script>
     </head>
 
-    <body class="deck">
+    <body class="deck_room">
         <nav class="top_nav">
             <ul>
                 <li class="home_page"><a href="/" title=""><span>Главная</span></a></li>
@@ -28,24 +28,26 @@
                 <div class="desc_fraction"></div>
             </div>
             <section class="available_card deck_col">
-                <h3>Доступные карты выбранной фракции:</h3>
+                <h3>Карты коллекции:</h3>
                 <div class="filter_left">
                     <ul>
-                        <li class="filter_li selected" data-filter="1">1</li>
-                        <li class="filter_li" data-filter="2">2</li>
-                        <li class="filter_li" data-filter="3">3</li>
-                        <li class="filter_li" data-filter="4">4</li>
-                        <li class="filter_li" data-filter="5">5</li>
-                        <li class="filter_li" data-filter="6">6</li>
+                        <li class="filter_li selected" data-filter="1" title="Все карты"></li>
+                        <li class="filter_li" data-filter="2" title="Рукопашные"></li>
+                        <li class="filter_li" data-filter="3" title="Дальнобойные"></li>
+                        <li class="filter_li" data-filter="4" title="Осадные"></li>
+                        <li class="filter_li" data-filter="5" title="Специальные"></li>
+                        <li class="filter_li" data-filter="6" title="Герои"></li>
+                        <li class="filter_li" data-filter="7" title="Нейтральные"></li>
                     </ul>
                 </div>
                 <div class="all_cards" id="all_cards"></div>
             </section>
             <section class="info_deck deck_col">
-                <h5>Лидер</h5>
+                <h3>Лидер</h3>
                 <div class="leader_block">
-                    <img class="leader" src="" title="" alt="">
+                    <img class="leader" src="" title="" alt="Лидер не назначен">
                 </div>
+                <button class="change_leader">Назначить лидера</button>
                 <div class="info">
                     <div>Карт всего:</div>
                     <div class="numb_of_cards"></div>
@@ -57,7 +59,6 @@
                     <div class="numb_of_heroes"></div>
                     <div>Сила колоды:</div>
                     <div class="strength_deck"></div>
-                    <button class="change_leader">Поменять лидера</button>
                     <button class="clean_deck">Удалить все карты</button>
                     <button class="save_deck">Сохранить изменения</button>
                 </div>
@@ -66,12 +67,13 @@
                 <h3>Карты в вашей колоде:</h3>
                 <div class="filter_right">
                     <ul>
-                        <li class="filter_li selected" data-filter="1">1</li>
-                        <li class="filter_li" data-filter="2">2</li>
-                        <li class="filter_li" data-filter="3">3</li>
-                        <li class="filter_li" data-filter="4">4</li>
-                        <li class="filter_li" data-filter="5">5</li>
-                        <li class="filter_li" data-filter="6">6</li>
+                        <li class="filter_li selected" data-filter="1" title="Все карты"></li>
+                        <li class="filter_li" data-filter="2" title="Рукопашные"></li>
+                        <li class="filter_li" data-filter="3" title="Дальнобойные"></li>
+                        <li class="filter_li" data-filter="4" title="Осадные"></li>
+                        <li class="filter_li" data-filter="5" title="Специальные"></li>
+                        <li class="filter_li" data-filter="6" title="Герои"></li>
+                        <li class="filter_li" data-filter="7" title="Нейтральные"></li>
                     </ul>
                 </div>
                 <div class="deck" id="deck"></div>
@@ -104,7 +106,7 @@
         <div class="card_view">
             <img class="pict_unit" src="" title="" alt="">
             <div class="desc_unit"></div>
-            <button class="close_unit">Закрыть</button>
+            <!-- текст <button class="close_unit">Закрыть</button>-->
         </div>
 
     </body>

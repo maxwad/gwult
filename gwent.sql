@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Хост: localhost
--- Время создания: Фев 26 2016 г., 13:40
+-- Время создания: Мар 16 2016 г., 13:30
 -- Версия сервера: 5.5.44-log
 -- Версия PHP: 5.4.41
 
@@ -63,7 +63,7 @@ INSERT INTO `abilities` (`id`, `name`, `func`, `pict`, `description`) VALUES
 CREATE TABLE IF NOT EXISTS `card_decks` (
   `id_user` int(11) NOT NULL,
   `id_fraction` int(11) DEFAULT NULL,
-  `decks` text,
+  `units` text,
   `specials` text,
   `leader` int(11) DEFAULT NULL
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
@@ -72,8 +72,8 @@ CREATE TABLE IF NOT EXISTS `card_decks` (
 -- Дамп данных таблицы `card_decks`
 --
 
-INSERT INTO `card_decks` (`id_user`, `id_fraction`, `decks`, `specials`, `leader`) VALUES
-(10, NULL, NULL, NULL, NULL);
+INSERT INTO `card_decks` (`id_user`, `id_fraction`, `units`, `specials`, `leader`) VALUES
+(10, 4, '2,3,68,42,81,82,83,80,38,40,41,37,73,74,75,76,35,36,69,70,71,72,57,58,79,66,43,60', '2,1,6,5,7,4,3', 6);
 
 -- --------------------------------------------------------
 
@@ -188,9 +188,7 @@ CREATE TABLE IF NOT EXISTS `sessions` (
 --
 
 INSERT INTO `sessions` (`session_id`, `expires`, `data`) VALUES
-('LjDp9QG8IIZUKOKQG0p2whiTUKYgkysl', 1457082010, '{"cookie":{"originalMaxAge":600000000,"expires":"2016-03-04T09:00:10.137Z","httpOnly":true,"path":"/"},"user":"www"}'),
-('XJCjrIKiMWy0WKj4irRqWHqi3_GUtdiJ', 1456676629, '{"cookie":{"originalMaxAge":599999992,"expires":"2016-02-28T16:23:48.959Z","httpOnly":true,"path":"/"},"user":"www"}'),
-('wwMteHh77u0p9LHCmQFa0eSh5zl4AlZF', 1456728779, '{"cookie":{"originalMaxAge":599999999,"expires":"2016-02-29T06:52:58.918Z","httpOnly":true,"path":"/"}}');
+('lJqWvsFyD4EtEv0m6KgBNa3qZBBPz8b-', 1458716480, '{"cookie":{"originalMaxAge":600000000,"expires":"2016-03-23T07:01:20.465Z","httpOnly":true,"path":"/"}}');
 
 -- --------------------------------------------------------
 
@@ -337,14 +335,13 @@ CREATE TABLE IF NOT EXISTS `users` (
   `user_name` varchar(40) NOT NULL,
   `user_pass` varchar(100) NOT NULL,
   `battles` varchar(100) DEFAULT NULL
-) ENGINE=MyISAM AUTO_INCREMENT=12 DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM AUTO_INCREMENT=13 DEFAULT CHARSET=utf8;
 
 --
 -- Дамп данных таблицы `users`
 --
 
 INSERT INTO `users` (`id`, `user_name`, `user_pass`, `battles`) VALUES
-(9, 'jenek04', '$2a$10$LNPVo8mGzPnjbqtGil07YeP8WeBkI9xyq1h3KCei.46KQ7Z.JlWmS', NULL),
 (10, 'www', '$2a$10$ZNdQhpRUyeVEWmyjuGy.VON7OuSFIKQCTqWl2gk64QmLKRFCutnKG', NULL);
 
 --
@@ -457,7 +454,7 @@ ALTER TABLE `units`
 -- AUTO_INCREMENT для таблицы `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=12;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=13;
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;

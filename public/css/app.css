@@ -91,6 +91,10 @@ button:hover {
     background: #FFD550;
 }
 
+input[type=text], input[type=password], textarea {
+    cursor: text!important;
+}
+
 #message_block {
     position: fixed;
     top: 39px;
@@ -770,10 +774,6 @@ button:hover {
     border-radius: 5px;
 }
 
-.deck_room .item_card:hover {
-
-}
-
 .deck_room .item_card img {
     width: 100%;
     cursor: pointer;
@@ -786,9 +786,74 @@ button:hover {
 
 .deck_room .leader_img {
     width: 100%;
+    cursor: pointer;
 }
 
 .deck_room .info_deck button {
     width: 50%!important;
     margin: 25px auto;
+}
+
+.deck_room .not_visible {
+    display: none;
+}
+
+.deck_room .item_leader:hover img {
+    box-shadow: 0 0 7px 3px #ba8b48;
+    background: #ba8b48;
+    cursor: pointer;
+}
+
+.deck_room .leader_choice, .deck_room .card_view {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, .95);
+}
+
+.deck_room .leaders_block {
+    display: flex;
+    margin: 100px auto 0 auto;
+    width: 100%;
+    min-width: 500px;
+    max-width: 1200px;
+}
+
+.deck_room .item_leader {
+    flex: 1;
+    padding: 25px;
+}
+
+.deck_room .item_leader img{
+    width: 100%;
+}
+
+.deck_room .leader_choice p, .deck_room .desc_unit {
+    text-align: center;
+    color:  #ba8b48;
+    margin: 30px auto;
+    height: 50px;
+    font-size: 24px;
+    width: 100%;
+    min-width: 500px;
+    max-width: 1200px;
+    background: #000000;
+    padding: 10px;
+}
+
+.deck_room .pict_unit {
+    display: block;
+    width: auto;
+    margin: 100px auto 0 auto;
+}
+
+.deck_room .desc_unit {
+    width: 50%;
+}
+
+.deck_room .close_unit {
+    margin: 40px auto;
+    width: 200px;
 }

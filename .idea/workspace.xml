@@ -22,44 +22,52 @@
     <favorites_list name="gwult" />
   </component>
   <component name="FileEditorManager">
-    <leaf>
-      <file leaf-file-name="create_decks.js" pinned="false" current="true" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/public/js/create_decks.js">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="99" column="31" selection-start="3246" selection-end="3246" vertical-scroll-proportion="-1.7535613" vertical-offset="3112" max-vertical-offset="6669">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="decks_room.html" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/public/decks_room.html">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="49" column="55" selection-start="2341" selection-end="2341" vertical-scroll-proportion="-9.5" vertical-offset="684" max-vertical-offset="2242">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="app.js" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app.js">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="745" column="86" selection-start="28591" selection-end="28591" vertical-scroll-proportion="0.0" vertical-offset="13572" max-vertical-offset="14440">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="app.css" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/public/css/app.css">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="789" column="0" selection-start="13044" selection-end="13044" vertical-scroll-proportion="0.0" vertical-offset="14313" max-vertical-offset="15181">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-    </leaf>
+    <splitter split-orientation="horizontal" split-proportion="0.5263484">
+      <split-first>
+        <leaf>
+          <file leaf-file-name="create_decks.js" pinned="false" current="true" current-in-tab="true">
+            <entry file="file://$PROJECT_DIR$/public/js/create_decks.js">
+              <provider selected="true" editor-type-id="text-editor">
+                <state line="425" column="9" selection-start="14926" selection-end="14926" vertical-scroll-proportion="0.8064516" vertical-offset="7525" max-vertical-offset="11571">
+                  <folding />
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file leaf-file-name="app.js" pinned="false" current="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/app.js">
+              <provider selected="true" editor-type-id="text-editor">
+                <state line="778" column="24" selection-start="29804" selection-end="29804" vertical-scroll-proportion="-76.68" vertical-offset="12865" max-vertical-offset="15580">
+                  <folding />
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file leaf-file-name="app.css" pinned="false" current="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/public/css/app.css">
+              <provider selected="true" editor-type-id="text-editor">
+                <state line="858" column="1" selection-start="14265" selection-end="14265" vertical-scroll-proportion="0.0" vertical-offset="16302" max-vertical-offset="16416">
+                  <folding />
+                </state>
+              </provider>
+            </entry>
+          </file>
+        </leaf>
+      </split-first>
+      <split-second>
+        <leaf>
+          <file leaf-file-name="decks_room.html" pinned="false" current="false" current-in-tab="true">
+            <entry file="file://$PROJECT_DIR$/public/decks_room.html">
+              <provider selected="true" editor-type-id="text-editor">
+                <state line="82" column="33" selection-start="4016" selection-end="4029" vertical-scroll-proportion="0.49779737" vertical-offset="1485" max-vertical-offset="2166">
+                  <folding />
+                </state>
+              </provider>
+            </entry>
+          </file>
+        </leaf>
+      </split-second>
+    </splitter>
   </component>
   <component name="FindManager">
     <FindUsagesManager>
@@ -81,19 +89,18 @@
         <option value="$PROJECT_DIR$/public/card.html" />
         <option value="$PROJECT_DIR$/public/my_room.html" />
         <option value="$PROJECT_DIR$/public/js/create_cards.js" />
+        <option value="$PROJECT_DIR$/public/decks_room.html" />
+        <option value="$PROJECT_DIR$/public/css/app.css" />
         <option value="$PROJECT_DIR$/app.js" />
         <option value="$PROJECT_DIR$/public/js/create_decks.js" />
-        <option value="$PROJECT_DIR$/public/css/app.css" />
-        <option value="$PROJECT_DIR$/public/decks_room.html" />
       </list>
     </option>
   </component>
   <component name="PhpWorkspaceProjectConfiguration" backward_compatibility_performed="true" />
   <component name="ProjectFrameBounds">
-    <option name="x" value="-9" />
-    <option name="y" value="-9" />
-    <option name="width" value="1938" />
-    <option name="height" value="1064" />
+    <option name="x" value="-8" />
+    <option name="width" value="1936" />
+    <option name="height" value="1066" />
   </component>
   <component name="ProjectInspectionProfilesVisibleTreeState">
     <entry key="Project Default">
@@ -137,6 +144,7 @@
       <sortByType ProjectPane="true" />
     </navigator>
     <panes>
+      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <PATH>
@@ -239,7 +247,6 @@
           </PATH>
         </subPane>
       </pane>
-      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -264,17 +271,17 @@
     </key>
   </component>
   <component name="RunManager" selected="Node.js.app.js">
-    <configuration default="false" name="test.js" type="NodeJSConfigurationType" factoryName="Node.js" temporary="true" path-to-node="C:/Program Files/nodejs/node" path-to-js-file="test.js" working-dir="$PROJECT_DIR$">
-      <browser start="false" url="" with-js-debugger="false" />
-      <RunnerSettings RunnerId="NodeJS.run" />
-      <ConfigurationWrapper RunnerId="NodeJS.run" />
-      <method />
-    </configuration>
     <configuration default="false" name="app.js" type="NodeJSConfigurationType" factoryName="Node.js" singleton="true" temporary="true" path-to-node="C:/Program Files/nodejs/node" path-to-js-file="app.js" working-dir="$PROJECT_DIR$">
       <browser start="false" url="" with-js-debugger="false" />
       <RunnerSettings RunnerId="NodeJS.debug" />
       <RunnerSettings RunnerId="NodeJS.run" />
       <ConfigurationWrapper RunnerId="NodeJS.debug" />
+      <ConfigurationWrapper RunnerId="NodeJS.run" />
+      <method />
+    </configuration>
+    <configuration default="false" name="test.js" type="NodeJSConfigurationType" factoryName="Node.js" temporary="true" path-to-node="C:/Program Files/nodejs/node" path-to-js-file="test.js" working-dir="$PROJECT_DIR$">
+      <browser start="false" url="" with-js-debugger="false" />
+      <RunnerSettings RunnerId="NodeJS.run" />
       <ConfigurationWrapper RunnerId="NodeJS.run" />
       <method />
     </configuration>
@@ -296,13 +303,12 @@
       <method />
     </configuration>
     <list size="2">
-      <item index="0" class="java.lang.String" itemvalue="Node.js.test.js" />
-      <item index="1" class="java.lang.String" itemvalue="Node.js.app.js" />
+      <item index="0" class="java.lang.String" itemvalue="Node.js.app.js" />
+      <item index="1" class="java.lang.String" itemvalue="Node.js.test.js" />
     </list>
     <recent_temporary>
-      <list size="2">
+      <list size="1">
         <item index="0" class="java.lang.String" itemvalue="Node.js.app.js" />
-        <item index="1" class="java.lang.String" itemvalue="Node.js.test.js" />
       </list>
     </recent_temporary>
   </component>
@@ -336,7 +342,7 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="-9" y="-9" width="1938" height="1064" extended-state="6" />
+    <frame x="-8" y="0" width="1936" height="1066" extended-state="0" />
     <editor active="true" />
     <layout>
       <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
@@ -344,11 +350,11 @@
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32876712" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.24967907" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.12646745" sideWeight="0.81473213" order="0" side_tool="false" content_ui="combo" x="692" y="193" width="216" height="483" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.14102565" sideWeight="0.8184855" order="0" side_tool="false" content_ui="combo" x="692" y="193" width="216" height="483" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.18638393" sideWeight="0.5" order="8" side_tool="true" content_ui="tabs" x="0" y="275" width="1366" height="188" />
-      <window_info id="Run" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.18526785" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.18151447" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
@@ -393,11 +399,6 @@
         <state line="61" column="27" selection-start="1636" selection-end="1636" vertical-scroll-proportion="0.33256352" vertical-offset="1015" max-vertical-offset="4674" />
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/public/js/my_room.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="130" column="41" selection-start="5160" selection-end="5197" vertical-scroll-proportion="0.064295486" vertical-offset="2423" max-vertical-offset="3154" />
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/template/layout/page.ejs">
       <provider selected="true" editor-type-id="text-editor">
         <state line="16" column="22" selection-start="581" selection-end="581" vertical-scroll-proportion="-11.692307" vertical-offset="0" max-vertical-offset="646" />
@@ -435,33 +436,38 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/public/js/create_cards.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="40" column="0" selection-start="434" selection-end="1272" vertical-scroll-proportion="-1.8211731" vertical-offset="2071" max-vertical-offset="7258" />
+        <state line="181" column="53" selection-start="6668" selection-end="6717" vertical-scroll-proportion="0.51424503" vertical-offset="3173" max-vertical-offset="7315" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/public/css/app.css">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="858" column="1" selection-start="14265" selection-end="14265" vertical-scroll-proportion="0.0" vertical-offset="16302" max-vertical-offset="16416">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/public/js/my_room.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="146" column="39" selection-start="5772" selection-end="5849" vertical-scroll-proportion="0.0" vertical-offset="2519" max-vertical-offset="3268" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/public/decks_room.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="49" column="55" selection-start="2341" selection-end="2341" vertical-scroll-proportion="-9.5" vertical-offset="684" max-vertical-offset="2242">
+        <state line="82" column="33" selection-start="4016" selection-end="4029" vertical-scroll-proportion="0.49779737" vertical-offset="1485" max-vertical-offset="2166">
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/app.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="745" column="86" selection-start="28591" selection-end="28591" vertical-scroll-proportion="0.0" vertical-offset="13780" max-vertical-offset="14877">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/public/css/app.css">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="789" column="0" selection-start="13044" selection-end="13044" vertical-scroll-proportion="0.0" vertical-offset="14480" max-vertical-offset="15181">
+        <state line="778" column="24" selection-start="29804" selection-end="29804" vertical-scroll-proportion="-76.68" vertical-offset="12865" max-vertical-offset="15580">
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/public/js/create_decks.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="99" column="31" selection-start="3246" selection-end="3246" vertical-scroll-proportion="-1.7535613" vertical-offset="3112" max-vertical-offset="6669">
+        <state line="425" column="9" selection-start="14926" selection-end="14926" vertical-scroll-proportion="0.8064516" vertical-offset="7525" max-vertical-offset="11571">
           <folding />
         </state>
       </provider>

@@ -125,6 +125,7 @@ function rows_cards (result, table, id, sort) {
     switch (table) {
         case "specials":
         case "fractions":
+        case "abilities":
             query_to_db = "SELECT * FROM " + table;
             break;
 
@@ -712,6 +713,11 @@ app.post('/initial', function(req, res) {
                     data_block.user_error = true;
                     deferred.reject(data_block);
                 } else {
+                    deck_user.id_fraction = -1;
+                    deck_user.specials = null;
+                    deck_user.units = null;
+                    deck_user.leader = '';
+                    data_block.deck_user = deck_user;
                     deferred.resolve(data_block);
                 }
             });
@@ -726,10 +732,11 @@ app.post('/initial', function(req, res) {
         get_user_id().
             then(function(result) { return check_user_deck(result) }).
             then(function(result) { return insert_user_deck(result) }).
-            then(function(result) { return rows_cards(result, "fractions", deck_user.id_fraction) }).
+            then(function(result) { return rows_cards(result, "fractions") }).
+            then(function(result) { return rows_cards(result, "abilities")}).
             then(function(result) { return rows_cards(result, "units", deck_user.id_fraction, " ORDER BY strength DESC") }).
             then(function(result) { return rows_cards(result, "leaders", deck_user.id_fraction,"") }).
-            then(function(result) { return rows_cards(result, "specials", deck_user.id_fraction) }).
+            then(function(result) { return rows_cards(result, "specials") }).
             then(function(result) { res.send(result); }).
             catch(function(result) { res.send(result); }).
             done();
@@ -740,6 +747,9 @@ app.post('/initial', function(req, res) {
 });
 
 
+/////////////////////////////////////////////////////////////
+// Обработка запроса на изменение текущей фракции
+/////////////////////////////////////////////////////////////
 app.post('/give_me_fraction', function(req, res) {
     var data_block      = {};
     rows_cards(data_block, "units", req.body.fraction, " ORDER BY strength DESC").
@@ -747,6 +757,36 @@ app.post('/give_me_fraction', function(req, res) {
         then(function(result) { res.send(result); }).
         catch(function(result) { res.send(result); }).
         done();
+});
+
+
+/////////////////////////////////////////////////////////////
+// Обновление колоды пользователя
+/////////////////////////////////////////////////////////////
+app.post('/update_deck', function(req, res) {
+    query_to_db = "UPDATE card_decks SET id_fraction=?, units=?, specials=?, leader=? WHERE id_user=?";
+    var data_obj = [
+        req.body.id_fraction,
+        req.body.units,
+        req.body.specials,
+        req.body.leader,
+        req.body.id_user
+    ];
+    console.log(req.body.id_fraction,
+        req.body.units,
+        req.body.specials,
+        req.body.leader,
+        req.body.id_user);
+    connection.query(query_to_db, data_obj, function(err) {
+        if (err) {
+            console.log("87. Ошибка при обновлении колоды: "+err);
+            res.send({update_error:true});
+        } else {
+            console.log('88. Колода успешно обновлена');
+            res.send({update_error:false});
+        }
+    });
+
 });
 
 

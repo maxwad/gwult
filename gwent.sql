@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Хост: localhost
--- Время создания: Мар 16 2016 г., 13:30
+-- Время создания: Мар 18 2016 г., 12:37
 -- Версия сервера: 5.5.44-log
 -- Версия PHP: 5.4.41
 
@@ -73,7 +73,7 @@ CREATE TABLE IF NOT EXISTS `card_decks` (
 --
 
 INSERT INTO `card_decks` (`id_user`, `id_fraction`, `units`, `specials`, `leader`) VALUES
-(10, 4, '2,3,68,42,81,82,83,80,38,40,41,37,73,74,75,76,35,36,69,70,71,72,57,58,79,66,43,60', '2,1,6,5,7,4,3', 6);
+(10, 4, '2,3,68,42,81,82,83,80,38,40,41,37,73,74,75,76,35,36,69,70,71,72,57,58,79,66,43,60,61,34', '2,1,6,5,7,4', 8);
 
 -- --------------------------------------------------------
 
@@ -188,6 +188,8 @@ CREATE TABLE IF NOT EXISTS `sessions` (
 --
 
 INSERT INTO `sessions` (`session_id`, `expires`, `data`) VALUES
+('A0cgSnOlmWTgTQn10ljnSTU2aJv0hgXW', 1458727291, '{"cookie":{"originalMaxAge":599999989,"expires":"2016-03-23T10:01:30.886Z","httpOnly":true,"path":"/"}}'),
+('SRZDAdsvdBRe-og-9sHpfRJlgmyvJ-IJ', 1458893750, '{"cookie":{"originalMaxAge":599999998,"expires":"2016-03-25T08:15:50.097Z","httpOnly":true,"path":"/"},"user":"www"}'),
 ('lJqWvsFyD4EtEv0m6KgBNa3qZBBPz8b-', 1458716480, '{"cookie":{"originalMaxAge":600000000,"expires":"2016-03-23T07:01:20.465Z","httpOnly":true,"path":"/"}}');
 
 -- --------------------------------------------------------

@@ -150,6 +150,35 @@ function rows_cards (result, table, id, sort) {
 
     return deferred.promise;
 }
+
+
+/////////////////////////////////////////////////////////////
+// Функция, которая отсылает данные для меню и списки созданных карт
+/////////////////////////////////////////////////////////////
+function request_data(data_block, flag, obj, data_prop, answer_prop){
+    var deferred = Q.defer();
+    if(flag == 0) {
+        query_to_db = "SELECT * FROM ?? ORDER BY id";
+    } else {
+        query_to_db = "SELECT ?? FROM ?? ORDER BY id";
+    }
+    connection.query(query_to_db, obj, function(err, rows) {
+        if (err || rows.length == 0) {
+            console.log("84. Ошибка при выборке данных либо записи отсутствуют: " + err);
+            data_block.data_answer = false;
+            deferred.reject(data_block);
+        } else {
+            console.log('66. Данные выбраны успешно');
+            var index = "data_" + data_prop;
+            data_block[index] = rows;
+            data_block[answer_prop] = true;
+            deferred.resolve(data_block);
+        }
+    });
+    return deferred.promise;
+}
+
+
 /////////////////////////////////////////////////////////////
 // Заглушка для главной страницы
 /////////////////////////////////////////////////////////////
@@ -207,7 +236,7 @@ app.post('/reg', function(req, res) {
 
     var hash = bcrypt.hashSync(req.body.pass);
     query_to_db = "INSERT INTO users (user_name,user_pass) VALUES( ?, ?)";
-    console.log("6. "+query_to_db);
+    console.log("6. " + query_to_db);
     connection.query(query_to_db, [req.body.name, hash], function(err) {
         if (err) {
             res.send({answer:false});
@@ -224,7 +253,7 @@ app.post('/reg', function(req, res) {
 /////////////////////////////////////////////////////////////
 app.post('/login', function(req, res) {
     query_to_db = "SELECT user_pass FROM users WHERE user_name=?";
-    console.log("7. "+query_to_db);
+    console.log("7. " + query_to_db);
     connection.query(query_to_db, [req.body.name], function(err, rows) {
         if (err) {
             console.log("8. Непредвиденная ошибка авторизации");
@@ -255,14 +284,14 @@ app.post('/login', function(req, res) {
 /////////////////////////////////////////////////////////////
 app.post('/check_name', function(req, res) {
     query_to_db = "SELECT * FROM users WHERE user_name=?";
-    console.log("14. "+query_to_db);
+    console.log("14. " + query_to_db);
     connection.query(query_to_db, [req.body.name], function(err, rows) {
         if (err) {
-            console.log("15. Ошибка при проверке наличия пользователя "+err);
+            console.log("15. Ошибка при проверке наличия пользователя " + err);
             res.send({answer:false});
         } else {
             if (rows.length == 0) {
-                console.log('16. не занято '+rows);
+                console.log('16. не занято ' + rows);
                 res.send({answer:true});
             } else {
                 console.log('17. занято');
@@ -280,27 +309,25 @@ app.post('/check_name', function(req, res) {
 /////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////
 
-
-
 /////////////////////////////////////////////////////////////
 // Создание комнаты
 /////////////////////////////////////////////////////////////
 app.post('/take_pass', function(req, res) {
     query_to_db = "SELECT * FROM list_of_battles WHERE pl1=?";
-    console.log("25. "+query_to_db);
+    console.log("25. " + query_to_db);
     connection.query(query_to_db, [req.session.user], function(err, rows) {
         if (err) {
-            console.log("26. Ошибка при обращении к таблице игр: "+err);
+            console.log("26. Ошибка при обращении к таблице игр: " + err);
             res.send({answer:false});
         } else {
             // Проверка на число созданных комнат одного пользователя
             if (rows.length < 3) {
                 console.log('27. Допустимо создать ещё комнату');
                 query_to_db = "INSERT INTO list_of_battles (pl1, pass_battle, date_battle) VALUES( ?, ?, ?)";
-                console.log("28. "+query_to_db);
+                console.log("28. " + query_to_db);
                 connection.query(query_to_db, [req.session.user, req.body.pass, req.body.date], function(err, rows) {
                     if (err) {
-                        console.log("29. Ошибка при создании коматы: "+err);
+                        console.log("29. Ошибка при создании коматы: " + err);
                         res.send({answer:false});
                     } else {
                         res.send({answer:true});
@@ -321,13 +348,13 @@ app.post('/take_pass', function(req, res) {
 /////////////////////////////////////////////////////////////
 app.post('/give_me_battle', function(req, res) {
     query_to_db = "SELECT * FROM list_of_battles WHERE pl1=?";
-    console.log("20. "+query_to_db);
+    console.log("20. " + query_to_db);
     connection.query(query_to_db, [req.session.user], function(err, rows) {
         if (err ||(rows.length == 0)) {
-            console.log("21. Ошибка при выводе информации о комате: "+err);
+            console.log("21. Ошибка при выводе информации о комате: " + err);
             res.send({answer:false});
         } else {
-            console.log("22. "+rows[0].id_battle+"  "+rows[0].pass_battle+"  "+rows[0].date_battle);
+            console.log("22. " + rows[0].id_battle + "  " + rows[0].pass_battle + "  " + rows[0].date_battle);
             // Проверка срока давности битвы.
             // Удаление комнат, которым больше суток
             var check_date = new Date().getTime() - rows[0].date_battle;
@@ -335,7 +362,7 @@ app.post('/give_me_battle', function(req, res) {
                 query_to_db = "DELETE FROM list_of_battles WHERE pl1=?";
                 connection.query(query_to_db, [req.session.user], function(err) {
                     if (err) {
-                        console.log("23. Ошибка при попытке удаления устаревших комнат: "+err);
+                        console.log("23. Ошибка при попытке удаления устаревших комнат: " + err);
                         res.send({answer:false});
                     } else {
                         console.log("24. Устаревшие комнаты удалены");
@@ -355,10 +382,10 @@ app.post('/give_me_battle', function(req, res) {
 /////////////////////////////////////////////////////////////
 app.post('/del_room', function(req, res) {
     query_to_db = "DELETE FROM list_of_battles WHERE pl1=? AND id_battle=?";
-    console.log("31. "+query_to_db);
+    console.log("31. " + query_to_db);
     connection.query(query_to_db, [req.session.user, req.body.numb], function(err) {
         if (err) {
-            console.log("31. Ошибка при удалении комнаты: "+err);
+            console.log("31. Ошибка при удалении комнаты: " + err);
             res.send({answer:false});
         } else {
             console.log('32. Комната успешно удалена');
@@ -374,10 +401,10 @@ app.post('/del_room', function(req, res) {
 /////////////////////////////////////////////////////////////
 app.post('/join_game', function(req, res) {
     query_to_db = "SELECT * FROM list_of_battles WHERE id_battle=?";
-    console.log("33. "+query_to_db);
+    console.log("33. " + query_to_db);
     connection.query(query_to_db, [req.body.numb], function(err, rows, fields) {
         if (err) {
-            console.log("34. Ошибка при поиске игры: "+err);
+            console.log("34. Ошибка при поиске игры: " + err);
             res.send({answer:"1"});
         } else {
             if (rows.length == 1) {
@@ -394,10 +421,10 @@ app.post('/join_game', function(req, res) {
                         } else {                                         //    Заполняем таблицу
                             var alias_battle = row_battle.pl1 + "_" + req.session.user;
                             query_to_db = "UPDATE list_of_battles SET pl2=?, start_battle='1', alias_battle=? WHERE id_battle=?";
-                            console.log("36. "+query_to_db);
+                            console.log("36. " + query_to_db);
                             connection.query(query_to_db, [req.session.user, alias_battle, req.body.numb], function(err) {
                                 if (err) {
-                                    console.log("37. Ошибка при заполнении данных в таблице list_of_battles: "+err);
+                                    console.log("37. Ошибка при заполнении данных в таблице list_of_battles: " + err);
                                     res.send({answer:"6"});
                                 } else {
                                     res.send({answer:"7"});
@@ -427,14 +454,14 @@ app.post('/join_game', function(req, res) {
 ////////////////////////////////////////////////////////////////
 app.post('/take_form', multer({ storage: getStorage() }).any(), function(req, res) {
 
-    query_to_db = '';
-    var query_var = [];
+    query_to_db         = '';
+    var query_var       = [];
+    var name_fields     = [];
+    var value_fields    = [];
+    var name_table      = req.body.name_form;
+    var type_query      = req.body.type_query;
+    var id_card         = req.body.id_card;
     var query_action;
-    var name_fields = [];
-    var value_fields = [];
-    var name_table = req.body.name_form;
-    var type_query = req.body.type_query;
-    var id_card = req.body.id_card;
 
     // Свойства объекта удаляются для того, чтобы они не участвовали
     // в циклической обработке объекта ниже
@@ -476,13 +503,13 @@ app.post('/take_form', multer({ storage: getStorage() }).any(), function(req, re
                 value_fields.push("?");
                 query_var.push(req.body[prop]);
             }
-            query_to_db = query_action + name_table + " (" + name_fields +") " + "VALUES (" + value_fields + ")";
+            query_to_db = query_action + name_table + " (" + name_fields + ") " + "VALUES (" + value_fields + ")";
             break;
 
         case "edit":
             query_action = "UPDATE ";
             for (var prop in req.body) {
-                name_fields.push(prop+"=?");
+                name_fields.push(prop + "=?");
                 query_var.push(req.body[prop]);
             }
             query_to_db = query_action + name_table + " SET " + name_fields + " WHERE id=" + id_card;
@@ -499,7 +526,7 @@ app.post('/take_form', multer({ storage: getStorage() }).any(), function(req, re
             break;
     }
 
-    console.log("40. "+query_to_db);
+    console.log("40. " + query_to_db);
     connection.query(query_to_db, query_var, function(err) {
         if(err) {
             console.log("41. Ошибка при записи в БД: " + err);
@@ -518,89 +545,14 @@ app.post('/give_me_data', function(req, res) {
     query_to_db         = '';
     var data_block      = {};
     data_block.options_answer   = true;
-
-    query_to_db = "SELECT * FROM ?? ORDER BY id";
-    console.log("64. "+query_to_db);
-    connection.query(query_to_db, [req.body.id_tab], function(err, rows) {
-        if (err) {
-            console.log("65. Ошибка при выборе данных из БД: "+err);
-            data_block.data_answer = false;
-            res.send(data_block);
-        } else {
-            if(rows.length > 0) {
-                console.log('66. Данные выбраны успешно');
-                data_block.data_rows = rows;
-                data_block.data_answer = true;
-
-            } else {
-                console.log('67. В таблице отсутствуют записи');
-                data_block.data_answer = false;
-            }
-
-            // Если в запросе присутствует флаг опций, то выбираем нужные данные.
-            // Для уверенности, что ответ не будет отправлен до того, как все нужные данные
-            // в него попадут, очередная функция запускается в колбэке предыдущей и только
-            // в самой "внутренней" отправляется ответ
-            if (req.body.select == 1) {
-                query_to_db = "SELECT id, name FROM fractions ORDER BY id";
-                console.log("68. "+query_to_db);
-                connection.query(query_to_db, function(err, rows) {
-                    if (err) {
-                        console.log("69. Ошибка при выборе фракций: "+err);
-                        data_block.options_answer = false;
-                        res.send(data_block);
-                    } else {
-                        if(rows.length > 0) {
-                            console.log('70. Фракции выбраны успешно');
-                            data_block.data_fractions = rows;
-                        } else {
-                            console.log('71. Не найдено ни одной фракции');
-                            data_block.options_answer = false;
-                        }
-
-                        query_to_db = "SELECT id, name FROM classes ORDER BY id";
-                        console.log("72. "+query_to_db);
-                        connection.query(query_to_db, function(err, rows) {
-                            if (err) {
-                                console.log("73. Ошибка при выборе классов: "+err);
-                                data_block.options_answer = false;
-                                res.send(data_block);
-                            } else {
-                                if(rows.length > 0) {
-                                    console.log('74. Классы выбраны успешно');
-                                    data_block.data_classes = rows;
-                                } else {
-                                    console.log('75. Не найдено ни одного класса');
-                                    data_block.options_answer = false;
-                                }
-
-                                query_to_db = "SELECT id, name, description FROM abilities ORDER BY id";
-                                console.log("76. "+query_to_db);
-                                connection.query(query_to_db, function(err, rows) {
-                                    if (err) {
-                                        console.log("77. Ошибка при выборе способностей: "+err);
-                                        data_block.options_answer = false;
-                                        res.send(data_block);
-                                    } else {
-                                        if(rows.length > 0) {
-                                            console.log('78. Фракции выбраны успешно');
-                                            data_block.data_abilities = rows;
-                                        } else {
-                                            console.log('79. Не найдено ни одной фракции');
-                                            data_block.options_answer = false;
-                                        }
-                                        res.send(data_block);
-                                    }
-                                });
-                            }
-                        });
-                    }
-                });
-            } else {
-                res.send(data_block);
-            }
-        }
-    });
+    console.log(req.body.id_tab);
+    request_data(data_block, 0, [req.body.id_tab], 'rows', 'data_answer').
+        then(function(result) { return request_data(result, 1, [['id', 'name'], 'classes'], 'classes', 'options_answer')}).
+        then(function(result) { return request_data(result, 1, [['id', 'name'], 'fractions'], 'fractions', 'options_answer')}).
+        then(function(result) { return request_data(result, 1, [['id', 'name', 'description'], 'abilities'], 'abilities', 'options_answer')}).
+        then(function(result) { res.send(result); }).
+        catch(function(result) { res.send(result); }).
+        done();
 });
 
 
@@ -622,10 +574,10 @@ app.post('/give_me_cards', function(req, res) {
         query_var = [req.body.list_name , req.body.id_query];
         data_block.answer_type   = 2;
     }
-    console.log("80. "+query_to_db);
+    console.log("80. " + query_to_db);
     connection.query(query_to_db, query_var, function(err, rows) {
         if (err) {
-            console.log("81. Ошибка при выборе данных из БД: "+err);
+            console.log("81. Ошибка при выборе данных из БД: " + err);
             data_block.data_answer = false;
             res.send(data_block);
         } else {
@@ -713,11 +665,11 @@ app.post('/initial', function(req, res) {
                     data_block.user_error = true;
                     deferred.reject(data_block);
                 } else {
-                    deck_user.id_fraction = -1;
-                    deck_user.specials = null;
-                    deck_user.units = null;
-                    deck_user.leader = '';
-                    data_block.deck_user = deck_user;
+                    deck_user.id_fraction   = -1;
+                    deck_user.specials      = null;
+                    deck_user.units         = null;
+                    deck_user.leader        = '';
+                    data_block.deck_user    = deck_user;
                     deferred.resolve(data_block);
                 }
             });
@@ -772,21 +724,15 @@ app.post('/update_deck', function(req, res) {
         req.body.leader,
         req.body.id_user
     ];
-    console.log(req.body.id_fraction,
-        req.body.units,
-        req.body.specials,
-        req.body.leader,
-        req.body.id_user);
     connection.query(query_to_db, data_obj, function(err) {
         if (err) {
-            console.log("87. Ошибка при обновлении колоды: "+err);
+            console.log("87. Ошибка при обновлении колоды: " + err);
             res.send({update_error:true});
         } else {
             console.log('88. Колода успешно обновлена');
             res.send({update_error:false});
         }
     });
-
 });
 
 

@@ -138,6 +138,7 @@ $(document).ready(function () {
             method: "POST",
             data: data_options,
             success: function(response) {
+                console.log(response);
                 if(response.options_answer == true) {
                     //рез-ты запроса присваиваются глобальным переменным,
                     //т.к. эти данные будут использоваться в других обработчиках

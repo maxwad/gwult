@@ -11,6 +11,7 @@ var bcrypt         = require('bcrypt-nodejs');
 var fs             = require('fs');
 var multer         = require('multer');
 var Q              = require('q');
+var socketio       = require('socket.io');
 
 var query_to_db;
 var app = express();
@@ -67,11 +68,11 @@ function HelloUser(req) {
             console.log("1. Нет юзера в сессии");
             USER = false;
         } else {
-            if (req.session.user == false) {
+            if (req.session.username == false) {
                 console.log("2. Нет юзера в сессии");
                 USER = false;
             } else {
-                console.log("3. Есть юзер в сессии - " + req.session.user);
+                console.log("3. Есть юзер в сессии - " + req.session.username);
                 USER = req.session.user;
             }
         }
@@ -183,7 +184,7 @@ function request_data(data_block, flag, obj, data_prop, answer_prop){
 // Заглушка для главной страницы
 /////////////////////////////////////////////////////////////
 app.get('/', function(req, res, next) {
-    console.log("4. " + req.session.user);
+    console.log("4. " + req.session.username);
     res.render('index', {});
     next();
 });
@@ -215,7 +216,7 @@ app.post('/check_session', function(req, res) {
     if (answer != false) {
         req.session.touch();
     }
-    console.log("5. " + req.session.user);
+    console.log("5. " + req.session.username);
     res.send({answer:answer});
 });
 
@@ -237,12 +238,13 @@ app.post('/reg', function(req, res) {
     var hash = bcrypt.hashSync(req.body.pass);
     query_to_db = "INSERT INTO users (user_name,user_pass) VALUES( ?, ?)";
     console.log("6. " + query_to_db);
-    connection.query(query_to_db, [req.body.name, hash], function(err) {
+    connection.query(query_to_db, [req.body.name, hash], function(err, result) {
         if (err) {
             res.send({answer:false});
             req.session.user = false;
         } else {
-            req.session.user = req.body.name;
+            req.session.user = result.insertId;
+            req.session.username = req.body.name;
             res.send({answer:true});
         }
     });
@@ -252,7 +254,7 @@ app.post('/reg', function(req, res) {
 // Авторизация пользователя
 /////////////////////////////////////////////////////////////
 app.post('/login', function(req, res) {
-    query_to_db = "SELECT user_pass FROM users WHERE user_name=?";
+    query_to_db = "SELECT user_pass, id FROM users WHERE user_name=?";
     console.log("7. " + query_to_db);
     connection.query(query_to_db, [req.body.name], function(err, rows) {
         if (err) {
@@ -271,7 +273,8 @@ app.post('/login', function(req, res) {
                     res.send({answer:false});
                 } else {
                     console.log("13. Пароли совпадают");
-                    req.session.user = req.body.name;
+                    req.session.user = rows[0].id;
+                    req.session.username = req.body.name;
                     res.send({answer:true});
                 }
             }
@@ -614,7 +617,7 @@ app.post('/initial', function(req, res) {
     function get_user_id () {
         var deferred = Q.defer();
         query_to_db = "SELECT id FROM users WHERE user_name = ?";
-        connection.query(query_to_db, [req.session.user], function(err, rows) {
+        connection.query(query_to_db, [req.session.username], function(err, rows) {
             if (err || rows.length == 0) {
                 console.log("84. Ошибка при поиске юзера в БД: " + err);
                 data_block.user_error = true;
@@ -736,6 +739,158 @@ app.post('/update_deck', function(req, res) {
 });
 
 
-http.createServer(app).listen(app.get('port'), function(){
+
+/////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////
+// обработка игровой комнаты
+/////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////
+
+
+/////////////////////////////////////////////////////////////
+//
+/////////////////////////////////////////////////////////////
+var gwent = http.createServer(app);
+var io = socketio(gwent);
+
+
+// Функция формирует объект игрока
+function initial_player (player, rows, obj, socket, deck_player, data_player) {
+    var deferred = Q.defer();
+    var pl, bg, units, leader;
+    if(player == 1) {
+        pl = rows[0].pl1;
+        bg = true;
+    } else {
+        pl = rows[0].pl2;
+        bg = false;
+    }
+    units = data_player.units;
+    for (var index = 0; index < data_player.leaders.length; index++) {
+        if(data_player.leaders[index].id == deck_player.leader) {
+            leader = data_player.leaders[index];
+        }
+    }
+    delete data_player;
+    console.log(data_player);
+    console.log(units);
+    console.log(leader);
+    if (obj.players.length < 2) {
+        obj.players.push({
+            user_id : pl,
+            socket_id : socket.id,
+            beginners : bg,
+            deck : deck_player,
+            units: units,
+            leader: leader
+        });
+    }
+    obj.complete =  obj.players.length;
+    console.log("+++++++++++++");
+    console.log(obj.players);
+    console.log(obj.complete);
+    console.log(obj.listeners);
+    console.log("+++++++++++++");
+    deferred.resolve(obj);
+    return deferred.promise;
+}
+
+
+app.get('/battle/:id', function(req, res) {
+    res.render('battle');
+});
+
+var rooms = {};
+io.on('connection', function(socket) {
+
+    socket.on('user connect', function(user_data) {
+        var room = "room_" + user_data.user_room;
+        if(!rooms[room]) {
+            rooms[room] = {};
+            rooms[room].complete = 0;
+            rooms[room].players = [];
+            rooms[room].listeners = [];
+        }
+        if (rooms[room].complete != 2) {
+            var deck_player;
+            var data_player = {};
+
+
+            // Функция выбирает кданные из таблицы колод
+            function select_user_deck (result, user_data) {
+                var deferred = Q.defer();
+                query_to_db = "SELECT * FROM card_decks WHERE id_user = ?";
+                connection.query(query_to_db, [user_data.user_id], function(err, rows) {
+                    if (err || rows.length == 0) {
+                        console.log("90. Ошибка при поиске юзера в БД: " + err);
+                        result.data_error = true;
+                        deferred.reject(result);
+                    } else {
+                        deck_player = rows[0];
+                        deferred.resolve(result);
+                    }
+                });
+                return deferred.promise;
+            }
+
+
+            query_to_db = "SELECT * FROM list_of_battles WHERE id_battle =?";
+            connection.query(query_to_db, [user_data.user_room], function(err, rows) {
+                if (err) {
+                    console.log("89. Ошибка при обращении к таблице битв: " + err);
+                    rooms[room].data_error = true;
+                } else {
+                    rooms[room].data_error = false;
+                    var player;
+                    if(rows[0].pl1 !== null && rows[0].pl1 == user_data.user_id) {
+                        player = 1;
+                    } else {
+                        if(rows[0].pl2 !== null && rows[0].pl2 == user_data.user_id) {
+                            player = 2;
+                        } else {
+                            player = 0;
+                            rooms[room].listeners.push({ user_id : user_data.user_id, socket_id : socket.id });
+                            console.log("+++++++++++++");
+                            console.log(rooms[room].players);
+                            console.log(rooms[room].complete);
+                            console.log(rooms[room].listeners);
+                            console.log("+++++++++++++");
+                        }
+                    }
+                    if (player != 0) {
+                        select_user_deck(rooms[room], user_data).
+                            then(function(result) { return rows_cards(rooms[room], "abilities")}).
+                            then(function(result) { return rows_cards(rooms[room], "specials") }).
+                            then(function(result) { return rows_cards(data_player, "units", deck_player.id_fraction, " ORDER BY strength DESC") }).
+                            then(function(result) { return rows_cards(data_player, "leaders", deck_player.id_fraction,"") }).
+                            then(function(result) { return initial_player(player, rows, rooms[room], socket, deck_player, data_player) }).
+                            catch(function(result) { console.log(result); }).
+                            done();
+                    }
+                }
+            });
+        } else {
+            if (user_data.user_id != rooms[room].players[0].user_id && user_data.user_id != rooms[room].players[1].user_id){
+                rooms[room].listeners.push({ user_id : user_data.user_id, socket_id : socket.id });
+                console.log("+++++++++++++");
+                console.log(rooms[room].players);
+                console.log(rooms[room].complete);
+                console.log(rooms[room].listeners);
+                console.log("+++++++++++++");
+            }
+        }
+
+
+
+
+
+
+
+        socket.broadcast.emit('chat message', '');
+    });
+    console.log('connected', socket.id);
+});
+
+gwent.listen(app.get('port'), function(){
     console.log('Express server listening on port ' + app.get('port'));
 });

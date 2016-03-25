@@ -117,7 +117,7 @@ $(document).ready(function () {
                             notice(message, 2);
                             break;
                         case "7":
-                            var addr_room = "/" + join_number.val();
+                            var addr_room = "/battle/" + join_number.val();
                             window.location = addr_room;
                             break;
                     }
@@ -154,7 +154,7 @@ $(document).ready(function () {
     //Переход в игровую комнату (кто должен переадресовывать: клиент или сервер?)
     $("body").on('click', '.go_battle', function() {
 
-        var addr_room = "/" + $(this).parent().parent().find(".numb_room").text();
+        var addr_room = "/battle/" + $(this).parent().parent().find(".numb_room").text();
         window.location = addr_room;
     });
 

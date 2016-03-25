@@ -1,28 +1,26 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <title><%=blocks.title%></title>
-
+        <title>Сражение</title>
         <link rel="stylesheet" href="/css/app.css"/>
         <script src="/js/jquery.min.js"></script>
-        <script src="/js/check.js"></script>
+        <script src="/socket.io/socket.io.js"></script>
         <link href="http://fonts.googleapis.com/css?family=Roboto" rel="stylesheet" type="text/css">
     </head>
-    <body>
+    <body class="battle">
         <header>
             <nav class="top_nav">
                 <ul>
                     <li class="home_page"><a href="/" title=""><span>Главная</span></a></li>
-                    <li class="some_page"><a href="my_room.html"><span>Мой профиль</span></a></li>
-                    <li class="login_page"><a href="auth.html"><span>Войти</span></a></li>
+                    <li class="some_page"><a href="/my_room.html"><span>Мой профиль</span></a></li>
+                    <li class="login_page"><a href="/auth.html"><span>Войти</span></a></li>
                 </ul>
             </nav>
         </header>
         <section class="container">
             <h1 class="hello">Ну привет</h1>
         </section>
-        <footer>
-            <%-blocks.footer%>
-        </footer>
+        <script src="/js/battle.js"></script>
     </body>
 </html>
+

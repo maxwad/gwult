@@ -574,15 +574,12 @@ function refresh_cards () {
             notice(message, 2);
             return false;
         }
-        console.log(deck_specials);
         var data_block          = {};
         data_block.id_user      = id_user;
         data_block.leader       = deck_leader;
         data_block.id_fraction  = deck_fraction;
         data_block.units        = deck_units.join(',');
         data_block.specials     = deck_specials.join(',');
-        console.log(deck_specials);
-        console.log(data_block.specials);
         $.ajax({
             url: "update_deck",
             method: "POST",

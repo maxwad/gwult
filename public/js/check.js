@@ -1,8 +1,9 @@
+
 $(document).ready(function () {
 
     var hello = $('.hello');
     $.ajax({
-        url: "check_session",
+        url: "/check_session",
         method: "POST",
         data: "",
         success: function(response) {

@@ -194,6 +194,7 @@ app.get('/', function(req, res, next) {
 /////////////////////////////////////////////////////////////
 app.get('/logout', function(req, res, next) {
     req.session.user = false;
+    req.session.username = false;
     req.session.destroy(function(err) {
         if (err) {
             console.log("19. Сессия не закрыта");
@@ -212,12 +213,15 @@ app.get('/logout', function(req, res, next) {
 // Если да, то продлеваем срок жизни coockie
 /////////////////////////////////////////////////////////////
 app.post('/check_session', function(req, res) {
-    var answer = HelloUser(req);
-    if (answer != false) {
+    var user_id = HelloUser(req);
+    if (user_id != false) {
         req.session.touch();
     }
     console.log("5. " + req.session.username);
-    res.send({answer:answer});
+    res.send({
+        user_id: user_id,
+        username: req.session.username
+    });
 });
 
 
@@ -313,6 +317,26 @@ app.post('/check_name', function(req, res) {
 /////////////////////////////////////////////////////////////
 
 /////////////////////////////////////////////////////////////
+// Провекрка готовности колоды игрока
+/////////////////////////////////////////////////////////////
+app.post('/deck_status', function(req, res) {
+    query_to_db = "SELECT * FROM card_decks WHERE id_user=?";
+    connection.query(query_to_db, [req.session.user], function(err, rows) {
+        // Если ошибка, записи о пользователе нет или колода полностью не сформирована
+        if (err || rows.length == 0 || rows[0].leader === null) {
+            console.log("26. Ошибка при обращении к таблице колод: " + err);
+            res.send({answer:false});
+        } else {
+            // Колода существует и полностью сформирована
+            res.send({answer:true});
+        }
+    });
+
+});
+
+
+
+/////////////////////////////////////////////////////////////
 // Создание комнаты
 /////////////////////////////////////////////////////////////
 app.post('/take_pass', function(req, res) {
@@ -357,7 +381,6 @@ app.post('/give_me_battle', function(req, res) {
             console.log("21. Ошибка при выводе информации о комате: " + err);
             res.send({answer:false});
         } else {
-            console.log("22. " + rows[0].id_battle + "  " + rows[0].pass_battle + "  " + rows[0].date_battle);
             // Проверка срока давности битвы.
             // Удаление комнат, которым больше суток
             var check_date = new Date().getTime() - rows[0].date_battle;
@@ -405,7 +428,7 @@ app.post('/del_room', function(req, res) {
 app.post('/join_game', function(req, res) {
     query_to_db = "SELECT * FROM list_of_battles WHERE id_battle=?";
     console.log("33. " + query_to_db);
-    connection.query(query_to_db, [req.body.numb], function(err, rows, fields) {
+    connection.query(query_to_db, [req.body.numb], function(err, rows) {
         if (err) {
             console.log("34. Ошибка при поиске игры: " + err);
             res.send({answer:"1"});
@@ -742,153 +765,224 @@ app.post('/update_deck', function(req, res) {
 
 /////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////
-// обработка игровой комнаты
+// Обработка игровой комнаты
 /////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////
+var gwent   = http.createServer(app);
+var io      = socketio(gwent);
+var rooms   = {};
+var decks   = {};
+var history = {};
+
 
 
 /////////////////////////////////////////////////////////////
-//
+// Подключение к игровой комнате
 /////////////////////////////////////////////////////////////
-var gwent = http.createServer(app);
-var io = socketio(gwent);
-
-
-// Функция формирует объект игрока
-function initial_player (player, rows, obj, socket, deck_player, data_player) {
-    var deferred = Q.defer();
-    var pl, bg, units, leader;
-    if(player == 1) {
-        pl = rows[0].pl1;
-        bg = true;
-    } else {
-        pl = rows[0].pl2;
-        bg = false;
-    }
-    units = data_player.units;
-    for (var index = 0; index < data_player.leaders.length; index++) {
-        if(data_player.leaders[index].id == deck_player.leader) {
-            leader = data_player.leaders[index];
-        }
-    }
-    delete data_player;
-    console.log(data_player);
-    console.log(units);
-    console.log(leader);
-    if (obj.players.length < 2) {
-        obj.players.push({
-            user_id : pl,
-            socket_id : socket.id,
-            beginners : bg,
-            deck : deck_player,
-            units: units,
-            leader: leader
-        });
-    }
-    obj.complete =  obj.players.length;
-    console.log("+++++++++++++");
-    console.log(obj.players);
-    console.log(obj.complete);
-    console.log(obj.listeners);
-    console.log("+++++++++++++");
-    deferred.resolve(obj);
-    return deferred.promise;
-}
-
-
 app.get('/battle/:id', function(req, res) {
     res.render('battle');
 });
 
-var rooms = {};
+
+/////////////////////////////////////////////////////////////
+// Подключение к игровой комнате сокетов
+/////////////////////////////////////////////////////////////
 io.on('connection', function(socket) {
 
+
+    /////////////////////////////////////////////////////////////
+    // Подключение к игровой комнате, сортировка на зрителей и игроков
+    /////////////////////////////////////////////////////////////
     socket.on('user connect', function(user_data) {
+        // Каждая битва проходит в "комнате".
+        // Комната - это дочерний объект глобального объекта rooms.
+        // Данные о колодах игроков находяться в аналогичных
+        // "отделениях" глобального объекта decks.
         var room = "room_" + user_data.user_room;
+        var user_id = user_data.user_id;
         if(!rooms[room]) {
-            rooms[room] = {};
-            rooms[room].complete = 0;
-            rooms[room].players = [];
-            rooms[room].listeners = [];
+            rooms[room]                     = {};
+            rooms[room].complete            = 0;
+            rooms[room].players             = [];
+            rooms[room].units               = [];
+            rooms[room].leaders             = [];
+            rooms[room].listeners           = [];
+            rooms[room].send_to_listeners   = 0;
+            decks[room]                     = [];
+            history[room]                   = {};
+            history[room].ready_status      = [0, 0];
+
         }
+        // Если не все игроки подключились к комнате
         if (rooms[room].complete != 2) {
             var deck_player;
             var data_player = {};
 
-
-            // Функция выбирает кданные из таблицы колод
-            function select_user_deck (result, user_data) {
-                var deferred = Q.defer();
-                query_to_db = "SELECT * FROM card_decks WHERE id_user = ?";
-                connection.query(query_to_db, [user_data.user_id], function(err, rows) {
-                    if (err || rows.length == 0) {
-                        console.log("90. Ошибка при поиске юзера в БД: " + err);
-                        result.data_error = true;
-                        deferred.reject(result);
-                    } else {
-                        deck_player = rows[0];
-                        deferred.resolve(result);
-                    }
-                });
-                return deferred.promise;
-            }
-
-
+            // Получаем данные из таблицы битв
             query_to_db = "SELECT * FROM list_of_battles WHERE id_battle =?";
             connection.query(query_to_db, [user_data.user_room], function(err, rows) {
-                if (err) {
+                if (err || rows.length == 0) {
                     console.log("89. Ошибка при обращении к таблице битв: " + err);
-                    rooms[room].data_error = true;
+                    rooms[room].data_error = 2;
+                    socket.emit('battle is not exist');
                 } else {
                     rooms[room].data_error = false;
+                    // Определяем роль юзера: игрок 1, игрок 2 или зритель
                     var player;
-                    if(rows[0].pl1 !== null && rows[0].pl1 == user_data.user_id) {
+                    if(rows[0].pl1 !== null && rows[0].pl1 == user_id) {
                         player = 1;
                     } else {
-                        if(rows[0].pl2 !== null && rows[0].pl2 == user_data.user_id) {
+                        if(rows[0].pl2 !== null && rows[0].pl2 == user_id) {
                             player = 2;
                         } else {
                             player = 0;
-                            rooms[room].listeners.push({ user_id : user_data.user_id, socket_id : socket.id });
-                            console.log("+++++++++++++");
-                            console.log(rooms[room].players);
-                            console.log(rooms[room].complete);
-                            console.log(rooms[room].listeners);
-                            console.log("+++++++++++++");
+                            rooms[room].listeners.push({ user_id : user_id, socket_id : socket.id });
+                            console.log("Добавлен зритель");
+                            socket.join(room);
+                            socket.emit('rivals are not complete');
                         }
                     }
                     if (player != 0) {
-                        select_user_deck(rooms[room], user_data).
+
+                        // Функция выбирает данные из таблицы колод
+                        function select_user_deck (result) {
+                            var deferred = Q.defer();
+                            query_to_db = "SELECT * FROM card_decks WHERE id_user = ?";
+                            connection.query(query_to_db, [user_id], function(err, rows) {
+                                if (err || rows.length == 0) {
+                                    console.log("90. Ошибка при поиске юзера в БД: " + err);
+                                    result.data_error = 1;
+                                    // Сообщаем юзеру, что у него не создана колода
+                                    socket.emit('user without deck');
+                                    deferred.reject(result);
+                                } else {
+                                    deck_player = rows[0];
+                                    deferred.resolve(result);
+                                }
+                            });
+                            return deferred.promise;
+                        }
+
+                        // Функция формирует объект игрока
+                        function initial_player (player, rows, obj, socket) {
+                            var deferred = Q.defer();
+                            var pl, bg, leader;
+                            obj.complete = 2;
+                            if(player == 1) {
+                                pl = rows[0].pl1;
+                                bg = true;
+                            } else {
+                                pl = rows[0].pl2;
+                                bg = false;
+                            }
+                            obj.units[player - 1]   = data_player.units;
+                            for (var index = 0; index < data_player.leaders.length; index++) {
+                                if(data_player.leaders[index].id == deck_player.leader) {
+                                    obj.leaders[player - 1] = data_player.leaders[index];
+                                }
+                            }
+
+                            obj.players[player - 1] = { user_id   : pl,
+                                user_name : user_data.user_name,
+                                socket_id : socket.id,
+                                beginners : bg      };
+                            decks[room][player - 1] = deck_player;
+                            console.log("Добавлен игрок");
+                            for (var i = 0; i < 2; i++) {
+                                if (obj.players[i] === undefined) {
+                                    obj.complete = obj.complete - 1;
+                                }
+                            }
+                            deferred.resolve(obj);
+                            return deferred.promise;
+                        }
+
+                        // Функция отправляет данные подключённым сокетам
+                        function send_info (socket, obj){
+                            var deferred = Q.defer();
+                            if(obj.complete == 2){
+                                obj.send_to_listeners = 1;
+                                io.to(obj.players[0].socket_id).emit('take data', [obj, decks[room][0]]);
+                                io.to(obj.players[1].socket_id).emit('take data', [obj, decks[room][1]]);
+                            } else {
+                                socket.emit('rivals are not complete');
+                            }
+                            deferred.resolve(obj);
+                            return deferred.promise;
+                        }
+
+                        select_user_deck(rooms[room]).
                             then(function(result) { return rows_cards(rooms[room], "abilities")}).
                             then(function(result) { return rows_cards(rooms[room], "specials") }).
+                            then(function(result) { return rows_cards(rooms[room], "fractions") }).
                             then(function(result) { return rows_cards(data_player, "units", deck_player.id_fraction, " ORDER BY strength DESC") }).
                             then(function(result) { return rows_cards(data_player, "leaders", deck_player.id_fraction,"") }).
-                            then(function(result) { return initial_player(player, rows, rooms[room], socket, deck_player, data_player) }).
+                            then(function(result) { return initial_player(player, rows, rooms[room], socket) }).
+                            then(function(result) { return send_info(socket, rooms[room]) }).
                             catch(function(result) { console.log(result); }).
                             done();
                     }
                 }
             });
         } else {
-            if (user_data.user_id != rooms[room].players[0].user_id && user_data.user_id != rooms[room].players[1].user_id){
-                rooms[room].listeners.push({ user_id : user_data.user_id, socket_id : socket.id });
-                console.log("+++++++++++++");
-                console.log(rooms[room].players);
-                console.log(rooms[room].complete);
-                console.log(rooms[room].listeners);
-                console.log("+++++++++++++");
+            if (user_id != rooms[room].players[0].user_id && user_id != rooms[room].players[1].user_id){
+                rooms[room].listeners.push({ user_id : user_id, socket_id : socket.id });
+                console.log("Добавлен зритель.");
+                socket.join(room);
+                socket.emit('take data', [rooms[room]]);
             }
         }
 
-
-
-
-
-
-
-        socket.broadcast.emit('chat message', '');
+        /////////////////////////////////////////////////////////////
+        // Обработка отключения игроков
+        /////////////////////////////////////////////////////////////
+        socket.on('disconnect', function() {
+            var finded = 0;
+            for(var i = 0; i < rooms[room].players.length; i++) {
+                if(rooms[room].players[i] !== undefined && rooms[room].players[i].user_id == user_id) {
+                    rooms[room].players[i] = undefined;
+                    rooms[room].send_to_listeners = 0;
+                    rooms[room].complete--;
+                    finded = 1;
+                    console.log("Игрок удалён");
+                }
+            }
+            if(finded == 0) {
+                for(var j = 0; j < rooms[room].listeners.length; j++) {
+                    if(rooms[room].listeners[j].user_id == user_id) {
+                        rooms[room].listeners.splice(j, 1);
+                        console.log("Зритель удалён");
+                        break;
+                    }
+                }
+            }
+            // Чистка мусора
+            if(rooms[room].complete == 0) {
+                delete decks[room];
+                delete rooms[room];
+                delete history[room];
+            }
+        });
     });
-    console.log('connected', socket.id);
+
+    /////////////////////////////////////////////////////////////
+    // Проверка готовности игроков к игре
+    /////////////////////////////////////////////////////////////
+    socket.on('player ready', function(user_data) {
+        console.log(user_data);
+        var room = "room_" + user_data.user_room;
+        var player_index = user_data.player_index;
+        history[room].ready_status[player_index] = 1;
+        if (history[room].ready_status[0] == 1 && history[room].ready_status[1] == 1) {
+            var resolution = [1, 0];
+            io.to(rooms[room].players[0].socket_id).emit('start battle', resolution);
+            io.to(rooms[room].players[1].socket_id).emit('start battle', resolution);
+        } else {
+            io.to(rooms[room].players[player_index].socket_id).emit('second player is not ready');
+        }
+    });
+
+
 });
 
 gwent.listen(app.get('port'), function(){

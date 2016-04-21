@@ -1,26 +1,151 @@
 <!DOCTYPE html>
-<html>
+<html class="html">
     <head>
         <title>Сражение</title>
         <link rel="stylesheet" href="/css/app.css"/>
         <script src="/js/jquery.min.js"></script>
+        <script src="/js/functions.js"></script>
         <script src="/socket.io/socket.io.js"></script>
         <link href="http://fonts.googleapis.com/css?family=Roboto" rel="stylesheet" type="text/css">
     </head>
     <body class="battle">
         <header>
-            <nav class="top_nav">
-                <ul>
-                    <li class="home_page"><a href="/" title=""><span>Главная</span></a></li>
-                    <li class="some_page"><a href="/my_room.html"><span>Мой профиль</span></a></li>
-                    <li class="login_page"><a href="/auth.html"><span>Войти</span></a></li>
-                </ul>
-            </nav>
         </header>
-        <section class="container">
-            <h1 class="hello">Ну привет</h1>
+        <section class="table">
+
+            <div class="players">
+                <div class="rival player_data">
+                    <div class="player_leader">
+                        <img src="" title="" alt="" class="leader_pic">
+                    </div>
+                    <div class="player_info">
+                        <div class="user_info">
+                            <img src="" title="" alt="" class="user_pic">
+                            <img src="" title="" alt="" class="fraction_pic">
+                        </div>
+                        <div class="battle_detail">
+                            <div class="player_status">
+                                <div class="player_deck">0</div>
+                                <div class="player_health">
+                                    <img src="/imgs/others/health.png" title="health" alt="health" class="health_pic">
+                                    <img src="/imgs/others/health.png" title="health" alt="health" class="health_pic">
+                                </div>
+                                <div class="player_power">0</div>
+                            </div>
+                            <div class="player_name">
+                                <div class="fraction_name"></div>
+                                <div class="user_name"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="weather_area"></div>
+                <div class="home_player player_data">
+                   <div class="player_info">
+                        <div class="user_info">
+                            <img src="" title="" alt="" class="user_pic">
+                            <img src="" title="" alt="" class="fraction_pic">
+                        </div>
+                        <div class="battle_detail">
+                            <div class="player_status">
+                                <div class="player_deck">0</div>
+                                <div class="player_health">
+                                    <img src="/imgs/others/health.png" title="health" alt="health" class="health_pic">
+                                    <img src="/imgs/others/health.png" title="health" alt="health" class="health_pic">
+                                </div>
+                                <div class="player_power">0</div>
+                            </div>
+                            <div class="player_name">
+                                <div class="fraction_name"></div>
+                                <div class="user_name"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="player_leader">
+                        <img src="" title="" alt="" class="leader_pic">
+                    </div>
+                </div>
+            </div>
+
+            <div class="battle_area">
+                <div class="main_block">
+                    <div class="battle_field">
+                        <div class="row_enemy">
+                            <div class="battle_row siege_row enemy">
+                                <div class="str_count">0</div>
+                                <div class="cards_row">
+                                    <div class="special_field"></div>
+                                    <div class="cards_field"></div>
+                                </div>
+                            </div>
+                            <div class="battle_row range_row enemy">
+                                <div class="str_count">0</div>
+                                <div class="cards_row">
+                                    <div class="special_field"></div>
+                                    <div class="cards_field"></div>
+                                </div>
+                            </div>
+                            <div class="battle_row close_row enemy">
+                                <div class="str_count">0</div>
+                                <div class="cards_row">
+                                    <div class="special_field"></div>
+                                    <div class="cards_field"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row_home">
+                            <div class="battle_row siege_row home">
+                                <div class="str_count">0</div>
+                                <div class="cards_row">
+                                    <div class="special_field"></div>
+                                    <div class="cards_field"></div>
+                                </div>
+                            </div>
+                            <div class="battle_row range_row home">
+                                <div class="str_count">0</div>
+                                <div class="cards_row">
+                                    <div class="special_field"></div>
+                                    <div class="cards_field"></div>
+                                </div>
+                            </div>
+                            <div class="battle_row close_row home">
+                                <div class="str_count">0</div>
+                                <div class="cards_row">
+                                    <div class="special_field"></div>
+                                    <div class="cards_field"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="cards"></div>
+                </div>
+                <div class="decks_fields">
+                    <div class="decks_user decks_enemy">
+                        <div class="all_cards">
+                            <img src="" title="" alt="" class="deck_cover">
+                        </div>
+                        <div class="retreat"></div>
+                    </div>
+                    <div class="control_button">
+                        <button class="exit">Сдаться</button>
+                        <div class="status_move"></div>
+                    </div>
+                    <div class="decks_user decks_home">
+                        <div class="retreat"></div>
+                        <div class="all_cards">
+                            <img src="" title="" alt="" class="deck_cover">
+                            <div class="deck_count"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </section>
-        <script src="/js/battle.js"></script>
+        <div class="card_rewiev">
+            <h2>Двойной клик по карте, которую хотите заменить</h2>
+            <div class="block_rewiev"></div>
+            <button class="skip">Пропустить</button>
+        </div>
+        <script type="text/javascript" src="/js/battle.js"></script>
     </body>
 </html>
 

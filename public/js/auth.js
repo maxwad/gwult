@@ -1,5 +1,5 @@
 /**
- * Created by Максим on 19.11.15.
+ * Created on 19.11.15.
  */
 $(document).ready(function () {
 
@@ -10,6 +10,16 @@ $(document).ready(function () {
     var reg_pass    = $('#reg_pass');
     var conf_pass   = $('#conf_pass');
     var message     = '';
+    var link        = $('.tab');
+    var tab_content = $('.tab_cont');
+
+    link.click(function () {
+        var index = $(this).index();
+        link.removeClass('active_li');
+        tab_content.removeClass('visible');
+        $(this).addClass('active_li');
+        $(tab_content[index]).addClass('visible');
+    });
 
 
 

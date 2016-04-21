@@ -8,6 +8,7 @@
 
         <script src="/js/jquery.min.js"></script>
         <script src="/js/check.js"></script>
+        <script src="/js/functions.js"></script>
         <script src="/js/auth.js"></script>
     </head>
     <body class="auth">
@@ -21,28 +22,34 @@
         <div id="message_block"></div>
 
         <div class="form_area">
-            <div class="login_block">
-                <h1 class="authorization">Авторизация</h1>
-                <form method="post" action="" name="login_form" id="login_form">
-                    <fieldset>
-                        <label for="login_name">Логин:</label><input type="text" name="login_name" id="login_name"><br>
-                        <label for="login_pass">Пароль:</label><input type="password" name="login_pass" id="login_pass"><br>
-                        <button name="login_button" id="login_button" value="">Войти</button>
-                    </fieldset>
-                </form>
+            <div class="tab_block">
+                <div class="list">
+                    <ul>
+                        <li class="tab create_tab active_li">Авторизация</li>
+                        <li class="tab join_tab">Регистрация</li>
+                    </ul>
+                </div>
+                <div class="tab_cont visible">
+                    <form method="post" action="" name="login_form" id="login_form">
+                        <fieldset>
+                            <input type="text" name="login_name" id="login_name" placeholder="Login">
+                            <input type="password" name="login_pass" id="login_pass" placeholder="Password">
+                            <button name="login_button" id="login_button" value="">Войти</button>
+                        </fieldset>
+                    </form>
+                </div>
+                <div class="tab_cont">
+                    <form method="post" action="" name="reg_form" id="reg_form">
+                        <fieldset>
+                            <input type="text" name="reg_name" id="reg_name" placeholder="Login">
+                            <input type="password" name="reg_pass" id="reg_pass" placeholder="Password">
+                            <input type="password" name="conf_pass" id="conf_pass" placeholder="Repeat password"/>
+                            <button name="reg_button" id="reg_button" value="">Зарегистрироваться</button>
+                        </fieldset>
+                    </form>
+                </div>
             </div>
-            <div class="reg_block">
-                <h1 class="registration">Регистрация</h1>
-                <form method="post" action="" name="reg_form" id="reg_form">
-                    <fieldset>
-                        <label for="reg_name">Логин:</label><input type="text" name="reg_name" id="reg_name"><br>
-                        <label for="reg_pass">Пароль:</label><input type="password" name="reg_pass" id="reg_pass"><br>
-                        <label for="conf_pass">Подтвердите:</label><input type="password" name="conf_pass" id="conf_pass"
-                            /><br>
-                        <button name="reg_button" id="reg_button" value="">Зарегистрироваться</button>
-                    </fieldset>
-                </form>
-            </div>
+
         </div>
     </body>
 </html>

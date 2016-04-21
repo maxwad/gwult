@@ -1,25 +1,24 @@
 $(document).ready(function () {
 
-var abilities,  // массив способностей
-fractions,      // массив фракций
-specials,       // массив специальных карт
-leaders,        // массив лидеров выбранной фракции
-units,          // массив юнитов выбранной фракции
-units_user,     // массив юнитов пользователя
-specials_user,  // массив специальных карт пользователя
-deck_leader,    // id лидера пользователя
-deck_fraction,  // id выбранной фракции
-deck_units,     // массив id юнитов
-deck_specials,  // массив id специальных карт
-id_user,
-selector;
-
-var select_fraction = $('#select_fraction');
-var leader_choice   = $('.leader_choice');
-var card_view       = $('.card_view');
-var deck_room       = $(".deck_room");
-var data_block      = {};
-var message         = '';
+var abilities,      // массив способностей
+    fractions,      // массив фракций
+    specials,       // массив специальных карт
+    leaders,        // массив лидеров выбранной фракции
+    units,          // массив юнитов выбранной фракции
+    units_user,     // массив юнитов пользователя
+    specials_user,  // массив специальных карт пользователя
+    deck_leader,    // id лидера пользователя
+    deck_fraction,  // id выбранной фракции
+    deck_units,     // массив id юнитов
+    deck_specials,  // массив id специальных карт
+    id_user,
+    selector,
+    select_fraction = $('#select_fraction'),
+    leader_choice   = $('.leader_choice'),
+    card_view       = $('.card_view'),
+    deck_room       = $(".deck_room"),
+    data_block      = {},
+    message         = '';
 
 
 //////////////////////////////////////////////////////////////////
@@ -140,7 +139,7 @@ function show_leader (obj, deck_leader) {
 
 
 //////////////////////////////////////////////////////////////////
-// Отправка запроса на начальные данные
+// Очистка области вывода
 //////////////////////////////////////////////////////////////////
 function clear (selector) {
     $(selector).empty();

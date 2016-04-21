@@ -7,7 +7,7 @@
         <link href="http://fonts.googleapis.com/css?family=Roboto" rel="stylesheet" type="text/css">
         <script src="/js/jquery.min.js"></script>
         <script src="/js/check.js"></script>
-        <script src="/js/auth.js"></script>
+        <script src="/js/functions.js"></script>
         <script src="/js/my_room.js"></script>
     </head>
 
@@ -21,32 +21,50 @@
         </nav>
         <div id="message_block"></div>
 
-        <div class="form_area">
+        <div class="content_block">
+            <div class="form_area left_col">
+                <div class="deck_status">
+                    <div class="status">Статус Вашей колоды: <span></span></div>
+                    <a href="decks_room.html">Перейти к колоде карт</a>
+                    <a href="card.html">Создать карты</a>
+                </div>
 
-            <div class="create_block">
-                <h1 class="creation">Создание игровой комнаты</h1>
-                <form method="post" action="" name="create_form" id="create_form">
-                    <fieldset>
-                        <label for="create_pass">Задайте пароль для комнаты:</label>
-                        <input type="password" name="create_pass" id="create_pass" placeholder="Оставьте пустым для всеобщего доступа">
-                        <button name="create_button" id="create_button" value="">Создать комнату</button>
-                    </fieldset>
-                </form>
-            </div>
-            <div class="join_block">
-                <h1 class="joining">Принять вызов другого игрока</h1>
-                <form method="post" action="" name="join_form" id="join_form">
-                    <fieldset>
-                        <label for="join_number">Номер комнаты:</label><input type="text" name="join_number" id="join_number">
-                        <label for="join_pass">Пароль:</label><input type="password" name="join_pass" id="join_pass">
-                        <button name="join_button" id="join_button" value="">Играть</button>
-                    </fieldset>
-                </form>
-            </div>
+                <div class="tab_block">
+                    <div class="list">
+                        <ul>
+                            <li class="tab create_tab active_li">Создать</li>
+                            <li class="tab join_tab">Присоединиться</li>
+                        </ul>
+                    </div>
+                    <div class="tab_cont visible">
+                        <div class="create_block">
+                            <form method="post" action="" name="create_form" id="create_form">
+                                <fieldset>
+                                    <label for="create_pass">Задайте пароль для новой комнаты или оставьте пустым для беспарольного доступа:</label>
+                                    <input type="password" name="create_pass" id="create_pass" placeholder="Пароль">
+                                    <button name="create_button" id="create_button" value="">Создать комнату</button>
+                                </fieldset>
+                            </form>
+                        </div>
+                    </div>
+                    <div class="tab_cont">
+                        <div class="join_block">
+                            <form method="post" action="" name="join_form" id="join_form">
+                                <fieldset>
+                                    <input type="text" name="join_number" id="join_number" placeholder="Номер комнаты">
+                                    <input type="text" name="join_pass" id="join_pass" placeholder="Пароль">
+                                    <button name="join_button" id="join_button" value="">Играть</button>
+                                </fieldset>
+                            </form>
+                        </div>
+                    </div>
+                </div>
 
+                <div class="info_battles"></div>
+            </div>
+            <div class="statistic right_col">
+                <h2>Статистика</h2>
+            </div>
         </div>
-        <div class="info_battles"></div>
-        <a href="card.html">Создать карты</a>
-        <a href="decks_room.html">Сформировать колоду</a>
     </body>
 </html>

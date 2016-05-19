@@ -945,7 +945,7 @@ input[type=text], input[type=password], textarea {
     background: rgba(0, 0, 0, 0.1);
     min-width: 275px;
     flex-wrap: wrap;
-    flex-direction: column;
+    flex-direction: column-reverse;
     justify-content: space-around;
 }
 
@@ -1011,7 +1011,7 @@ input[type=text], input[type=password], textarea {
     align-items: center;
 }
 
-.battle .player_deck {
+.battle .player_cards {
     flex: 1;
     height: 35px;
     background: url('../imgs/others/all.png') left center no-repeat;
@@ -1058,7 +1058,7 @@ input[type=text], input[type=password], textarea {
     box-shadow: 0 0 2px 2px #96BBCB;
 }
 
-.battle .home_player .player_power {
+.battle .home .player_power {
     background: #D29E4B;
     box-shadow: 0 0 2px 2px #D29E4B;
 }
@@ -1106,6 +1106,8 @@ input[type=text], input[type=password], textarea {
 }
 
 .battle .battle_field {
+    display: flex;
+    flex-direction: column-reverse;
     height: 80%;
     background: rgba(255, 255, 255, 0.2);
     position: relative;
@@ -1128,6 +1130,7 @@ input[type=text], input[type=password], textarea {
 
 .battle .row_enemy, .battle .row_home {
     height: 50%;
+    position: relative;
 }
 
 .battle .row_home {
@@ -1187,17 +1190,39 @@ input[type=text], input[type=password], textarea {
     height: 100%;
     padding-left: 15px;
     background: rgba(255, 255, 255, 0.5);
+    display: flex;
+    justify-content: center;
+    background: #D5EEFF;
+    overflow: hidden;
+}
+
+.battle .cards_field img {
+    display: block;
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    min-height: 150px;
+}
+
+.battle .cards_field div:hover img {
+    box-shadow: 0 0 7px 3px #ba8b48;
+    background: #ba8b48;
+    cursor: pointer;
 }
 
 .battle .cards {
     display: flex;
+    justify-content: center;
     height: 20%;
     padding: 10px 25px;
     background: #D5EEFF;
 }
 
 .battle .decks_fields {
+    display: flex;
     flex: 1;
+    flex-direction: column-reverse;
     height: 100%;
     z-index: 1;
 }
@@ -1218,7 +1243,7 @@ input[type=text], input[type=password], textarea {
 .battle .exit {
     display: block;
     margin: 20px auto;
-    padding: 5px 20px;
+    padding: 5px 40px;
 }
 
 .battle .status_move {
@@ -1241,12 +1266,11 @@ input[type=text], input[type=password], textarea {
     position: absolute;
     top: 0;
     left: 50%;
-    height: 100%;
+    height: 90%;
     width: auto;
     transform: translateX(-50%);
-    min-height: 150px;
+    min-height: 140px;
 }
-
 
 .battle .deck_count {
     position: absolute;
@@ -1266,8 +1290,9 @@ input[type=text], input[type=password], textarea {
     width: 100%;
 }
 
-.battle .cards div {
+.battle .cards div, .battle .cards_field div{
     flex: 1;
+    max-width: 100px;
     position: relative;
     z-index: 2;
     padding: 10px 0;
@@ -1308,14 +1333,14 @@ input[type=text], input[type=password], textarea {
 
 .battle .block_rewiev {
     padding: 30px 10%;
-    height: 80%;
+    height: 70%;
 }
 
 .battle .block_rewiev div {
     display: inline-block;
     width: 19%;
     padding: 10px 35px;
-    height: 50%;
+    height: 45%;
 }
 
 .battle .card_rewiev img {
@@ -1339,4 +1364,100 @@ input[type=text], input[type=password], textarea {
 .battle .card_rewiev .skip {
     padding: 5px 20px;
     transform: translateX(-25px);
+}
+
+.battle .round {
+    position: absolute;
+    display: flex;
+    align-items: center;
+    width: 400px;
+    height: 180px;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: #ba8b48;
+    z-index: 7;
+}
+
+.battle .round span {
+    font-size: 30px;
+    text-align: center;
+    font-weight: 900;
+    width: 100%;
+    color: #000000;
+}
+
+
+.battle .results_game {
+    display: none;
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 10;
+    background: #000000;
+    width: 100%;
+    height: 100%;
+}
+
+.battle .results_body {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 500px;
+    transform: translate(-50%, -50%);
+}
+
+.battle .results_body h2 {
+    margin-bottom: 100px;
+    font-size: 50px;
+}
+
+.battle .results_body table {
+    width: 100%;
+    margin: 0 auto;
+    font-size: 24px;
+}
+
+.battle .results_body table td {
+    width: 33.33333333%;
+    text-align: center;
+    padding: 5px;    
+}
+
+.battle .results_body table .table_head td {
+    border-bottom: 2px solid  #ba8b48;
+}
+
+.battle .results_body .to_home {
+    display: block;
+    width: 150px;
+    padding: 10px;
+    margin: 100px auto 0 auto;
+}
+
+.battle .results_body .win {
+    color: #ba8b48;
+}
+
+.battle .fold {
+    display: flex;
+    align-items: center;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 35px;
+    padding-left: 70px;
+    background: #ffffff;
+    z-index: 7;
+    opacity: 0.3;
+    text-align: center;
+}
+
+.battle .fold span {
+    width: 100%;
+    font-size: 100px;
+    text-align: center;
+    font-weight: 900;
+    color: #b5b5b5;
 }

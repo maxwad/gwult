@@ -810,7 +810,14 @@ io.on('connection', function(socket) {
             rooms[room].send_to_listeners   = 0;
             decks[room]                     = [];
             history[room]                   = {};
+            history[room].cards             = [];
+            history[room].count_cards       = [10, 10];
+            history[room].count_deck        = [0, 0];
             history[room].ready_status      = [0, 0];
+            history[room].resolution        = [1, 0];
+            history[room].give_up_status    = [0, 0];
+            history[room].round             = 1;
+            history[room].mes_flag          = 0;
 
         }
         // Если не все игроки подключились к комнате
@@ -829,6 +836,7 @@ io.on('connection', function(socket) {
                     rooms[room].data_error = false;
                     // Определяем роль юзера: игрок 1, игрок 2 или зритель
                     var player;
+                    socket.join(room);
                     if(rows[0].pl1 !== null && rows[0].pl1 == user_id) {
                         player = 1;
                     } else {
@@ -838,8 +846,7 @@ io.on('connection', function(socket) {
                             player = 0;
                             rooms[room].listeners.push({ user_id : user_id, socket_id : socket.id });
                             console.log("Добавлен зритель");
-                            socket.join(room);
-                            socket.emit('rivals are not complete');
+                            socket.to(room).emit('rivals are not complete');
                         }
                     }
                     if (player != 0) {
@@ -902,10 +909,10 @@ io.on('connection', function(socket) {
                             var deferred = Q.defer();
                             if(obj.complete == 2){
                                 obj.send_to_listeners = 1;
-                                io.to(obj.players[0].socket_id).emit('take data', [obj, decks[room][0]]);
-                                io.to(obj.players[1].socket_id).emit('take data', [obj, decks[room][1]]);
+                                io.to(obj.players[0].socket_id).emit('take data', [obj, decks[room][0], history[room]]);
+                                io.to(obj.players[1].socket_id).emit('take data', [obj, decks[room][1], history[room]]);
                             } else {
-                                socket.emit('rivals are not complete');
+                                socket.to(room).emit('rivals are not complete');
                             }
                             deferred.resolve(obj);
                             return deferred.promise;
@@ -929,7 +936,7 @@ io.on('connection', function(socket) {
                 rooms[room].listeners.push({ user_id : user_id, socket_id : socket.id });
                 console.log("Добавлен зритель.");
                 socket.join(room);
-                socket.emit('take data', [rooms[room]]);
+                socket.emit('take data', [rooms[room], history[room]]);
             }
         }
 
@@ -951,13 +958,14 @@ io.on('connection', function(socket) {
                 for(var j = 0; j < rooms[room].listeners.length; j++) {
                     if(rooms[room].listeners[j].user_id == user_id) {
                         rooms[room].listeners.splice(j, 1);
+                        socket.leave(room);
                         console.log("Зритель удалён");
                         break;
                     }
                 }
             }
             // Чистка мусора
-            if(rooms[room].complete == 0) {
+            if(rooms[room].complete == 0 && rooms[room].listeners.length == 0) {
                 delete decks[room];
                 delete rooms[room];
                 delete history[room];
@@ -969,16 +977,96 @@ io.on('connection', function(socket) {
     // Проверка готовности игроков к игре
     /////////////////////////////////////////////////////////////
     socket.on('player ready', function(user_data) {
-        console.log(user_data);
         var room = "room_" + user_data.user_room;
         var player_index = user_data.player_index;
         history[room].ready_status[player_index] = 1;
         if (history[room].ready_status[0] == 1 && history[room].ready_status[1] == 1) {
-            var resolution = [1, 0];
-            io.to(rooms[room].players[0].socket_id).emit('start battle', resolution);
-            io.to(rooms[room].players[1].socket_id).emit('start battle', resolution);
+            io.to(rooms[room].players[0].socket_id).emit('start battle', [history[room].resolution, history[room].mes_flag]);
+            io.to(rooms[room].players[1].socket_id).emit('start battle', [history[room].resolution, history[room].mes_flag]);
+            history[room].mes_flag++;
         } else {
             io.to(rooms[room].players[player_index].socket_id).emit('second player is not ready');
+        }
+    });
+
+    /////////////////////////////////////////////////////////////
+    // Запись данных по количеству карт у игрока на руках и в колоде
+    /////////////////////////////////////////////////////////////
+    socket.on('write counts', function(user_data) {
+        var room = "room_" + user_data.user_room;
+        history[room].count_cards[user_data.player_index] = user_data.count_cards;
+        history[room].count_deck[user_data.player_index] = user_data.count_deck;
+    });
+
+    /////////////////////////////////////////////////////////////
+    // Запись данных по количеству карт у игрока на руках и в колоде
+    /////////////////////////////////////////////////////////////
+    socket.on('give me counts', function(user_data) {
+        var room = "room_" + user_data.user_room;
+        var data = {};
+        data.count_cards = history[room].count_cards;
+        data.count_deck = history[room].count_deck;
+        socket.emit('take counts', data);
+    });
+
+    /////////////////////////////////////////////////////////////
+    // Обработка и перенаправление карт игрокам и зрителям
+    /////////////////////////////////////////////////////////////
+    socket.on('step to', function(user_data) {
+        var room = "room_" + user_data.user_room;
+        history[room].cards.push(user_data);
+        history[room].count_cards[user_data.player_index] = user_data.count_cards;
+        history[room].count_deck[user_data.player_index] = user_data.count_deck;
+        if(user_data.resolution == 1) {
+            history[room].resolution[user_data.player_index] = 1;
+            history[room].resolution[user_data.rival_index] = 0;
+        } else {
+            history[room].resolution[user_data.player_index] = 0;
+            history[room].resolution[user_data.rival_index] = 1;
+        }
+        socket.broadcast.to(room).emit('step from', user_data);
+        console.log(history[room].resolution);
+    });
+
+    /////////////////////////////////////////////////////////////
+    // Обработка кнопки "ПАС"
+    /////////////////////////////////////////////////////////////
+    socket.on('give up', function(user_data) {
+        var room = "room_" + user_data.user_room;
+        var data = {};
+        history[room].give_up_status[user_data.player_index] = 1;
+        history[room].count_cards[user_data.player_index] = user_data.count_cards;
+        history[room].resolution[user_data.player_index] = 0;
+        history[room].resolution[user_data.rival_index] = 1;
+        if(history[room].give_up_status[0] == 1 && history[room].give_up_status[1] == 1) {
+            delete data.give_up;
+            history[room].cards.push('give_up');
+            history[room].give_up_status = [0, 0];
+            history[room].round++;
+            switch (history[room].round) {
+                case 2:
+                    history[room].resolution = [0, 1];
+                    break;
+
+                case 3:
+                    history[room].resolution = [1, 0];
+                    break;
+
+                case 4:
+                    history[room].resolution = [0, 1];
+                    history[room].round = 1;
+                    break;
+
+            }
+            data.count_cards    = history[room].count_cards;
+            data.resolution     = history[room].resolution;
+            data.round          = history[room].round;
+            data.player         = user_data.player_index;
+            io.to(room).emit('won is', data);
+        } else {
+            data.give_up = 1;
+            data.player  = user_data.player_index;
+            socket.broadcast.to(room).emit('won is', data);
         }
     });
 

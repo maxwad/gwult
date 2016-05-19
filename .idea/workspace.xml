@@ -27,44 +27,61 @@
     <favorites_list name="gwult" />
   </component>
   <component name="FileEditorManager">
-    <leaf>
-      <file leaf-file-name="battle.ejs" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/template/battle.ejs">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="110" column="60" selection-start="5674" selection-end="5674" vertical-scroll-proportion="-28.653847" vertical-offset="1345" max-vertical-offset="2983">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="app.css" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/public/css/app.css">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="1133" column="18" selection-start="19251" selection-end="19251" vertical-scroll-proportion="0.0" vertical-offset="21040" max-vertical-offset="25593">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="app.js" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app.js">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="976" column="26" selection-start="38742" selection-end="38752" vertical-scroll-proportion="0.0" vertical-offset="18039" max-vertical-offset="18924">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="battle.js" pinned="false" current="true" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/public/js/battle.js">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="66" column="22" selection-start="2171" selection-end="2171" vertical-scroll-proportion="0.33559322" vertical-offset="957" max-vertical-offset="7296">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-    </leaf>
+    <splitter split-orientation="horizontal" split-proportion="0.5">
+      <split-first>
+        <leaf>
+          <file leaf-file-name="battle.ejs" pinned="false" current="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/template/battle.ejs">
+              <provider selected="true" editor-type-id="text-editor">
+                <state line="142" column="30" selection-start="7240" selection-end="7240" vertical-scroll-proportion="0.0" vertical-offset="2982" max-vertical-offset="3885">
+                  <folding />
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file leaf-file-name="app.css" pinned="false" current="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/public/css/app.css">
+              <provider selected="true" editor-type-id="text-editor">
+                <state line="1300" column="0" selection-start="22224" selection-end="22224" vertical-scroll-proportion="0.0" vertical-offset="27300" max-vertical-offset="30828">
+                  <folding />
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file leaf-file-name="battle.js" pinned="false" current="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/public/js/battle.js">
+              <provider selected="true" editor-type-id="text-editor">
+                <state line="756" column="32" selection-start="30337" selection-end="30337" vertical-scroll-proportion="-6.0" vertical-offset="15720" max-vertical-offset="19446">
+                  <folding />
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file leaf-file-name="app.js" pinned="false" current="true" current-in-tab="true">
+            <entry file="file://$PROJECT_DIR$/app.js">
+              <provider selected="true" editor-type-id="text-editor">
+                <state line="1039" column="60" selection-start="42081" selection-end="42081" vertical-scroll-proportion="0.42857143" vertical-offset="21537" max-vertical-offset="22764">
+                  <folding />
+                </state>
+              </provider>
+            </entry>
+          </file>
+        </leaf>
+      </split-first>
+      <split-second>
+        <leaf>
+          <file leaf-file-name="battle.js" pinned="false" current="false" current-in-tab="true">
+            <entry file="file://$PROJECT_DIR$/public/js/battle.js">
+              <provider selected="true" editor-type-id="text-editor">
+                <state line="580" column="50" selection-start="23036" selection-end="23036" vertical-scroll-proportion="0.46637428" vertical-offset="11861" max-vertical-offset="19446">
+                  <folding />
+                </state>
+              </provider>
+            </entry>
+          </file>
+        </leaf>
+      </split-second>
+    </splitter>
   </component>
   <component name="FindManager">
     <FindUsagesManager>
@@ -86,10 +103,10 @@
         <option value="$PROJECT_DIR$/public/decks_room.html" />
         <option value="$PROJECT_DIR$/public/my_room.html" />
         <option value="$PROJECT_DIR$/public/js/create_decks.js" />
-        <option value="$PROJECT_DIR$/app.js" />
-        <option value="$PROJECT_DIR$/public/css/app.css" />
         <option value="$PROJECT_DIR$/template/battle.ejs" />
+        <option value="$PROJECT_DIR$/public/css/app.css" />
         <option value="$PROJECT_DIR$/public/js/battle.js" />
+        <option value="$PROJECT_DIR$/app.js" />
       </list>
     </option>
   </component>
@@ -236,7 +253,7 @@
     <property name="options.lastSelected" value="settings.nodejs" />
     <property name="SearchEverywhereHistory" value="" />
     <property name="restartRequiresConfirmation" value="false" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="last_opened_file_path" value="K:/velo" />
     <property name="FullScreen" value="false" />
     <property name="DefaultHtmlFileTemplate" value="Html5" />
     <property name="options.searchVisible" value="true" />
@@ -350,20 +367,44 @@
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3278328" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32955772" sideWeight="0.8150685" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.24967907" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.06616862" sideWeight="0.77167946" order="0" side_tool="false" content_ui="combo" x="692" y="193" width="216" height="483" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.056443024" sideWeight="0.77826566" order="0" side_tool="false" content_ui="combo" x="692" y="193" width="216" height="483" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
-      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.18481848" sideWeight="0.5" order="8" side_tool="true" content_ui="tabs" x="0" y="275" width="1366" height="188" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.22832052" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.22722283" sideWeight="0.5" order="8" side_tool="true" content_ui="tabs" x="0" y="275" width="1366" height="188" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.22149123" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32876712" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="SLIDING" type="SLIDING" visible="false" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
-      <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.24967907" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
+      <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.24919957" sideWeight="0.777168" order="2" side_tool="false" content_ui="combo" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
+      <window_info id="Thumbnails" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32930845" sideWeight="0.5" order="11" side_tool="false" content_ui="tabs" />
+      <window_info id="Command Line Tools Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32930845" sideWeight="0.5" order="11" side_tool="false" content_ui="tabs" />
     </layout>
+    <layout-to-restore>
+      <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
+      <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3278328" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32876712" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32955772" sideWeight="0.8150685" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
+      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.22722283" sideWeight="0.5" order="8" side_tool="true" content_ui="tabs" x="0" y="275" width="1366" height="188" />
+      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
+      <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3278328" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
+      <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.24967907" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="SLIDING" type="SLIDING" visible="false" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.056443024" sideWeight="0.77826566" order="0" side_tool="false" content_ui="combo" x="692" y="193" width="216" height="483" />
+      <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
+      <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.24919957" sideWeight="0.777168" order="2" side_tool="false" content_ui="combo" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.22149123" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Command Line Tools Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32930845" sideWeight="0.5" order="11" side_tool="false" content_ui="tabs" />
+      <window_info id="Thumbnails" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32930845" sideWeight="0.5" order="12" side_tool="false" content_ui="tabs" />
+    </layout-to-restore>
   </component>
   <component name="Vcs.Log.UiProperties">
     <option name="RECENTLY_FILTERED_USER_GROUPS">
@@ -381,13 +422,57 @@
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
-      <option name="time" value="2" />
+      <option name="time" value="4" />
     </breakpoint-manager>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/template/index.ejs">
+    <entry file="file://$PROJECT_DIR$/template/battle.ejs">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="848" />
+        <state line="142" column="30" selection-start="7240" selection-end="7240" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="3885">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/public/css/app.css">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="1300" column="0" selection-start="22224" selection-end="22224" vertical-scroll-proportion="0.0" vertical-offset="27300" max-vertical-offset="30828">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="1050" column="54" selection-start="42493" selection-end="42493" vertical-scroll-proportion="0.0" vertical-offset="21756" max-vertical-offset="22743">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/public/js/battle.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="566" column="37" selection-start="22289" selection-end="22289" vertical-scroll-proportion="0.0" vertical-offset="11478" max-vertical-offset="19341">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/public/css/app.css">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="1300" column="0" selection-start="22224" selection-end="22224" vertical-scroll-proportion="0.0" vertical-offset="27300" max-vertical-offset="30828">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="938" column="56" selection-start="37324" selection-end="37324" vertical-scroll-proportion="0.0" vertical-offset="19698" max-vertical-offset="22764">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/template/battle.ejs">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="142" column="30" selection-start="7240" selection-end="7240" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="3885">
+          <folding />
+        </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/node_modules/q/q.js">
@@ -396,21 +481,16 @@
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/Структура проекта.txt">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="26" column="47" selection-start="649" selection-end="649" vertical-scroll-proportion="0.8232236" vertical-offset="19" max-vertical-offset="912" />
-      </provider>
       <provider editor-type-id="com.intellij.persistence.database.editor.CsvTableFileEditorProvider">
         <state />
+      </provider>
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="26" column="47" selection-start="649" selection-end="649" vertical-scroll-proportion="0.8232236" vertical-offset="19" max-vertical-offset="912" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/public/js/check.js">
       <provider selected="true" editor-type-id="text-editor">
         <state line="18" column="3" selection-start="509" selection-end="509" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="504" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/public/js/auth.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="47" column="0" selection-start="1239" selection-end="1239" vertical-scroll-proportion="0.0" vertical-offset="1764" max-vertical-offset="3822" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/public/card.html">
@@ -428,16 +508,6 @@
         <state line="9" column="48" selection-start="376" selection-end="376" vertical-scroll-proportion="-7.0" vertical-offset="0" max-vertical-offset="1596" />
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/public/js/my_room.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="93" column="43" selection-start="3527" selection-end="3546" vertical-scroll-proportion="0.760181" vertical-offset="1281" max-vertical-offset="4431" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/public/auth.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="10" column="48" selection-start="335" selection-end="375" vertical-scroll-proportion="0.024504084" vertical-offset="189" max-vertical-offset="1260" />
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/public/js/create_cards.js">
       <provider selected="true" editor-type-id="text-editor">
         <state line="228" column="79" selection-start="9003" selection-end="9007" vertical-scroll-proportion="0.33333334" vertical-offset="4046" max-vertical-offset="7030" />
@@ -450,30 +520,50 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app.js">
+    <entry file="file://$PROJECT_DIR$/public/js/my_room.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="976" column="26" selection-start="38742" selection-end="38752" vertical-scroll-proportion="0.0" vertical-offset="18039" max-vertical-offset="18924">
-          <folding />
-        </state>
+        <state line="76" column="17" selection-start="2639" selection-end="2802" vertical-scroll-proportion="0.6023468" vertical-offset="1134" max-vertical-offset="4431" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/public/js/functions.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="5" column="18" selection-start="181" selection-end="181" vertical-scroll-proportion="0.13991164" vertical-offset="0" max-vertical-offset="679" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/public/js/auth.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="47" column="0" selection-start="1239" selection-end="1239" vertical-scroll-proportion="-0.8769752" vertical-offset="1764" max-vertical-offset="3822" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/public/auth.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="17" column="89" selection-start="630" selection-end="681" vertical-scroll-proportion="0.0" vertical-offset="189" max-vertical-offset="1260" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/public/css/app.css">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="1133" column="18" selection-start="19251" selection-end="19251" vertical-scroll-proportion="0.0" vertical-offset="21040" max-vertical-offset="25593">
+        <state line="1300" column="0" selection-start="22224" selection-end="22224" vertical-scroll-proportion="0.0" vertical-offset="27300" max-vertical-offset="30828">
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/template/battle.ejs">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="110" column="60" selection-start="5674" selection-end="5674" vertical-scroll-proportion="-28.653847" vertical-offset="1345" max-vertical-offset="2983">
+        <state line="142" column="30" selection-start="7240" selection-end="7240" vertical-scroll-proportion="0.0" vertical-offset="2982" max-vertical-offset="3885">
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/public/js/battle.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="66" column="22" selection-start="2171" selection-end="2171" vertical-scroll-proportion="0.33559322" vertical-offset="957" max-vertical-offset="7296">
+        <state line="756" column="32" selection-start="30337" selection-end="30337" vertical-scroll-proportion="-6.0" vertical-offset="15720" max-vertical-offset="19446">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="1039" column="60" selection-start="42081" selection-end="42081" vertical-scroll-proportion="0.42857143" vertical-offset="21537" max-vertical-offset="22764">
           <folding />
         </state>
       </provider>

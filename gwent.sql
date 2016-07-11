@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Хост: localhost
--- Время создания: Мар 18 2016 г., 12:37
+-- Время создания: Июн 16 2016 г., 15:28
 -- Версия сервера: 5.5.44-log
 -- Версия PHP: 5.4.41
 
@@ -32,7 +32,7 @@ CREATE TABLE IF NOT EXISTS `abilities` (
   `func` varchar(50) DEFAULT NULL,
   `pict` text,
   `description` text
-) ENGINE=MyISAM AUTO_INCREMENT=19 DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM AUTO_INCREMENT=20 DEFAULT CHARSET=utf8;
 
 --
 -- Дамп данных таблицы `abilities`
@@ -73,7 +73,9 @@ CREATE TABLE IF NOT EXISTS `card_decks` (
 --
 
 INSERT INTO `card_decks` (`id_user`, `id_fraction`, `units`, `specials`, `leader`) VALUES
-(10, 4, '2,3,68,42,81,82,83,80,38,40,41,37,73,74,75,76,35,36,69,70,71,72,57,58,79,66,43,60,61,34', '2,1,6,5,7,4', 8);
+(10, 4, '2,3,68,42,81,82,83,80,38,40,41,37,73,74,75,76,35,36,69,70,71,72,57,58,79,66,43,60,61,34,78,65,67,59', '2,1,6,5,7,4', 8),
+(14, 4, '42,43,38,40,41,37,35,36,34,39,81,82,83,80,73,74,75,76,77,78,79,65', '3,4,2,5,6,7', 6),
+(13, -1, NULL, NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -169,7 +171,15 @@ CREATE TABLE IF NOT EXISTS `list_of_battles` (
   `start_battle` tinyint(1) DEFAULT '0',
   `alias_battle` varchar(80) DEFAULT NULL,
   `date_battle` bigint(16) DEFAULT NULL
-) ENGINE=MyISAM AUTO_INCREMENT=71 DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM AUTO_INCREMENT=112 DEFAULT CHARSET=utf8;
+
+--
+-- Дамп данных таблицы `list_of_battles`
+--
+
+INSERT INTO `list_of_battles` (`id_battle`, `pl1`, `pl2`, `pass_battle`, `start_battle`, `alias_battle`, `date_battle`) VALUES
+(111, '10', '14', '', 1, '10_14', 1465379992046),
+(90, NULL, NULL, '', 0, NULL, 1459517096705);
 
 -- --------------------------------------------------------
 
@@ -188,9 +198,10 @@ CREATE TABLE IF NOT EXISTS `sessions` (
 --
 
 INSERT INTO `sessions` (`session_id`, `expires`, `data`) VALUES
-('A0cgSnOlmWTgTQn10ljnSTU2aJv0hgXW', 1458727291, '{"cookie":{"originalMaxAge":599999989,"expires":"2016-03-23T10:01:30.886Z","httpOnly":true,"path":"/"}}'),
-('SRZDAdsvdBRe-og-9sHpfRJlgmyvJ-IJ', 1458893750, '{"cookie":{"originalMaxAge":599999998,"expires":"2016-03-25T08:15:50.097Z","httpOnly":true,"path":"/"},"user":"www"}'),
-('lJqWvsFyD4EtEv0m6KgBNa3qZBBPz8b-', 1458716480, '{"cookie":{"originalMaxAge":600000000,"expires":"2016-03-23T07:01:20.465Z","httpOnly":true,"path":"/"}}');
+('5LgGyK56uSyAVkDpz9JXhDnkSsH9x0ka', 1465987958, '{"cookie":{"originalMaxAge":600000000,"expires":"2016-06-15T10:52:37.648Z","httpOnly":true,"path":"/"},"user":10,"username":"www"}'),
+('LG-Bv8RChoyhSJPKutjpFucGAWpOv7XX', 1465980034, '{"cookie":{"originalMaxAge":600000000,"expires":"2016-06-15T08:40:34.387Z","httpOnly":true,"path":"/"}}'),
+('PeF6VGR_g7YIU-1xO5E9PpFv3cR_AYfl', 1465987962, '{"cookie":{"originalMaxAge":600000000,"expires":"2016-06-15T10:52:42.161Z","httpOnly":true,"path":"/"},"user":14,"username":"eee"}'),
+('iG7Gux8liHvF_XhYsfR-lrfMd_PUwE2t', 1465980034, '{"cookie":{"originalMaxAge":600000000,"expires":"2016-06-15T08:40:34.339Z","httpOnly":true,"path":"/"}}');
 
 -- --------------------------------------------------------
 
@@ -235,7 +246,7 @@ CREATE TABLE IF NOT EXISTS `units` (
   `hero` tinyint(1) NOT NULL DEFAULT '0',
   `pict` text,
   `description` text
-) ENGINE=MyISAM AUTO_INCREMENT=84 DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM AUTO_INCREMENT=85 DEFAULT CHARSET=utf8;
 
 --
 -- Дамп данных таблицы `units`
@@ -312,7 +323,7 @@ INSERT INTO `units` (`id`, `name`, `id_fraction`, `id_class`, `strength`, `id_ab
 (68, 'Моровая дева', 4, 2, 5, 1, 0, 'imgs/units/mons_25.png', 'Больные бредили о покрытой поршой и лишаями женщине, окружённой крысами.'),
 (69, 'Волколак', 4, 2, 5, 1, 0, 'imgs/units/mons_26.png', 'Не так страшен волк, как его малюют. Зато волколак куда страшней!'),
 (70, 'Вампир', 4, 2, 5, 3, 0, 'imgs/units/mons_27.png', 'Катакан: Мелитэле, обереги нас от зла, защити нас от когтей катакана...'),
-(71, 'Кладбищенская баба', 4, 4, 5, 1, 0, 'imgs/units/mons_28.png', 'Редко какое чудовище носит столь подходящее имя, как кладбищенская баба.'),
+(71, 'Кладбищенская баба', 4, 3, 5, 1, 0, 'imgs/units/mons_28.png', 'Редко какое чудовище носит столь подходящее имя, как кладбищенская баба.'),
 (72, 'Ледяной Великан', 4, 4, 5, 1, 0, 'imgs/units/mons_29.png', 'Раз в жизни я бегал от врага. От Ледяного Великана. И вовсе этого не стыжусь.'),
 (73, 'Бес', 4, 2, 6, 1, 0, 'imgs/units/mons_30.png', 'Бес немного смахивает на оленя. Огромного, злобного оленя.'),
 (74, 'Ведьма', 4, 2, 6, 3, 0, 'imgs/units/mons_31.png', 'Кухарка: - Порубим тебя, юноша. Отличный выйдет супчик...'),
@@ -321,7 +332,7 @@ INSERT INTO `units` (`id`, `name`, `id_fraction`, `id_class`, `strength`, `id_ab
 (77, 'Элементаль земли', 4, 4, 6, 1, 0, 'imgs/units/mons_34.png', 'Как выжить при встрече с элементалем земли? Очень просто. Бежать со всех ног.'),
 (78, 'Элементаль огня', 4, 4, 6, 1, 0, 'imgs/units/mons_35.png', 'А теперь будет жарко.'),
 (79, 'Главоглаз', 4, 4, 6, 3, 0, 'imgs/units/mons_36.png', 'Огромный главоглаз. Оно... оно двигается!'),
-(80, 'Кейран', 4, 2, 8, 4, 1, 'imgs/units/mons_h1.png', 'Как убить кейрана? Легко. Берёшь лучший меч... продаешь и нанимаешь ведьмака.'),
+(80, 'Кейран', 4, 7, 8, 1, 1, 'imgs/units/mons_h1.png', 'Как убить кейрана? Легко. Берёшь лучший меч... продаешь и нанимаешь ведьмака.'),
 (81, 'Драуг', 4, 2, 10, 1, 1, 'imgs/units/mons_h2.png', 'Генерал так и не признал поражения. Продолжал сражаться даже после смерти.'),
 (82, 'Имлерих', 4, 2, 10, 1, 1, 'imgs/units/mons_h3.png', 'Ladd nawh! Убить их! А кишки смешать с землёй.'),
 (83, 'Леший', 4, 3, 10, 1, 1, 'imgs/units/mons_h4.png', 'В этом лесу не охотятся. Никогда. Хоть бы деревня с голоду помирала.');
@@ -337,14 +348,16 @@ CREATE TABLE IF NOT EXISTS `users` (
   `user_name` varchar(40) NOT NULL,
   `user_pass` varchar(100) NOT NULL,
   `battles` varchar(100) DEFAULT NULL
-) ENGINE=MyISAM AUTO_INCREMENT=13 DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM AUTO_INCREMENT=15 DEFAULT CHARSET=utf8;
 
 --
 -- Дамп данных таблицы `users`
 --
 
 INSERT INTO `users` (`id`, `user_name`, `user_pass`, `battles`) VALUES
-(10, 'www', '$2a$10$ZNdQhpRUyeVEWmyjuGy.VON7OuSFIKQCTqWl2gk64QmLKRFCutnKG', NULL);
+(10, 'www', '$2a$10$ZNdQhpRUyeVEWmyjuGy.VON7OuSFIKQCTqWl2gk64QmLKRFCutnKG', NULL),
+(13, 'qqq', '$2a$10$ia45nVEe6N3KH5FH4H2ryuu5V7ryNfL4B2dmU/PaQuYnJ0F5zuuEG', NULL),
+(14, 'eee', '$2a$10$oG/XYhtuH7Y9itgMJJxbMOPpGUmj9DZGw4Nkm2N3pNTkFIOSJetdi', NULL);
 
 --
 -- Индексы сохранённых таблиц
@@ -421,7 +434,7 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT для таблицы `abilities`
 --
 ALTER TABLE `abilities`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=19;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=20;
 --
 -- AUTO_INCREMENT для таблицы `classes`
 --
@@ -441,7 +454,7 @@ ALTER TABLE `leaders`
 -- AUTO_INCREMENT для таблицы `list_of_battles`
 --
 ALTER TABLE `list_of_battles`
-  MODIFY `id_battle` int(10) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=71;
+  MODIFY `id_battle` int(10) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=112;
 --
 -- AUTO_INCREMENT для таблицы `specials`
 --
@@ -451,12 +464,12 @@ ALTER TABLE `specials`
 -- AUTO_INCREMENT для таблицы `units`
 --
 ALTER TABLE `units`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=84;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=85;
 --
 -- AUTO_INCREMENT для таблицы `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=13;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=15;
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;

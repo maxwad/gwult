@@ -992,40 +992,37 @@ io.on('connection', function(socket) {
     /////////////////////////////////////////////////////////////
     // Запись данных по количеству карт у игрока на руках и в колоде
     /////////////////////////////////////////////////////////////
-    socket.on('write counts', function(user_data) {
+    socket.on('counts', function(user_data) {
         var room = "room_" + user_data.user_room;
-        history[room].count_cards[user_data.player_index] = user_data.count_cards;
-        history[room].count_deck[user_data.player_index] = user_data.count_deck;
-    });
-
-    /////////////////////////////////////////////////////////////
-    // Запись данных по количеству карт у игрока на руках и в колоде
-    /////////////////////////////////////////////////////////////
-    socket.on('give me counts', function(user_data) {
-        var room = "room_" + user_data.user_room;
+        if(user_data.player_index != -1) {
+            history[room].count_cards[user_data.player_index] = user_data.count_cards;
+            history[room].count_deck[user_data.player_index]  = user_data.count_deck;
+        }
         var data = {};
         data.count_cards = history[room].count_cards;
-        data.count_deck = history[room].count_deck;
-        socket.emit('take counts', data);
+        data.count_deck  = history[room].count_deck;
+        io.to(room).emit('take counts', data);
     });
 
     /////////////////////////////////////////////////////////////
     // Обработка и перенаправление карт игрокам и зрителям
     /////////////////////////////////////////////////////////////
     socket.on('step to', function(user_data) {
-        var room = "room_" + user_data.user_room;
-        history[room].cards.push(user_data);
-        history[room].count_cards[user_data.player_index] = user_data.count_cards;
-        history[room].count_deck[user_data.player_index] = user_data.count_deck;
-        if(user_data.resolution == 1) {
-            history[room].resolution[user_data.player_index] = 1;
-            history[room].resolution[user_data.rival_index] = 0;
-        } else {
-            history[room].resolution[user_data.player_index] = 0;
-            history[room].resolution[user_data.rival_index] = 1;
+        var room;
+        for(var i = 0; i < user_data.length; i++) {
+            room = "room_" + user_data[i].user_room;
+            history[room].cards.push(user_data[i]);
+            if(user_data[i].resolution == 1) {
+                history[room].resolution[user_data[i].player_index] = 1;
+                history[room].resolution[user_data[i].rival_index] = 0;
+            }
+            if(user_data[i].resolution == 0){
+                history[room].resolution[user_data[i].player_index] = 0;
+                history[room].resolution[user_data[i].rival_index] = 1;
+            }
         }
+
         socket.broadcast.to(room).emit('step from', user_data);
-        console.log(history[room].resolution);
     });
 
     /////////////////////////////////////////////////////////////

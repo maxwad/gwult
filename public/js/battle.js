@@ -1,7 +1,7 @@
 /**
  * Created on 19.03.16.
  */
-
+var ggg = 0;
 Array.prototype.shuffle = function() {
     for (var i = this.length - 1; i > 0; i--) {
         var num = Math.floor(Math.random() * (i + 1));
@@ -15,11 +15,43 @@ Array.prototype.shuffle = function() {
 //////////////////////////////////////////////////////////////////
 // Функция, формирует колоду пользователя по исходным данным
 //////////////////////////////////////////////////////////////////
-function build_deck (deck, from) {
+function build_deck (deck, from, abilities) {
     var to = [];
     for(var i = 0; i < deck.length; i++){
         for(var j = 0; j < from.length; j++){
             if(from[j].id == deck[i]) {
+                if(from[j].strength !== undefined){
+                    from[j].fact_strength = from[j].strength;
+                    from[j].multiplier = 1;
+                    from[j].added = 0;
+                }
+                for(var k = 0; k < abilities.length; k++){
+                    if (parseInt(from[j].id_ability) == abilities[k].id) {
+                        from[j].ability = abilities[k].func;
+                        switch (from[j].abilities) {
+                            case 'clear_weather':
+                            case 'downpour':
+                            case 'fog':
+                            case 'frost':
+                            case 'gain':
+                            case 'commander_horn':
+                            case 'support':
+                                from[j].type_ability = 1; //способности, которые надо пересчитывать
+                                break;
+
+                            case 'agility':
+                            case 'double':
+                            case 'dummy':
+                            case 'execution':
+                            case 'medic':
+                            case 'spy':
+                                from[j].type_ability = 2; //способности, которые не надо пересчитывать
+                                break;
+
+                        }
+                    }
+                }
+
                 to.push(from[j]);
             }
         }
@@ -33,8 +65,8 @@ function show_cards (count, selector, from, flag, source) {
     selector.empty();
     for (var i = 0; i < count; i++) {
         if(flag == 1) {
-            from.push(source[i]);
-            source.splice(i,1);
+            from.push(source[0]);
+            source.splice(0,1);
         }
         selector.append(
             $('<div/>').attr('data-item', i).append(
@@ -44,6 +76,11 @@ function show_cards (count, selector, from, flag, source) {
                 })
             )
         );
+        if(from[i].strength !== undefined) {
+            selector.children().eq(i).append(
+                $('<div/>').text(from[i].fact_strength).attr('data-item', i).addClass('fact_strength')
+            );
+        }
     }
 }
 
@@ -114,12 +151,9 @@ function to_battlefield_home (this_card) {
                     this_card.change_class = 3;
                 }
             }
-
             break;
 
         case undefined:
-            //значит, это специальная карта
-            console.log('Special card');
             break;
     }
     return field_name;
@@ -139,7 +173,7 @@ function count_strength (player_obj, player_power){
             var selector_s = player_obj[i][row_name_arr[n]].row_selector + ' .str_count';
             $(selector_s).text(player_obj[i][row_name_arr[n]].total);
             for(var j = 0; j < player_obj[i][row_name_arr[n]].units_cards.length; j++) {
-                player_obj[i][row_name_arr[n]].total += parseInt(player_obj[i][row_name_arr[n]].units_cards[j].strength);
+                player_obj[i][row_name_arr[n]].total += parseInt(player_obj[i][row_name_arr[n]].units_cards[j].fact_strength);
                 $(selector_s).text(player_obj[i][row_name_arr[n]].total);
             }
             player_obj[i].total += player_obj[i][row_name_arr[n]].total;
@@ -164,15 +198,6 @@ function notice_round (mes, type) {
             $(this).remove();
         });
     }, 1500);
-}
-
-//////////////////////////////////////////////////////////////////
-// Запрос на информацию о количестве карт у игроков
-//////////////////////////////////////////////////////////////////
-function give_me_counts (number_of_room, socket) {
-    var data_user          = {};
-    data_user.user_room    = number_of_room;
-    socket.emit('give me counts', data_user);
 }
 
 //////////////////////////////////////////////////////////////////
@@ -204,6 +229,11 @@ function last_card(data) {
             'src':          "../" + last_card.pict,
             'title':        last_card.name
         });
+        if(last_card.strength !== undefined) {
+            $('.retreat').eq(0).append(
+                $('<div/>').text(last_card.strength).addClass('fact_strength')
+            );
+        }
     }
 
     compare = 0;
@@ -218,47 +248,55 @@ function last_card(data) {
             'src':          "../" + last_card.pict,
             'title':        last_card.name
         });
+        if(last_card.strength !== undefined) {
+            $('.retreat').eq(1).append(
+                $('<div/>').text(last_card.strength).addClass('fact_strength')
+            );
+        }
     }
 }
 
 
 $(document).ready(function () {
 
-    var i,
-        selector,
-        message,
-        user_id,
-        username,
-        number_of_room,
-        alias_player,
-        alias_rival,
-        work_obj        = [],
-        history         = {},
-        abilities       = [],
-        fractions       = [],
-        specials        = [],
-        units           = [],
-        player_deck     = {},
-        leaders         = [],
-        deck_units      = [],
-        deck_specials   = [],
-        deck_complete   = [],
-        player_cards    = [],
-        retreat_home    = [],
-        retreat_rival   = [],
-        round_results   = [],
-        player_index    = -1,
-        rival_index     = 0,
-        choose_flag     = 0,
-        count_repl      = 0,
-        resolution      = 0,
-        give_up_home    = 0,
-        give_up_rival   = 0,
-        leader_flag     = 0,
-        health_home     = 7,
-        health_rival    = 7,
-        count_move_h    = 0,
-        count_move_r    = 0,
+    var i,                      /* счётчик */
+        length,                 /* граница счётчика */
+        selector,               /* переменная для хранения селектора*/
+        message,                /* сообщение */
+        user_id,                /* id игрока */
+        username,               /* ник игрока */
+        number_of_room,         /* номер игровой комнаты */
+        alias_player,           /* переменная с индексом игрока */
+        alias_rival,            /* переменная с индексом противника */
+        work_obj        = [],   /* объект с инфой от сервера */
+        history         = {},   /* история ходов */
+        abilities       = [],   /* массис способностей */
+        fractions       = [],   /* массив фракций игроков  */
+        specials        = [],   /* массив спецкарт игроков */
+        units           = [],   /* массив юнитов игроков */
+        player_deck     = {},   /* объект айдишек карт игрока */
+        leaders         = [],   /* массив лидеров игроков */
+        deck_units      = [],   /* массив юнитов игрока */
+        deck_specials   = [],   /* массив спеукарт игрока */
+        deck_complete   = [],   /* итоговый массив карт игрока */
+        player_cards    = [],   /* начальные карты игрока на данную игру */
+        retreat_home    = [],   /* отбой игрока */
+        retreat_rival   = [],   /* отбой соперника */
+        round_results   = [],   /* массив результатов раундов */
+        data_abilities  = {},   /* объект с инфой для отработки способностей */
+        result_ability  = [],   /* результат отработки способности */
+        player_index    = -1,   /* индекс игрока: -1: зритель; 0: игрок; 1: соперник */
+        rival_index     = 0,    /* индекс соперника */
+        choose_flag     = 0,    /* флаг: выбирал ли уже игрок карты на замену */
+        count_repl      = 0,    /* количество заменённых карт */
+        resolution      = 0,    /* разрешение на ход */
+        give_up_home    = 0,    /* флаг ПАС для игрока */
+        give_up_rival   = 0,    /* флаг ПАС для противника */
+        leader_flag     = 0,    /* флаг: использовал ли уже игрок своего лидера */
+        health_home     = 2,    /* жизни игрока */
+        health_rival    = 2,    /* жизни соперника */
+        count_move_h    = 0,    /* номер хода игрока */
+        count_move_r    = 0,    /* номер хода соперника */
         leader_pic_$    = $('.leader_pic'),
         fraction_name_$ = $('.fraction_name'),
         players_names_$ = $('.user_name'),
@@ -275,7 +313,7 @@ $(document).ready(function () {
         retreat_$       = $('.last_card');
 
 
-    var battle_arr      = [];
+    var battle_arr      = [];   /* массив игрового стола */
     battle_arr[0]   = new Forces(".row_home");
     battle_arr[1]   = new Forces(".row_enemy");
 
@@ -307,7 +345,6 @@ $(document).ready(function () {
             socket.emit('user connect', user_data);
         }
     });
-
 
 
     socket.on('user without deck', function(){
@@ -352,7 +389,9 @@ $(document).ready(function () {
             leaders     = work_obj[0].leaders;
             abilities   = work_obj[0].abilities;
             specials    = work_obj[0].specials;
-            for(i = 0; i < work_obj[0].fractions.length; i++) {
+            length      = work_obj[0].fractions.length;
+
+            for(i = 0; i < length; i++) {
                 if(work_obj[0].fractions[i].id == work_obj[0].leaders[0].id_fraction) {
                     fractions[0] = work_obj[0].fractions[i];
                 }
@@ -424,8 +463,8 @@ $(document).ready(function () {
                 if(!localStorage['player_cards_' + number_of_room]) {
                     if(choose_flag == 0) {
                         player_cards = [];
-                        deck_units = build_deck (player_deck.units, units[0]);
-                        deck_specials = build_deck (player_deck.specials, specials);
+                        deck_units = build_deck (player_deck.units, units[0], abilities);
+                        deck_specials = build_deck (player_deck.specials, specials, abilities);
                         deck_complete = deck_units.concat(deck_specials);
                         deck_complete.shuffle().shuffle();
                         card_rewiev_$.css('display', 'block');
@@ -436,25 +475,20 @@ $(document).ready(function () {
                 } else {
                     player_cards = JSON.parse(localStorage['player_cards_' + number_of_room]);
                     deck_complete = JSON.parse(localStorage['deck_complete_' + number_of_room]);
+                    length = player_cards.length;
                     if(choose_flag == 0 && localStorage['count_repl_' + number_of_room] == 2) {
-                        show_cards (player_cards.length, cards_$, player_cards, 0,'');
+                        show_cards (length, cards_$, player_cards, 0,'');
                         i_am_ready (socket, user_id, username, number_of_room, player_index);
                         choose_flag = 1;
                     } else {
                         if(choose_flag == 0 && localStorage['count_repl_' + number_of_room] < 2) {
                             card_rewiev_$.css('display', 'block');
-                            show_cards (player_cards.length, block_rewiev_$, player_cards, 0,'');
+                            show_cards (length, block_rewiev_$, player_cards, 0,'');
                             choose_flag = 1;
                         }
                     }
                 }
-                var user_data          = {};
-                user_data.user_room    = number_of_room;
-                user_data.player_index = player_index;
-                user_data.count_cards  = player_cards.length;
-                user_data.count_deck   = deck_complete.length;
-                socket.emit('write counts', user_data);
-                give_me_counts (number_of_room, socket);
+
 
             } else {
                 // Вывод начальных данных для зрителей
@@ -463,15 +497,17 @@ $(document).ready(function () {
                     players_names_$.eq(j).text(work_obj[0].players[j].user_name);
                 }
                 $('.battle .exit').remove();
-                give_me_counts (number_of_room, socket);
             }
-
-
+            var counts_data            = {};
+            counts_data.user_room      = number_of_room;
+            counts_data.player_index   = player_index;
+            counts_data.count_cards    = player_cards.length;
+            counts_data.count_deck     = deck_complete.length;
+            socket.emit('counts', counts_data);
 
             // Обработка истории игры для новых подключившихся пользователей
             if (history.cards.length != 0 && count_move_h == 0 && count_move_r == 0) {
                 console.log("Вывожу историю игры");
-                console.log(history.resolution[player_index]);
                 for(i = 0; i < history.cards.length; i++) {
                     if(history.cards[i] == 'give_up'){
                         round_results.push([battle_arr[0].total, battle_arr[1].total]);
@@ -498,7 +534,6 @@ $(document).ready(function () {
 
                         var row_name_arr = ['close', 'range', 'siege'];
                         for(var m = 0; m < 2; m++){
-
                             for (var j = 0; j < row_name_arr.length; j++) {
                                 var k = battle_arr[m][row_name_arr[j]].units_cards.length;
                                 while(k != 0) {
@@ -512,17 +547,19 @@ $(document).ready(function () {
                                     battle_arr[m][row_name_arr[j]].units_cards.splice(k,1);
                                 }
                                 selector = battle_arr[m][row_name_arr[j]].row_selector + ' .cards_field';
-                                show_cards (battle_arr[m][row_name_arr[j]].units_cards.length, $(selector), battle_arr[m][row_name_arr[j]].units_cards, 0,'');
+                                length = battle_arr[m][row_name_arr[j]].units_cards.length;
+                                show_cards (length, $(selector), battle_arr[m][row_name_arr[j]].units_cards, 0,'');
                             }
 
+                            length = battle_arr[m].specials.length;
                             for(var n = 0; n < battle_arr[m].specials.length; n++){
                                 if(m == 0){
-                                    retreat_home.push(battle_arr[m].specials[n]);
+                                    retreat_home.push(battle_arr[m].specials[0]);
                                 }
                                 if(m == 1){
-                                    retreat_rival.push(battle_arr[m].specials[n]);
+                                    retreat_rival.push(battle_arr[m].specials[0]);
                                 }
-                                battle_arr[m].specials.splice(n,1);
+                                battle_arr[m].specials.splice(0,1);
                                 // TODO: Удалять карту лидера
                             }
                         }
@@ -552,23 +589,43 @@ $(document).ready(function () {
 
                         field_name = to_battlefield_home(history.cards[i].card);
                         if (field_name !== undefined) {
+                            if(history.cards[i].card.ability == 'spy'){
+                                if(ind == 0) {
+                                    ind = 1;
+                                } else {
+                                    ind = 0;
+                                }
+                            }
                             battle_arr[ind][field_name].units_cards.push(history.cards[i].card);
                             selector = battle_arr[ind][field_name].row_selector + ' .cards_field';
-                            show_cards (battle_arr[ind][field_name].units_cards.length, $(selector), battle_arr[ind][field_name].units_cards, 0,'');
+                            length = battle_arr[ind][field_name].units_cards.length;
+                            show_cards (length, $(selector), battle_arr[ind][field_name].units_cards, 0,'');
                             battle_arr[ind][field_name].total = 0;
                         } else {
                             battle_arr[ind].specials.push(history.cards[i].card);
                         }
                         count_strength (battle_arr, player_power_$);
+
+                        data_abilities.battle_arr    = battle_arr;
+                        data_abilities.player_cards  = player_cards;
+                        data_abilities.retreat_home  = retreat_home;
+                        data_abilities.retreat_rival = retreat_rival;
+                        result_ability = abilities_obj[history.cards[i].card.ability](data_abilities, 3);
+
+                        counts_data.user_room      = number_of_room;
+                        counts_data.player_index   = player_index;
+                        counts_data.count_cards    = player_cards.length;
+                        counts_data.count_deck     = deck_complete.length;
+                        socket.emit('counts', counts_data);
                     }
                 }
                 if (retreat_home.length !=0 && retreat_rival != 0) {
                     var data = {};
-                    data.retreat_home = retreat_home;
-                    data.count_move_h = count_move_h;
-                    data.retreat_$ = retreat_$;
+                    data.retreat_home  = retreat_home;
+                    data.count_move_h  = count_move_h;
+                    data.retreat_$     = retreat_$;
                     data.retreat_rival = retreat_rival;
-                    data.count_move_r = count_move_r;
+                    data.count_move_r  = count_move_r;
                     last_card(data);
                 }
                 if(player_index == -1) {
@@ -578,7 +635,7 @@ $(document).ready(function () {
                     give_up_home = history.give_up_status[player_index];
                     give_up_rival = history.give_up_status[rival_index];
                     resolution = history.resolution[player_index];
-                    console.log(history.resolution);
+
                     if(resolution == 1 && give_up_rival == 1) {
                         status_move_$.text('ВАШ ХОД. ПРОТИВНИК СДАЛСЯ');
                     }
@@ -643,7 +700,12 @@ $(document).ready(function () {
             if(count_repl == 2) {
                 card_rewiev_$.css('display', 'none');
                 show_cards (player_cards.length, cards_$, player_cards, 0,'');
-                give_me_counts (number_of_room, socket);
+                var counts_data            = {};
+                counts_data.user_room = number_of_room;
+                counts_data.player_index   = player_index;
+                counts_data.count_cards    = player_cards.length;
+                counts_data.count_deck     = deck_complete.length;
+                socket.emit('counts', counts_data);
                 i_am_ready (socket, user_id, username, number_of_room, player_index);
             }
         }
@@ -655,7 +717,12 @@ $(document).ready(function () {
         localStorage['player_cards_' + number_of_room] = JSON.stringify(player_cards);
         localStorage['deck_complete_' + number_of_room] = JSON.stringify(deck_complete);
         show_cards (player_cards.length, cards_$, player_cards, 0,'');
-        give_me_counts (number_of_room, socket);
+        var counts_data            = {};
+        counts_data.user_room = number_of_room;
+        counts_data.player_index   = player_index;
+        counts_data.count_cards    = player_cards.length;
+        counts_data.count_deck     = deck_complete.length;
+        socket.emit('counts', counts_data);
         localStorage['count_repl_' + number_of_room] = 2;
         i_am_ready (socket, user_id, username, number_of_room, player_index);
     });
@@ -672,10 +739,15 @@ $(document).ready(function () {
             $(this).remove();
 
             if (field_name !== undefined) {
-                battle_arr[0][field_name].units_cards.push(this_card);
-                selector = battle_arr[0][field_name].row_selector + ' .cards_field';
-                show_cards (battle_arr[0][field_name].units_cards.length, $(selector), battle_arr[0][field_name].units_cards, 0,'');
-                battle_arr[0][field_name].total = 0;
+                var flag_field = 0;
+                if(this_card.ability == 'spy'){
+                    flag_field = 1;
+                }
+                battle_arr[flag_field][field_name].units_cards.push(this_card);
+                selector = battle_arr[flag_field][field_name].row_selector + ' .cards_field';
+                length = battle_arr[flag_field][field_name].units_cards.length;
+                show_cards (length, $(selector), battle_arr[flag_field][field_name].units_cards, 0,'');
+                battle_arr[flag_field][field_name].total = 0;
             } else {
                 battle_arr[0].specials.push(this_card);
             }
@@ -696,19 +768,43 @@ $(document).ready(function () {
                 resolution = 0;
                 $('.exit').click();
             }
-            var user_data               = {};
-            user_data.user_room         = number_of_room;
-            user_data.player_index      = player_index;
-            user_data.rival_index       = rival_index;
-            user_data.user_id           = user_id;
-            user_data.card              = this_card;
-            user_data.card_effect       = [];
-            user_data.count_cards       = player_cards.length;
-            user_data.count_deck        = deck_complete.length;
-            user_data.resolution        = resolution;
-            user_data.give_up           = give_up_home;
-            socket.emit('step to', user_data);
+
+            var arr_data                  = [];
+            var user_data                 = {};
+            user_data.user_room           = number_of_room;
+            user_data.player_index        = player_index;
+            user_data.rival_index         = rival_index;
+            user_data.user_id             = user_id;
+            user_data.card                = this_card;
+            user_data.card_effect         = [];
+            user_data.resolution          = resolution;
+            user_data.give_up             = give_up_home;
+            arr_data.push(user_data);
+
+            data_abilities.number_of_room = number_of_room;
+            data_abilities.player_index   = player_index;
+            data_abilities.battle_arr     = battle_arr;
+            data_abilities.player_cards   = player_cards;
+            data_abilities.deck_complete  = deck_complete;
+            data_abilities.retreat_home   = retreat_home;
+            data_abilities.retreat_rival  = retreat_rival;
+            data_abilities.socket         = socket;
+            data_abilities.arr_data       = arr_data;
+
+            result_ability = abilities_obj[this_card.ability](data_abilities, 1);
+            socket.emit('step to', result_ability);
+            var counts_data            = {};
+            counts_data.user_room      = number_of_room;
+            counts_data.player_index   = player_index;
+            counts_data.count_cards    = player_cards.length;
+            counts_data.count_deck     = deck_complete.length;
+
+            socket.emit('counts', counts_data);
+
+            count_strength (battle_arr, player_power_$);
+
             localStorage['player_cards_' + number_of_room] = JSON.stringify(player_cards);
+            localStorage['deck_complete_' + number_of_room] = JSON.stringify(deck_complete);
         }
 
     });
@@ -716,31 +812,58 @@ $(document).ready(function () {
 
     // Обработка пришедших карт
     socket.on('step from', function(user_data){
-        console.log(user_data);
         count_move_r++;
         give_up_rival = user_data.give_up;
         if(give_up_home != 1) {
             status_move_$.text('ВАШ ХОД');
         }
-        var field_name, position;
-        if(player_index == -1) {
-            position = user_data.player_index;
-            status_move_$.text('');
-            give_me_counts (number_of_room, socket);
-        } else {
-            position = 1;
+
+        for(var i = 0; i < user_data.length; i++) {
+            var field_name, position;
+            if(player_index == -1) {
+                position = user_data[i].player_index;
+                status_move_$.text('');
+            } else {
+                position = 1;
+            }
+            field_name = to_battlefield_home(user_data[i].card);
+            if (field_name !== undefined) {
+                if(user_data[i].card.ability == 'spy'){
+                    if(position == 0) {
+                        position = 1;
+                    } else {
+                        position = 0;
+                    }
+                }
+                battle_arr[position][field_name].units_cards.push(user_data[i].card);
+                selector = battle_arr[position][field_name].row_selector + ' .cards_field';
+                length = battle_arr[position][field_name].units_cards.length;
+                show_cards (length, $(selector), battle_arr[position][field_name].units_cards, 0,'');
+                battle_arr[position][field_name].total = 0;
+            } else {
+                battle_arr[position].specials.push(user_data[i].card);
+            }
+            count_strength (battle_arr, player_power_$);
+
+            data_abilities.battle_arr    = battle_arr;
+            data_abilities.player_cards  = player_cards;
+            data_abilities.retreat_home  = retreat_home;
+            data_abilities.retreat_rival = retreat_rival;
+            result_ability = abilities_obj[user_data[i].card.ability](data_abilities, 2);
+/*
+            var counts_data            = {};
+            counts_data.user_room      = number_of_room;
+            counts_data.player_index   = player_index;
+            counts_data.count_cards    = player_cards.length;
+            counts_data.count_deck     = deck_complete.length;
+            socket.emit('counts', counts_data);
+            */
         }
-        field_name = to_battlefield_home(user_data.card);
-        if (field_name !== undefined) {
-            battle_arr[position][field_name].units_cards.push(user_data.card);
-            selector = battle_arr[position][field_name].row_selector + ' .cards_field';
-            show_cards (battle_arr[position][field_name].units_cards.length, $(selector), battle_arr[position][field_name].units_cards, 0,'');
-            battle_arr[position][field_name].total = 0;
-        } else {
-            battle_arr[position].specials.push(user_data.card);
-        }
-        count_strength (battle_arr, player_power_$);
-        give_me_counts (number_of_room, socket);
+
+
+
+
+
         if(give_up_home != 1) {
             resolution = 1;
         } else {
@@ -840,7 +963,8 @@ $(document).ready(function () {
                     }
                 }
                 td_body.empty();
-                for (i = 0; i< round_results.length; i++) {
+                length = round_results.length;
+                for (i = 0; i < length; i++) {
                     var class_home = '',
                         class_rival = '';
                     if(round_results[i][0] > round_results[i][1]) {
@@ -878,29 +1002,35 @@ $(document).ready(function () {
                             battle_arr[i][row_name_arr[j]].units_cards.splice(k,1);
                         }
                         selector = battle_arr[i][row_name_arr[j]].row_selector + ' .cards_field';
-                        show_cards (battle_arr[i][row_name_arr[j]].units_cards.length, $(selector), battle_arr[i][row_name_arr[j]].units_cards, 0,'');
+                        length = battle_arr[i][row_name_arr[j]].units_cards.length;
+                        show_cards (length, $(selector), battle_arr[i][row_name_arr[j]].units_cards, 0,'');
                     }
 
                     for(var n = 0; n < battle_arr[i].specials.length; n++){
                         if(i == 0){
-                            retreat_home.push(battle_arr[i].specials[n]);
+                            retreat_home.push(battle_arr[i].specials[0]);
                         }
                         if(i == 1){
-                            retreat_rival.push(battle_arr[i].specials[n]);
+                            retreat_rival.push(battle_arr[i].specials[0]);
                         }
-                        battle_arr[i].specials.splice(n,1);
+                        battle_arr[i].specials.splice(0,1);
                         // TODO: Удалять карту лидера
                     }
                 }
                 count_strength (battle_arr, player_power_$);
-                give_me_counts (number_of_room, socket);
+                var counts_data            = {};
+                counts_data.user_room = number_of_room;
+                counts_data.player_index   = player_index;
+                counts_data.count_cards    = player_cards.length;
+                counts_data.count_deck     = deck_complete.length;
+                socket.emit('counts', counts_data);
                 $('.fold').remove();
                 var data = {};
-                data.retreat_home = retreat_home;
-                data.count_move_h = count_move_h;
-                data.retreat_$ = retreat_$;
+                data.retreat_home  = retreat_home;
+                data.count_move_h  = count_move_h;
+                data.retreat_$     = retreat_$;
                 data.retreat_rival = retreat_rival;
-                data.count_move_r = count_move_r;
+                data.count_move_r  = count_move_r;
                 last_card(data);
                 if(player_index != -1) {
                     resolution = user_data.resolution[player_index];

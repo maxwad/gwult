@@ -335,6 +335,7 @@ input[type=text], input[type=password], textarea {
 }
 
 .room .deck_status a {
+    display: block;
     margin: 5px auto;
     padding: 5px 10px;
     background: #9a733d;
@@ -1205,6 +1206,40 @@ input[type=text], input[type=password], textarea {
     min-height: 150px;
 }
 
+.battle .table .fact_strength {
+    display: block;
+    position: absolute;
+    top: 0;
+    left: 2%;
+    height: 22px;
+    width: 22px;
+    background: #ffffff;
+    color: #000000;
+    line-height: 22px;
+    border-radius: 50%;
+    text-align: center;
+}
+
+.battle .table .retreat .fact_strength {
+    left: 13px;
+}
+
+.battle .block_rewiev .fact_strength {
+    display: block;
+    position: absolute;
+    top: 15px;
+    left: 40px;
+    height: 30px;
+    width: 30px;
+    line-height: 30px;
+    background: #ffffff;
+    padding: 0;
+    color: #000000;
+    border-radius: 50%;
+    text-align: center;
+    font-weight: 900;
+}
+
 .battle .cards_field div:hover img {
     box-shadow: 0 0 7px 3px #ba8b48;
     background: #ba8b48;
@@ -1290,7 +1325,7 @@ input[type=text], input[type=password], textarea {
     width: 100%;
 }
 
-.battle .cards div, .battle .cards_field div{
+.battle .cards>div, .battle .cards_field>div{
     flex: 1;
     max-width: 100px;
     position: relative;
@@ -1313,8 +1348,11 @@ input[type=text], input[type=password], textarea {
     min-height: 150px;
 }
 
+.battle .cards>div:hover {
+    transform: translate(-15px, -15%);
+}
+
 .battle .cards div:hover img {
-    transform: translateY(-15%);
     box-shadow: 0 0 7px 3px #ba8b48;
     background: #ba8b48;
     cursor: pointer;
@@ -1341,11 +1379,11 @@ input[type=text], input[type=password], textarea {
     width: 19%;
     padding: 10px 35px;
     height: 45%;
+    position: relative;
 }
 
 .battle .card_rewiev img {
     display: block;
-    margin: 0 auto;
     width: auto;
     height: 100%;
 }

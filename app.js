@@ -937,6 +937,8 @@ io.on('connection', function(socket) {
                 console.log("Добавлен зритель.");
                 socket.join(room);
                 socket.emit('take data', [rooms[room], history[room]]);
+            } else {
+                // TODO: Обработать случай, когда игрок подключился со второй вкладки в браузере
             }
         }
 

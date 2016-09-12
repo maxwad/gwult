@@ -1,7 +1,7 @@
 /**
  * Created on 19.03.16.
  */
-var ggg = 0;
+
 Array.prototype.shuffle = function() {
     for (var i = this.length - 1; i > 0; i--) {
         var num = Math.floor(Math.random() * (i + 1));
@@ -21,37 +21,20 @@ function build_deck (deck, from, abilities) {
         for(var j = 0; j < from.length; j++){
             if(from[j].id == deck[i]) {
                 if(from[j].strength !== undefined){
+                    from[j].unit          = 1;
                     from[j].fact_strength = from[j].strength;
-                    from[j].multiplier = 1;
-                    from[j].added = 0;
+                    from[j].multiplier    = 1;
+                    from[j].multihorn     = 1;
+                    from[j].added         = 0;
+                    from[j].exponent      = 1;
+                } else {
+                    from[j].unit          = 0;
                 }
                 for(var k = 0; k < abilities.length; k++){
                     if (parseInt(from[j].id_ability) == abilities[k].id) {
                         from[j].ability = abilities[k].func;
-                        switch (from[j].abilities) {
-                            case 'clear_weather':
-                            case 'downpour':
-                            case 'fog':
-                            case 'frost':
-                            case 'gain':
-                            case 'commander_horn':
-                            case 'support':
-                                from[j].type_ability = 1; //способности, которые надо пересчитывать
-                                break;
-
-                            case 'agility':
-                            case 'double':
-                            case 'dummy':
-                            case 'execution':
-                            case 'medic':
-                            case 'spy':
-                                from[j].type_ability = 2; //способности, которые не надо пересчитывать
-                                break;
-
-                        }
                     }
                 }
-
                 to.push(from[j]);
             }
         }
@@ -61,26 +44,92 @@ function build_deck (deck, from, abilities) {
 //////////////////////////////////////////////////////////////////
 // Функция, которая выводит карты на стол
 //////////////////////////////////////////////////////////////////
-function show_cards (count, selector, from, flag, source) {
-    selector.empty();
-    for (var i = 0; i < count; i++) {
-        if(flag == 1) {
-            from.push(source[0]);
-            source.splice(0,1);
+function show_cards (flag, from, selector) {
+    if(flag == 1) {
+        var weather_area_$  = $('.weather_area');
+        weather_area_$.empty();
+        for (var i = 0; i < 2; i++) {
+            for(var j = 0; j < from[i].specials.length; j++) {
+                weather_area_$.append(
+                    $('<div/>').attr('data-id-card', from[i].specials[j].id)
+                        .addClass('weather_card')
+                        .append(
+                            $('<img/>').attr({
+                                'src':          "../" + from[i].specials[j].pict,
+                                'title':        from[i].specials[j].name
+                            })
+                        )
+                );
+            }
         }
-        selector.append(
-            $('<div/>').attr('data-item', i).append(
-                $('<img/>').attr({
-                    'src':          "../" + from[i].pict,
-                    'title':        from[i].name
-                })
-            )
-        );
-        if(from[i].strength !== undefined) {
-            selector.children().eq(i).append(
-                $('<div/>').text(from[i].fact_strength).attr('data-item', i).addClass('fact_strength')
-            );
+        $('.special_field').empty();
+        $('.cards_field').empty();
+        var battle_field = $('.battle_field');
+        var row_name     = ['siege', 'range', 'close'];
+        var prop_name    = ['row_specials', 'units_cards'];
+        for(var i = 0; i < 2; i++){
+            for(var j = 0; j < row_name.length; j++){
+                for(var k = 0; k < prop_name.length; k++){
+                    for(var l = 0; l < from[i][row_name[j]][prop_name[k]].length; l++){
+                        battle_field
+                             .children().eq(i)
+                             .children().eq(j)
+                             .children().eq(1)
+                             .children().eq(k)
+                             .append(
+                                $('<div/>').attr('data-item', i)
+                                    .attr('data-id-card', from[i][row_name[j]][prop_name[k]][l].id)
+                                    .addClass('card_on_table')
+                                    .append(
+                                        $('<img/>').attr({
+                                            'src':          "../" + from[i][row_name[j]][prop_name[k]][l].pict,
+                                            'title':        from[i][row_name[j]][prop_name[k]][l].name
+                                        })
+                                    )
+                            );
+                        if(from[i][row_name[j]][prop_name[k]][l].unit == 1) {
+                            battle_field
+                                .children().eq(i)
+                                .children().eq(j)
+                                .children().eq(1)
+                                .children().eq(k)
+                                .children().eq(l)
+                                .append(
+                                $('<div/>')
+                                    .text(from[i][row_name[j]][prop_name[k]][l].fact_strength)
+                                    .attr('data-item', i).addClass('fact_strength')
+                                );
+                        }
+                    }
+                }
+            }
         }
+    } else {
+        if(flag == 0) {
+            selector.empty();
+            for (var i = 0; i < from.length; i++) {
+                selector.append(
+                    $('<div/>').attr('data-item', i)
+                        .attr('data-id-card', from[i].id)
+                        .addClass('card_on_table')
+                        .append(
+                            $('<img/>').attr({
+                                'src':          "../" + from[i].pict,
+                                'title':        from[i].name
+                            })
+                        )
+                );
+                if(from[i].unit == 1) {
+                    selector.children().eq(i).append(
+                        $('<div/>').
+                            text(from[i].fact_strength)
+                            .attr('data-item', i)
+                            .addClass('fact_strength')
+                    );
+                }
+            }
+        }
+
     }
 }
 
@@ -102,6 +151,8 @@ function i_am_ready (socket, user_id, username, number_of_room, player_index) {
 function Row_obj(index, selector) {
     this.row_selector   = index + selector;
     this.units_cards    = [];
+    this.effects        = [];
+    this.row_specials   = [];
     this.total          = 0;
 }
 
@@ -114,13 +165,14 @@ function Forces (index) {
     this.close     = new Row_obj(index, " .close_row");
     this.leader    = {};
     this.specials  = [];
+    this.effects   = [];
     this.total     = 0;
 }
 
 //////////////////////////////////////////////////////////////////
 // Функция, которая определяет, в какое поле должна быть выложена карта
 //////////////////////////////////////////////////////////////////
-function to_battlefield_home (this_card) {
+function get_field (this_card) {
     var field_name;
     switch (this_card.id_class) {
         case 2:
@@ -159,26 +211,35 @@ function to_battlefield_home (this_card) {
     return field_name;
 }
 
-
 //////////////////////////////////////////////////////////////////
 // Функция, которая пересчитывает очки
 //////////////////////////////////////////////////////////////////
-function count_strength (player_obj, player_power){
+function count_strength (battle_arr, player_power){
+    set_effect (battle_arr);
     var row_name_arr = ['close', 'range', 'siege'];
     // Пересчитываем очки у обоих игроков
     for(var i = 0; i < 2; i++) {
-        player_obj[i].total = 0;
+        battle_arr[i].total = 0;
         for(var n = 0; n < row_name_arr.length; n++) {
-            player_obj[i][row_name_arr[n]].total = 0;
-            var selector_s = player_obj[i][row_name_arr[n]].row_selector + ' .str_count';
-            $(selector_s).text(player_obj[i][row_name_arr[n]].total);
-            for(var j = 0; j < player_obj[i][row_name_arr[n]].units_cards.length; j++) {
-                player_obj[i][row_name_arr[n]].total += parseInt(player_obj[i][row_name_arr[n]].units_cards[j].fact_strength);
-                $(selector_s).text(player_obj[i][row_name_arr[n]].total);
+            battle_arr[i][row_name_arr[n]].total = 0;
+            var selector_s = battle_arr[i][row_name_arr[n]].row_selector + ' .str_count';
+            $(selector_s).text(battle_arr[i][row_name_arr[n]].total);
+            for(var j = 0; j < battle_arr[i][row_name_arr[n]].units_cards.length; j++) {
+                var card = battle_arr[i][row_name_arr[n]].units_cards[j];
+                if(card.ability != 'dummy') {
+                    var basis = parseInt(card.strength);
+                    if(card.hero != 1 && card.strength != 0) {
+                        card.fact_strength = ((Math.pow(basis, card.exponent) + card.added) * card.multiplier * card.multihorn);
+                    } else {
+                        card.fact_strength = card.strength;
+                    }
+                    battle_arr[i][row_name_arr[n]].total += card.fact_strength;
+                    $(selector_s).text(battle_arr[i][row_name_arr[n]].total);
+                }
             }
-            player_obj[i].total += player_obj[i][row_name_arr[n]].total;
+            battle_arr[i].total += battle_arr[i][row_name_arr[n]].total;
         }
-        player_power.eq(i).text(player_obj[i].total);
+        player_power.eq(i).text(battle_arr[i].total);
     }
 }
 
@@ -225,17 +286,24 @@ function last_card(data) {
                 last_card = data.retreat_home[i];
             }
         }
-        data.retreat_$.eq(0).attr({
-            'src':          "../" + last_card.pict,
-            'title':        last_card.name
-        });
-        if(last_card.strength !== undefined) {
+        $('.retreat').eq(0).empty().append(
+            $('<img/>').attr({
+                'src':          "../" + last_card.pict,
+                'title':        last_card.name,
+                'class':        'last_card'
+            })
+        );
+
+        //if(last_card.unit == 1) {
             $('.retreat').eq(0).append(
-                $('<div/>').text(last_card.strength).addClass('fact_strength')
+                $('<div/>')
+                    .text(data.retreat_home.length)
+                    .addClass('fact_strength')
             );
-        }
+        //}
     }
 
+    last_card = {};
     compare = 0;
     if (data.retreat_rival.length != 0) {
         for(var i = 0; i < data.retreat_rival.length; i++){
@@ -244,20 +312,164 @@ function last_card(data) {
                 last_card = data.retreat_rival[i];
             }
         }
-        data.retreat_$.eq(1).attr({
-            'src':          "../" + last_card.pict,
-            'title':        last_card.name
-        });
-        if(last_card.strength !== undefined) {
+        $('.retreat').eq(1).empty().append(
+            $('<img/>').attr({
+                'src':          "../" + last_card.pict,
+                'title':        last_card.name,
+                'class':        'last_card'
+            })
+        );
+        //if(last_card.unit == 1) {
             $('.retreat').eq(1).append(
-                $('<div/>').text(last_card.strength).addClass('fact_strength')
+                $('<div/>')
+                    .text(data.retreat_rival.length)
+                    .addClass('fact_strength')
             );
+        //}
+    }
+}
+
+//////////////////////////////////////////////////////////////////
+// Очистка стола от карт
+//////////////////////////////////////////////////////////////////
+function clear_battlefield (data) {
+    var row_name_arr = ['close', 'range', 'siege'];
+    for(var m = 0; m < 2; m++){
+        for (var j = 0; j < row_name_arr.length; j++) {
+            var card_row = data.battle_arr[m][row_name_arr[j]];
+
+            var k = card_row.units_cards.length;
+            while(k != 0) {
+                k--;
+                card_row.units_cards[k].exponent      = 1;
+                card_row.units_cards[k].added         = 0;
+                card_row.units_cards[k].multiplier    = 1;
+                card_row.units_cards[k].multihorn     = 1;
+                card_row.units_cards[k].fact_strength = card_row.units_cards[k].strength;
+                if(card_row.units_cards[k].name == 'Чучело') {
+                    card_row.units_cards[k].unit = 0;
+                }
+                if(m == 0){
+                    data.retreat_home.push(card_row.units_cards[k]);
+                }
+                if(m == 1) {
+                    data.retreat_rival.push(card_row.units_cards[k]);
+                }
+                card_row.units_cards.splice(k,1);
+            }
+
+            var l = card_row.row_specials.length;
+            while(l != 0) {
+                l--;
+                if(card_row.row_specials[l].ability == 'commander_horn'){
+                    delete card_row.row_specials[l].field_horn;
+                }
+                if(m == 0){
+                    data.retreat_home.push(card_row.row_specials[l]);
+                }
+                if(m == 1) {
+                    data.retreat_rival.push(card_row.row_specials[l]);
+                }
+                card_row.row_specials.splice(l,1);
+            }
+            card_row.effects = [];
         }
+
+        var n = data.battle_arr[m].specials.length;
+        while(n != 0) {
+            n--;
+            if(m == 0){
+                data.retreat_home.push(data.battle_arr[m].specials[0]);
+            }
+            if(m == 1){
+                data.retreat_rival.push(data.battle_arr[m].specials[0]);
+            }
+            data.battle_arr[m].specials.splice(0,1);
+        }
+        data.battle_arr[m].effects = [];
+        data.battle_arr[m].leader  = {};
     }
 }
 
 
+//////////////////////////////////////////////////////////////////
+// Удаление карты со стола
+//////////////////////////////////////////////////////////////////
+function delete_card (data) {
+    if(data.card.from_medic == 1) {
+        var retreat = {};
+        if(data.ind == 0){
+            retreat = data.retreat_home;
+        } else {
+            retreat = data.retreat_rival;
+        }
+        for(var k = 0; k < retreat.length; k++){
+            if(retreat[k].id == data.card.id){
+                retreat.splice(k, 1);
+            }
+        }
+    } else {
+        if(data.card.from_theft == 1) {
+            var retreat = {};
+            if(data.ind == 0){
+                retreat = data.retreat_rival;
+            } else {
+                retreat = data.retreat_home;
+            }
+            for(var k = 0; k < retreat.length; k++){
+                if(retreat[k].id == data.card.id){
+                    retreat.splice(k, 1);
+                }
+            }
+        } else {
+            var effects = data.battle_arr[data.ind][data.field_name].effects;
+            var j = effects.length;
+            while(j != 0) {
+                j--;
+                if(effects[j] == data.card.ability){
+                    abilities_obj[data.card.ability](data.battle_arr[data.ind][data.field_name], 5);
+                    effects.splice(j, 1);
+                    break; // чтоб не удаляло все карты, если есть одинаковые!
+                }
+            }
+
+            var units = data.battle_arr[data.ind][data.field_name].units_cards;
+            var i = units.length;
+            while(i != 0) {
+                i--;
+                if(units[i].id == data.card.id){
+                    if(data.card.from_dummy != 1) {
+                        units[i].exponent      = 1;
+                        units[i].added         = 0;
+                        units[i].multiplier    = 1;
+                        units[i].multihorn     = 1;
+                        units[i].fact_strength = units[i].strength;
+                        if(data.ind == 0){
+                            data.retreat_home.push(clone(units[i]));
+                        } else {
+                            data.retreat_rival.push(clone(units[i]));
+                        }
+                        units.splice(i, 1);
+                    }
+                    break; // чтоб не удаляло все карты, если есть одинаковые!
+                }
+            }
+        }
+    }
+    last_card(data);
+}
+
+
+
+
 $(document).ready(function () {
+
+    function Counts_data() {
+        this.user_room      = number_of_room;
+        this.player_index   = player_index;
+        this.count_cards    = player_cards.length;
+        this.count_deck     = deck_complete.length;
+    }
 
     var i,                      /* счётчик */
         length,                 /* граница счётчика */
@@ -268,6 +480,9 @@ $(document).ready(function () {
         number_of_room,         /* номер игровой комнаты */
         alias_player,           /* переменная с индексом игрока */
         alias_rival,            /* переменная с индексом противника */
+        memory_ability  = '',   /* переменная для хранения выполняющейся способности */
+        memory_id       = '',   /* переменная для хранения id играемой карты */
+        memory_card     = {},   /* переменная для хранения карты */
         work_obj        = [],   /* объект с инфой от сервера */
         history         = {},   /* история ходов */
         abilities       = [],   /* массис способностей */
@@ -283,20 +498,21 @@ $(document).ready(function () {
         retreat_home    = [],   /* отбой игрока */
         retreat_rival   = [],   /* отбой соперника */
         round_results   = [],   /* массив результатов раундов */
-        data_abilities  = {},   /* объект с инфой для отработки способностей */
         result_ability  = [],   /* результат отработки способности */
         player_index    = -1,   /* индекс игрока: -1: зритель; 0: игрок; 1: соперник */
         rival_index     = 0,    /* индекс соперника */
         choose_flag     = 0,    /* флаг: выбирал ли уже игрок карты на замену */
         count_repl      = 0,    /* количество заменённых карт */
         resolution      = 0,    /* разрешение на ход */
+        temp_resolution = 0,    /* хранение состояния разрешения*/
         give_up_home    = 0,    /* флаг ПАС для игрока */
         give_up_rival   = 0,    /* флаг ПАС для противника */
-        leader_flag     = 0,    /* флаг: использовал ли уже игрок своего лидера */
         health_home     = 2,    /* жизни игрока */
         health_rival    = 2,    /* жизни соперника */
-        count_move_h    = 0,    /* номер хода игрока */
-        count_move_r    = 0,    /* номер хода соперника */
+        end_of_game     = 0,    /* флаг конца игры */
+        exp             = 0,    /* очки опыта */
+        leaders_flag    = {},   /* флаг: использовал ли уже игрок своего лидера */
+        count_moves     = {},   /* хранение номера хода игроков */
         leader_pic_$    = $('.leader_pic'),
         fraction_name_$ = $('.fraction_name'),
         players_names_$ = $('.user_name'),
@@ -312,8 +528,11 @@ $(document).ready(function () {
         count_deck_$    = $('.deck_count'),
         retreat_$       = $('.last_card');
 
-
-    var battle_arr      = [];   /* массив игрового стола */
+    count_moves.h   = 0;    /* номер хода игрока */
+    count_moves.r   = 0;    /* номер хода соперника */
+    leaders_flag.h  = 0;    /* флаг: использовал ли уже игрок своего лидера */
+    leaders_flag.r  = 0;    /* флаг: использовал ли уже противник своего лидера */
+    var battle_arr  = [];   /* массив игрового стола */
     battle_arr[0]   = new Forces(".row_home");
     battle_arr[1]   = new Forces(".row_enemy");
 
@@ -333,9 +552,7 @@ $(document).ready(function () {
             if (response.user_id != false) {
                 user_id     = response.user_id;
                 username    = response.username;
-                console.log(response.username);
             } else {
-                console.log('гость');
                 user_id = 0;
             }
             var user_data       = {};
@@ -391,6 +608,8 @@ $(document).ready(function () {
             specials    = work_obj[0].specials;
             length      = work_obj[0].fractions.length;
 
+
+
             for(i = 0; i < length; i++) {
                 if(work_obj[0].fractions[i].id == work_obj[0].leaders[0].id_fraction) {
                     fractions[0] = work_obj[0].fractions[i];
@@ -426,9 +645,13 @@ $(document).ready(function () {
 
                 default:
                     player_index = -1;
+                    rival_index  =  1;
                     break;
             }
             for (i = 0; i < 2; i++) {
+
+                leaders[i].leader = 1;
+                leaders[i].ability = leaders[i].func;
 
                 leader_pic_$.eq(i).attr({
                     src:   "../" + leaders[i].pict,
@@ -468,22 +691,25 @@ $(document).ready(function () {
                         deck_complete = deck_units.concat(deck_specials);
                         deck_complete.shuffle().shuffle();
                         card_rewiev_$.css('display', 'block');
-                        show_cards(10, block_rewiev_$, player_cards, 1, deck_complete);
+                        for (var i = 0; i < 10; i++) {
+                            player_cards.push(deck_complete[0]);
+                            deck_complete.splice(0,1);
+                         }
+                        show_cards(0, player_cards, block_rewiev_$);
                         // Блокируем изменение созданной колоды
                         choose_flag = 1;
                     }
                 } else {
                     player_cards = JSON.parse(localStorage['player_cards_' + number_of_room]);
                     deck_complete = JSON.parse(localStorage['deck_complete_' + number_of_room]);
-                    length = player_cards.length;
                     if(choose_flag == 0 && localStorage['count_repl_' + number_of_room] == 2) {
-                        show_cards (length, cards_$, player_cards, 0,'');
+                        show_cards (0, player_cards, cards_$);
                         i_am_ready (socket, user_id, username, number_of_room, player_index);
                         choose_flag = 1;
                     } else {
                         if(choose_flag == 0 && localStorage['count_repl_' + number_of_room] < 2) {
                             card_rewiev_$.css('display', 'block');
-                            show_cards (length, block_rewiev_$, player_cards, 0,'');
+                            show_cards(0, player_cards, block_rewiev_$);
                             choose_flag = 1;
                         }
                     }
@@ -498,16 +724,10 @@ $(document).ready(function () {
                 }
                 $('.battle .exit').remove();
             }
-            var counts_data            = {};
-            counts_data.user_room      = number_of_room;
-            counts_data.player_index   = player_index;
-            counts_data.count_cards    = player_cards.length;
-            counts_data.count_deck     = deck_complete.length;
+            var counts_data = new Counts_data();
             socket.emit('counts', counts_data);
-
             // Обработка истории игры для новых подключившихся пользователей
-            if (history.cards.length != 0 && count_move_h == 0 && count_move_r == 0) {
-                console.log("Вывожу историю игры");
+            if (history.cards.length != 0 && count_moves.h == 0 && count_moves.r == 0) {
                 for(i = 0; i < history.cards.length; i++) {
                     if(history.cards[i] == 'give_up'){
                         round_results.push([battle_arr[0].total, battle_arr[1].total]);
@@ -531,101 +751,91 @@ $(document).ready(function () {
                             $('.home .health_pic').eq(health_rival).attr('src', "../imgs/others/unhealth.png");
                             $('.rival .health_pic').eq(health_home).attr('src', "../imgs/others/unhealth.png");
                         }
-
-                        var row_name_arr = ['close', 'range', 'siege'];
-                        for(var m = 0; m < 2; m++){
-                            for (var j = 0; j < row_name_arr.length; j++) {
-                                var k = battle_arr[m][row_name_arr[j]].units_cards.length;
-                                while(k != 0) {
-                                    k--;
-                                    if(m == 0){
-                                        retreat_home.push(battle_arr[m][row_name_arr[j]].units_cards[k]);
-                                    }
-                                    if(m == 1) {
-                                        retreat_rival.push(battle_arr[m][row_name_arr[j]].units_cards[k]);
-                                    }
-                                    battle_arr[m][row_name_arr[j]].units_cards.splice(k,1);
-                                }
-                                selector = battle_arr[m][row_name_arr[j]].row_selector + ' .cards_field';
-                                length = battle_arr[m][row_name_arr[j]].units_cards.length;
-                                show_cards (length, $(selector), battle_arr[m][row_name_arr[j]].units_cards, 0,'');
-                            }
-
-                            length = battle_arr[m].specials.length;
-                            for(var n = 0; n < battle_arr[m].specials.length; n++){
-                                if(m == 0){
-                                    retreat_home.push(battle_arr[m].specials[0]);
-                                }
-                                if(m == 1){
-                                    retreat_rival.push(battle_arr[m].specials[0]);
-                                }
-                                battle_arr[m].specials.splice(0,1);
-                                // TODO: Удалять карту лидера
-                            }
-                        }
-                        count_strength (battle_arr, player_power_$);
-
+                        var data_on_table           = {};
+                        data_on_table.retreat_home  = retreat_home;
+                        data_on_table.retreat_rival = retreat_rival;
+                        data_on_table.battle_arr    = battle_arr;
+                        clear_battlefield (data_on_table);
                     } else {
                         // Если в истории обрабатывается обычная карта
 
                         var field_name, ind;
                         if(history.cards[i].player_index == player_index) {
-                            count_move_h++;
+                            count_moves.h++;
                             ind = 0;
                         } else {
                             if(player_index == -1) {
                                 if(history.cards[i].player_index == 0) {
-                                    count_move_h++;
+                                    count_moves.h++;
                                 }
                                 if(history.cards[i].player_index == 1) {
-                                    count_move_r++;
+                                    count_moves.r++;
                                 }
                                 ind = history.cards[i].player_index;
                             } else {
-                                count_move_r++;
+                                count_moves.r++;
                                 ind = 1;
                             }
                         }
-
-                        field_name = to_battlefield_home(history.cards[i].card);
+                        field_name = get_field(history.cards[i].card);
                         if (field_name !== undefined) {
-                            if(history.cards[i].card.ability == 'spy'){
-                                if(ind == 0) {
+                            if(history.cards[i].card.delete == 1) {
+                                // Если карту надо удалить с поля, а не добавить
+                                if(history.cards[i].player_index == rival_index){
                                     ind = 1;
                                 } else {
                                     ind = 0;
                                 }
+                                var delete_data           = {};
+                                delete_data.ind           = ind;
+                                delete_data.field_name    = field_name;
+                                delete_data.card          = history.cards[i].card;
+                                delete_data.battle_arr    = battle_arr;
+                                delete_data.retreat_home  = retreat_home;
+                                delete_data.retreat_rival = retreat_rival;
+                                delete_card(delete_data);
+                            } else {
+                                battle_arr[ind][field_name].units_cards.push(history.cards[i].card);
                             }
-                            battle_arr[ind][field_name].units_cards.push(history.cards[i].card);
-                            selector = battle_arr[ind][field_name].row_selector + ' .cards_field';
-                            length = battle_arr[ind][field_name].units_cards.length;
-                            show_cards (length, $(selector), battle_arr[ind][field_name].units_cards, 0,'');
                             battle_arr[ind][field_name].total = 0;
-                        } else {
-                            battle_arr[ind].specials.push(history.cards[i].card);
                         }
-                        count_strength (battle_arr, player_power_$);
+                        if(history.cards[i].card.delete != 1) {
+                            var data_abilities           = {};
+                            data_abilities.battle_arr    = battle_arr;
+                            data_abilities.player_cards  = player_cards;
+                            data_abilities.retreat_home  = retreat_home;
+                            data_abilities.retreat_rival = retreat_rival;
+                            data_abilities.player_index  = player_index;
+                            data_abilities.rival_index   = rival_index;
+                            data_abilities.count_moves   = count_moves;
+                            data_abilities.position      = ind;
+                            data_abilities.item_history  = history.cards[i];
+                            result_ability = abilities_obj[history.cards[i].card.ability](data_abilities, 3);
+                            if(history.cards[i].card.leader == 1){
+                                if(ind == 0){
+                                    leaders_flag.h = 1;
+                                    $('.home .player_leader').css('opacity', '0.5');
+                                } else {
+                                    leaders_flag.r = 1;
+                                    $('.rival .player_leader').css('opacity', '0.5');
+                                }
+                            }
+                        }
 
-                        data_abilities.battle_arr    = battle_arr;
-                        data_abilities.player_cards  = player_cards;
-                        data_abilities.retreat_home  = retreat_home;
-                        data_abilities.retreat_rival = retreat_rival;
-                        result_ability = abilities_obj[history.cards[i].card.ability](data_abilities, 3);
-
-                        counts_data.user_room      = number_of_room;
-                        counts_data.player_index   = player_index;
-                        counts_data.count_cards    = player_cards.length;
-                        counts_data.count_deck     = deck_complete.length;
+                        var counts_data = new Counts_data();
                         socket.emit('counts', counts_data);
+                        count_strength (battle_arr, player_power_$);
                     }
                 }
+                count_strength (battle_arr, player_power_$);
+                show_cards (1, battle_arr);
                 if (retreat_home.length !=0 && retreat_rival != 0) {
                     var data = {};
                     data.retreat_home  = retreat_home;
-                    data.count_move_h  = count_move_h;
+                    data.count_move_h  = count_moves.h;
                     data.retreat_$     = retreat_$;
                     data.retreat_rival = retreat_rival;
-                    data.count_move_r  = count_move_r;
+                    data.count_move_r  = count_moves.r;
                     last_card(data);
                 }
                 if(player_index == -1) {
@@ -658,10 +868,12 @@ $(document).ready(function () {
 
             }
         }
+        console.log(player_cards);
+        console.log(retreat_home);
     });
 
 
-    // Обработка данных о количестве карт игроков  для зрителей
+    // Обработка данных о количестве карт игроков для зрителей
     socket.on('take counts', function(data){
         if (player_index == -1) {
             for(i = 0; i < 2; i++) {
@@ -692,19 +904,15 @@ $(document).ready(function () {
             player_cards.push(deck_complete[0]);
             deck_complete.splice(0, 1);
             card_rewiev_$.css('display', 'block');
-            show_cards (player_cards.length, block_rewiev_$, player_cards, 0,'');
+            show_cards (0, player_cards, block_rewiev_$);
             count_repl++;
             localStorage['count_repl_' + number_of_room] = count_repl;
             localStorage['player_cards_' + number_of_room] = JSON.stringify(player_cards);
             localStorage['deck_complete_' + number_of_room] = JSON.stringify(deck_complete);
             if(count_repl == 2) {
                 card_rewiev_$.css('display', 'none');
-                show_cards (player_cards.length, cards_$, player_cards, 0,'');
-                var counts_data            = {};
-                counts_data.user_room = number_of_room;
-                counts_data.player_index   = player_index;
-                counts_data.count_cards    = player_cards.length;
-                counts_data.count_deck     = deck_complete.length;
+                show_cards (0, player_cards, cards_$);
+                var counts_data = new Counts_data();
                 socket.emit('counts', counts_data);
                 i_am_ready (socket, user_id, username, number_of_room, player_index);
             }
@@ -716,44 +924,83 @@ $(document).ready(function () {
         card_rewiev_$.css('display', 'none');
         localStorage['player_cards_' + number_of_room] = JSON.stringify(player_cards);
         localStorage['deck_complete_' + number_of_room] = JSON.stringify(deck_complete);
-        show_cards (player_cards.length, cards_$, player_cards, 0,'');
-        var counts_data            = {};
-        counts_data.user_room = number_of_room;
-        counts_data.player_index   = player_index;
-        counts_data.count_cards    = player_cards.length;
-        counts_data.count_deck     = deck_complete.length;
+        show_cards (0, player_cards, cards_$);
+        var counts_data = new Counts_data();
         socket.emit('counts', counts_data);
         localStorage['count_repl_' + number_of_room] = 2;
         i_am_ready (socket, user_id, username, number_of_room, player_index);
     });
 
     // Ходы игроков
-    battle_$.on("click", ".cards div", function() {
-        if(resolution == 1 && give_up_home != 1) {
-            var ind = $(this).attr('data-item');
-            var this_card = player_cards[ind];
-            count_move_h++;
-            this_card.number_move = count_move_h;
+
+    battle_$.on("click", ".cards div, .home .player_leader", function() {
+        memory_ability = '';
+        memory_id      = '';
+        memory_card    = {};
+        if(temp_resolution == 1) {
+            resolution = 1;
+            temp_resolution = 0;
+        }
+        $('.cards div, .home .player_leader').removeClass('move');
+        $(this).addClass('move');
+    });
+
+    battle_$.on("click", ".move", function() {
+        if(resolution == 1 && give_up_home != 1 && player_index != -1) {
+            var this_card = {};
+            if ($(this).hasClass('player_leader')){
+                this_card = leaders[0];
+                leaders_flag.h = 1;
+            } else {
+                var ind = $(this).attr('data-item');
+                this_card = player_cards[ind];
+            }
+            count_moves.h++;
+            this_card.number_move = count_moves.h;
             var field_name;
-            field_name = to_battlefield_home(this_card);
-            $(this).remove();
+            field_name = get_field(this_card);
 
             if (field_name !== undefined) {
                 var flag_field = 0;
-                if(this_card.ability == 'spy'){
-                    flag_field = 1;
-                }
                 battle_arr[flag_field][field_name].units_cards.push(this_card);
-                selector = battle_arr[flag_field][field_name].row_selector + ' .cards_field';
-                length = battle_arr[flag_field][field_name].units_cards.length;
-                show_cards (length, $(selector), battle_arr[flag_field][field_name].units_cards, 0,'');
+                show_cards (1, battle_arr);
                 battle_arr[flag_field][field_name].total = 0;
+                if(this_card.ability == 'medic'){
+                    memory_ability  = this_card.ability;
+                    memory_card     = this_card;
+                    temp_resolution = 1;
+                    resolution      = 0;
+                    memory_id       = ind;
+                }
             } else {
-                battle_arr[0].specials.push(this_card);
+                if(this_card.ability == 'dummy'){
+                    memory_ability = this_card.ability;
+                    temp_resolution = 1;
+                    resolution = 0;
+                    memory_id = ind;
+                    message = 'Кликните на карте вашего поля, которую хотите заменить';
+                    notice(message, 1);
+                    return false;
+                }
+                if(this_card.ability == 'commander_horn'){
+                    memory_ability  = this_card.ability;
+                    memory_card     = this_card;
+                    temp_resolution = 1;
+                    resolution      = 0;
+                    memory_id       = ind;
+                    message = 'Кликните на вашем поле, в котором хотите усилить карты';
+                    notice(message, 1);
+                    return false;
+                }
             }
-            player_cards.splice(ind,1);
-            show_cards (player_cards.length, cards_$, player_cards, 0,'');
+            if ($(this).hasClass('player_leader') == false){
+                $(this).remove();
+                player_cards.splice(ind,1);
+            } else {
+                $(this).css('opacity', '0.5');
+            }
             count_strength (battle_arr, player_power_$);
+            show_cards (0, player_cards, cards_$);
             count_cards_$.eq(0).text(player_cards.length);
             if(give_up_rival == 1) {
                 resolution = 1;
@@ -762,8 +1009,7 @@ $(document).ready(function () {
                 resolution = 0;
                 status_move_$.text('ХОД ПРОТИВНИКА');
             }
-            // TODO: Если упротивника закончились карты
-            if(player_cards.length == 0 && leader_flag == 1) {
+            if(player_cards.length == 0 && leaders_flag.h == 1) {
                 give_up_home = 1;
                 resolution = 0;
                 $('.exit').click();
@@ -776,48 +1022,43 @@ $(document).ready(function () {
             user_data.rival_index         = rival_index;
             user_data.user_id             = user_id;
             user_data.card                = this_card;
-            user_data.card_effect         = [];
             user_data.resolution          = resolution;
             user_data.give_up             = give_up_home;
             arr_data.push(user_data);
 
+            var data_abilities            = {};
             data_abilities.number_of_room = number_of_room;
             data_abilities.player_index   = player_index;
+            data_abilities.rival_index    = rival_index;
             data_abilities.battle_arr     = battle_arr;
             data_abilities.player_cards   = player_cards;
             data_abilities.deck_complete  = deck_complete;
             data_abilities.retreat_home   = retreat_home;
             data_abilities.retreat_rival  = retreat_rival;
+            data_abilities.count_moves    = count_moves;
+            data_abilities.position       = ind;
             data_abilities.socket         = socket;
             data_abilities.arr_data       = arr_data;
 
             result_ability = abilities_obj[this_card.ability](data_abilities, 1);
             socket.emit('step to', result_ability);
-            var counts_data            = {};
-            counts_data.user_room      = number_of_room;
-            counts_data.player_index   = player_index;
-            counts_data.count_cards    = player_cards.length;
-            counts_data.count_deck     = deck_complete.length;
-
+            var counts_data = new Counts_data();
             socket.emit('counts', counts_data);
-
             count_strength (battle_arr, player_power_$);
-
+            show_cards (1, battle_arr);
             localStorage['player_cards_' + number_of_room] = JSON.stringify(player_cards);
             localStorage['deck_complete_' + number_of_room] = JSON.stringify(deck_complete);
         }
-
     });
 
 
     // Обработка пришедших карт
     socket.on('step from', function(user_data){
-        count_move_r++;
+        count_moves.r++;
         give_up_rival = user_data.give_up;
         if(give_up_home != 1) {
             status_move_$.text('ВАШ ХОД');
         }
-
         for(var i = 0; i < user_data.length; i++) {
             var field_name, position;
             if(player_index == -1) {
@@ -826,55 +1067,77 @@ $(document).ready(function () {
             } else {
                 position = 1;
             }
-            field_name = to_battlefield_home(user_data[i].card);
+            field_name = get_field(user_data[i].card);
             if (field_name !== undefined) {
-                if(user_data[i].card.ability == 'spy'){
-                    if(position == 0) {
+                if(user_data[i].card.delete == 1) {   // Если карту надо удалить с поля, а не добавить
+                    if(user_data[i].player_index == rival_index){
                         position = 1;
                     } else {
                         position = 0;
                     }
+                    var delete_data           = {};
+                    delete_data.ind           = position;
+                    delete_data.field_name    = field_name;
+                    delete_data.card          = user_data[i].card;
+                    delete_data.battle_arr    = battle_arr;
+                    delete_data.retreat_home  = retreat_home;
+                    delete_data.retreat_rival = retreat_rival;
+                    delete_card(delete_data);
+                } else {
+                    battle_arr[position][field_name].units_cards.push(user_data[i].card);
                 }
-                battle_arr[position][field_name].units_cards.push(user_data[i].card);
-                selector = battle_arr[position][field_name].row_selector + ' .cards_field';
-                length = battle_arr[position][field_name].units_cards.length;
-                show_cards (length, $(selector), battle_arr[position][field_name].units_cards, 0,'');
                 battle_arr[position][field_name].total = 0;
-            } else {
-                battle_arr[position].specials.push(user_data[i].card);
             }
-            count_strength (battle_arr, player_power_$);
+            if(user_data[i].card.delete != 1) {
+                var data_abilities           = {};
+                data_abilities.battle_arr    = battle_arr;
+                data_abilities.player_index  = player_index;
+                data_abilities.rival_index   = rival_index;
+                data_abilities.player_cards  = player_cards;
+                data_abilities.deck_complete = deck_complete;
+                data_abilities.retreat_home  = retreat_home;
+                data_abilities.retreat_rival = retreat_rival;
+                data_abilities.count_moves   = count_moves;
+                data_abilities.socket        = socket;
+                data_abilities.position      = position;
+                data_abilities.from_player   = user_data[i].player_index;
+                data_abilities.card          = user_data[i].card;
 
-            data_abilities.battle_arr    = battle_arr;
-            data_abilities.player_cards  = player_cards;
-            data_abilities.retreat_home  = retreat_home;
-            data_abilities.retreat_rival = retreat_rival;
-            result_ability = abilities_obj[user_data[i].card.ability](data_abilities, 2);
-/*
+                result_ability = abilities_obj[user_data[i].card.ability](data_abilities, 2);
+                if(user_data[i].card.leader == 1){
+                    if(position == 0){
+                        leaders_flag.h = 1;
+                        $('.home .player_leader').css('opacity', '0.5');
+                    } else {
+                        leaders_flag.r = 1;
+                        $('.rival .player_leader').css('opacity', '0.5');
+                    }
+                }
+            }
             var counts_data            = {};
             counts_data.user_room      = number_of_room;
             counts_data.player_index   = player_index;
             counts_data.count_cards    = player_cards.length;
             counts_data.count_deck     = deck_complete.length;
             socket.emit('counts', counts_data);
-            */
+            count_strength (battle_arr, player_power_$);
+            show_cards (1, battle_arr);
         }
-
-
-
-
 
         if(give_up_home != 1) {
             resolution = 1;
         } else {
             resolution = 0;
         }
+        localStorage['player_cards_' + number_of_room] = JSON.stringify(player_cards);
+        localStorage['deck_complete_' + number_of_room] = JSON.stringify(deck_complete);
+        console.log(battle_arr);
     });
 
     // Кнопка "ПАС"
     battle_$.on("click", ".exit", function() {
-        give_up_home            = 1;
         status_move_$.text('ХОД ПРОТИВНИКА. ВЫ СДАЛИСЬ');
+        give_up_home            = 1;
         var user_data           = {};
         user_data.player_index  = player_index;
         user_data.rival_index   = rival_index;
@@ -883,6 +1146,10 @@ $(document).ready(function () {
         user_data.count_cards   = player_cards.length;
         socket.emit('give up', user_data);
         fold('.row_home');
+        $('.cards div').removeClass('move');
+        memory_ability = '';
+        memory_id      = '';
+        memory_card    = {};
     });
 
     // Конец раунда
@@ -902,11 +1169,15 @@ $(document).ready(function () {
                 }
             }
         } else {
+            $('.cards div').removeClass('move');
             round_results.push([battle_arr[0].total, battle_arr[1].total]);
-            var winner = '';
-            var looser = '';
-            alias_player = player_index;
-            alias_rival = rival_index;
+            memory_ability = '';
+            memory_id      = '';
+            memory_card    = {};
+            var winner     = '';
+            var looser     = '';
+            alias_player   = player_index;
+            alias_rival    = rival_index;
             if (player_index == -1) {
                 alias_player = 0;
                 alias_rival = 1;
@@ -934,13 +1205,14 @@ $(document).ready(function () {
             }
             if(health_home == 0 || health_rival == 0) {
                 resolution = 0;
+                end_of_game = 1;
                 setTimeout(function(){
                     $('.results_game').fadeIn(1000,function(){});
                 }, 1000);
-                var td_head = $('.results_body thead td');
-                var td_body = $('.results_body tbody');
-                td_head.eq(1).text(work_obj[0].players[alias_player].user_name);
-                td_head.eq(2).text(work_obj[0].players[alias_rival].user_name);
+                var td_head_$ = $('.results_body thead td');
+                var td_body_$ = $('.results_body tbody');
+                td_head_$.eq(1).text(work_obj[0].players[alias_player].user_name);
+                td_head_$.eq(2).text(work_obj[0].players[alias_rival].user_name);
 
                 if(health_home == 0){
                     if(player_index == -1) {
@@ -949,9 +1221,8 @@ $(document).ready(function () {
                         $('.results_body h2').text("Поражение!");
                     }
                     if (health_rival != 0) {
-                        td_head.eq(2).addClass('win');
+                        td_head_$.eq(2).addClass('win');
                     }
-
                 } else {
                     if(player_index == -1) {
                         $('.results_body h2').text("Победа " + work_obj[0].players[alias_player].user_name + "!");
@@ -959,78 +1230,60 @@ $(document).ready(function () {
                         $('.results_body h2').text("Победа!").addClass('win');
                     }
                     if (health_home != 0) {
-                        td_head.eq(1).addClass('win');
+                        td_head_$.eq(1).addClass('win');
                     }
                 }
-                td_body.empty();
+                td_body_$.empty();
                 length = round_results.length;
-                for (i = 0; i < length; i++) {
+                var win_count = 0;
+                for (i = 0; i < length; i++) {                    
                     var class_home = '',
                         class_rival = '';
                     if(round_results[i][0] > round_results[i][1]) {
                         class_home = 'win';
+                        win_count++;
                     }
 
                     if(round_results[i][0] < round_results[i][1]) {
                         class_rival = 'win';
                     }
-                    td_body.append($('<tr/>')
+                    td_body_$.append($('<tr/>')
                         .append($('<td/>').text(i+1))
                         .append($('<td/>').text(round_results[i][0]).addClass(class_home))
                         .append($('<td/>').text(round_results[i][1]).addClass(class_rival))
                     )
                 }
+                if(win_count == 2) {
+                    exp++;
+                }
+                if(win_count == 2 && length == 2) {
+                    exp++;
+                }
+                if(win_count == 1 && length == 3) {
+                    exp++;
+                }
+                
             } else {
-                // TODO: Вставить обработку способности фракции перед каждым раундом
                 notice_round (winner, 2);
                 setTimeout(function(){
                     notice_round (user_data.round, 1);
                 }, 4600);
-                var row_name_arr = ['close', 'range', 'siege'];
-                for(i = 0; i < 2; i++){
-
-                    for (var j = 0; j < row_name_arr.length; j++) {
-                        var k = battle_arr[i][row_name_arr[j]].units_cards.length;
-                        while(k != 0) {
-                            k--;
-                            if(i == 0){
-                                retreat_home.push(battle_arr[i][row_name_arr[j]].units_cards[k]);
-                            }
-                            if(i == 1) {
-                                retreat_rival.push(battle_arr[i][row_name_arr[j]].units_cards[k]);
-                            }
-                            battle_arr[i][row_name_arr[j]].units_cards.splice(k,1);
-                        }
-                        selector = battle_arr[i][row_name_arr[j]].row_selector + ' .cards_field';
-                        length = battle_arr[i][row_name_arr[j]].units_cards.length;
-                        show_cards (length, $(selector), battle_arr[i][row_name_arr[j]].units_cards, 0,'');
-                    }
-
-                    for(var n = 0; n < battle_arr[i].specials.length; n++){
-                        if(i == 0){
-                            retreat_home.push(battle_arr[i].specials[0]);
-                        }
-                        if(i == 1){
-                            retreat_rival.push(battle_arr[i].specials[0]);
-                        }
-                        battle_arr[i].specials.splice(0,1);
-                        // TODO: Удалять карту лидера
-                    }
-                }
+                var data_on_table           = {};
+                data_on_table.retreat_home  = retreat_home;
+                data_on_table.retreat_rival = retreat_rival;
+                data_on_table.battle_arr    = battle_arr;
+                clear_battlefield (data_on_table);
                 count_strength (battle_arr, player_power_$);
-                var counts_data            = {};
-                counts_data.user_room = number_of_room;
-                counts_data.player_index   = player_index;
-                counts_data.count_cards    = player_cards.length;
-                counts_data.count_deck     = deck_complete.length;
+                show_cards (1, battle_arr);
+                var counts_data = new Counts_data();
                 socket.emit('counts', counts_data);
                 $('.fold').remove();
                 var data = {};
                 data.retreat_home  = retreat_home;
-                data.count_move_h  = count_move_h;
+                data.count_move_h  = count_moves.h;
                 data.retreat_$     = retreat_$;
                 data.retreat_rival = retreat_rival;
-                data.count_move_r  = count_move_r;
+                data.count_move_r  = count_moves.r;
                 last_card(data);
                 if(player_index != -1) {
                     resolution = user_data.resolution[player_index];
@@ -1046,6 +1299,109 @@ $(document).ready(function () {
         }
     });
 
+    battle_$.on("click", ".home .cards_field .card_on_table, .choice .card_on_table, .row_home .battle_row", function() {
+        if(memory_ability != '' && temp_resolution == 1) {
+            if(memory_ability == 'dummy'){
+                var test = $(this).children().eq(0).attr('title');
+                console.log('karta');
+                console.log(test);
+                if(test === undefined) {
+                    return false;
+                }
+            }
+            if(memory_ability == 'commander_horn') {
+                var class_card;
+                var field_numb = $(this).closest('.battle_row').index();
+                console.log('pole');
+                console.log(field_numb);
+                switch (field_numb){
 
+                    case 0:
+                        class_card = 4;
+                        break;
 
+                    case 1:
+                        class_card = 3;
+                        break;
+
+                    case 2:
+                        class_card = 2;
+                        break;
+                }
+                memory_card.field_horn = class_card;
+            }
+
+            var mode = 0;
+            var arr_data                  = [];
+            var user_data                 = {};
+            user_data.user_room           = number_of_room;
+            user_data.player_index        = player_index;
+            user_data.rival_index         = rival_index;
+            user_data.user_id             = user_id;
+            user_data.card                = memory_card;
+            user_data.resolution          = resolution;
+            user_data.give_up             = give_up_home;
+            arr_data.push(user_data);
+
+            var data_abilities            = {};
+            data_abilities.number_of_room = number_of_room;
+            data_abilities.player_index   = player_index;
+            data_abilities.rival_index    = rival_index;
+            data_abilities.memory_id      = memory_id;
+            data_abilities.battle_arr     = battle_arr;
+            data_abilities.player_cards   = player_cards;
+            data_abilities.deck_complete  = deck_complete;
+            data_abilities.retreat_home   = retreat_home;
+            data_abilities.retreat_rival  = retreat_rival;
+            data_abilities.socket         = socket;
+            data_abilities.count_moves    = count_moves;
+            data_abilities.arr_data       = arr_data;
+
+            if(memory_ability == 'dummy' && test != 'Чучело'){
+                var id_replace            = $(this).attr('data-id-card');
+                data_abilities.id_replace = id_replace;
+                mode = 1;
+            } else {
+                if(memory_ability == 'dummy' && test == 'Чучело') {
+                    return false;
+                }
+            }
+
+            if(memory_ability == 'medic'){
+                data_abilities.item_card = $(this).attr('data-item');
+                mode = 6;
+            }
+
+            if(memory_ability == 'commander_horn'){
+                mode = 1;
+            }
+            result_ability           = abilities_obj[memory_ability](data_abilities, mode);
+            socket.emit('step to', result_ability);
+            var counts_data = new Counts_data();
+            socket.emit('counts', counts_data);
+
+            localStorage['player_cards_' + number_of_room] = JSON.stringify(player_cards);
+            resolution      = temp_resolution;
+            memory_ability  = '';
+            memory_card     = {};
+            temp_resolution = 0;
+            if(give_up_rival == 1) {
+                resolution = 1;
+                status_move_$.text('ВАШ ХОД. ПРОТИВНИК СДАЛСЯ');
+            } else {
+                resolution = 0;
+                status_move_$.text('ХОД ПРОТИВНИКА');
+            }
+            if(player_cards.length == 0 && leaders_flag.h == 1) {
+                give_up_home = 1;
+                resolution = 0;
+                $('.exit').click();
+            }
+
+        }
+    });
+
+    battle_$.on("click", ".del", function() {
+        localStorage.clear();
+    });
 });

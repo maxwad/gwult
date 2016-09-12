@@ -1041,7 +1041,8 @@ input[type=text], input[type=password], textarea {
     width: 60px;
     height: 60px;
     top: 50%;
-    transform: translate(-50%, 15%);
+    right: 0;
+    transform: translate(50%, 15%);
     border-radius: 50%;
     font-size: 28px;
     line-height: 60px;
@@ -1087,8 +1088,29 @@ input[type=text], input[type=password], textarea {
 
 .battle .weather_area {
     height: 150px;
-    padding: 5px;
     background: #7d7d7d;
+    padding-left: 15px;
+    display: flex;
+    justify-content: center;
+    overflow: hidden;
+}
+
+.battle .weather_card {
+    flex: 1;
+    max-width: 100px;
+    position: relative;
+    z-index: 2;
+    padding: 10px 0;
+    transform: translateX(-15px);
+}
+
+.battle .weather_card img {
+    display: block;
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    min-height: 150px;
 }
 
 .battle .battle_area {
@@ -1122,7 +1144,7 @@ input[type=text], input[type=password], textarea {
     left: 0;
     width: 100%;
     height: 100%;
-    z-index: 5;
+    z-index: 11;
     font-size: 30px;
     padding-top: 200px;
     text-align: center;
@@ -1163,6 +1185,7 @@ input[type=text], input[type=password], textarea {
     border-radius: 50%;
     line-height: 47px;
     text-align: center;
+    z-index: 10;
 }
 
 .battle .enemy .str_count {
@@ -1186,6 +1209,14 @@ input[type=text], input[type=password], textarea {
     background: rgba(255, 255, 255, 0.4);
 }
 
+.battle .special_field div {
+    display: block;
+    position: relative;
+    justify-content: center;
+    overflow: hidden;
+    height: 100%;
+}
+
 .battle .cards_field {
     flex: 12;
     height: 100%;
@@ -1193,11 +1224,10 @@ input[type=text], input[type=password], textarea {
     background: rgba(255, 255, 255, 0.5);
     display: flex;
     justify-content: center;
-    background: #D5EEFF;
     overflow: hidden;
 }
 
-.battle .cards_field img {
+.battle .cards_field img, .battle .special_field img {
     display: block;
     position: absolute;
     top: 0;
@@ -1348,8 +1378,10 @@ input[type=text], input[type=password], textarea {
     min-height: 150px;
 }
 
-.battle .cards>div:hover {
+.battle .cards .move {
+    transition: all 0.3s;
     transform: translate(-15px, -15%);
+    z-index: 4;
 }
 
 .battle .cards div:hover img {
@@ -1498,4 +1530,55 @@ input[type=text], input[type=password], textarea {
     text-align: center;
     font-weight: 900;
     color: #b5b5b5;
+}
+
+.battle .choice {
+    display: flex;
+    position: absolute;
+    align-items: center;
+    justify-content: space-around;
+    top: 0;
+    right: 0;
+    height: 100%;
+    width: 100%;
+    z-index: 10;
+    background: rgba(0, 0, 0, 0.95);
+    padding: 30px 10%;
+}
+
+.battle .choice div {
+    display: inline-block;
+    flex: 0;
+    padding: 10px 35px;
+    height: 380px;
+    width: 250px;
+    position: relative;
+}
+
+.battle .choice img {
+    display: block;
+    width: auto;
+    height: 100%;
+}
+
+.battle .choice img:hover {
+    box-shadow: 0 0 7px 3px #ba8b48;
+    background: #ba8b48;
+    cursor: pointer;
+}
+
+.battle .choice .fact_strength {
+    display: block;
+    position: absolute;
+    top: 15px;
+    left: 40px;
+    height: 40px;
+    width: 40px;
+    line-height: 40px;
+    background: #ffffff;
+    padding: 0;
+    color: #000000;
+    border-radius: 50%;
+    text-align: center;
+    font-weight: 900;
 }

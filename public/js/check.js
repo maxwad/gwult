@@ -10,7 +10,7 @@ $(document).ready(function () {
             if (response.user_id == false) {
                 $(hello).text($(hello).text()+", гость");
             } else {
-                $(hello).text($(hello).text()+", "+response.user_id);
+                $(hello).text($(hello).text()+", "+response.username);
                 $('.login_page').html('<a href="/logout" title=""><span>Выйти</span></a>');
             }
         }

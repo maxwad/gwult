@@ -567,12 +567,15 @@ function gain (data, mode) {
                         if(data[i][row[j]].effects[k] == 'gain') {
                             gain++;
                         }
-                        for(var l = 0; l < data[i][row[j]].units_cards.length; l++){
-                            if(data[i][row[j]].units_cards[l].hero != 1 &&
-                                data[i][row[j]].units_cards[l].name != 'Чучело') {
-                                data[i][row[j]].units_cards[l].added = gain;
+                        if(data[i][row[j]].units_cards.length > 1){
+                            for(var l = 0; l < data[i][row[j]].units_cards.length; l++){
+                                if(data[i][row[j]].units_cards[l].hero != 1 &&
+                                    data[i][row[j]].units_cards[l].name != 'Чучело') {
+                                    data[i][row[j]].units_cards[l].added = gain;
+                                }
                             }
                         }
+
                     }
                     gain = 0;
                 }
@@ -985,7 +988,6 @@ function amount (data, mode) {
             for(var p = 0; p < data.units_cards.length; p++){
                 if(data.units_cards[p].ability == 'amount') {
                     data.units_cards[p].strength = 0;
-                    console.log('ok');
                     break;
                 }
             }
@@ -1015,6 +1017,8 @@ function theft (data, mode) {
             break;
 
         case 2:
+            var message = 'Игроком использована карта лидера';
+            notice(message, 1);
             break;
 
         case 3:
@@ -1053,6 +1057,8 @@ function recruit (data, mode) {
                 data.deck_complete.splice(0, 1);
             }
             show_cards (0, data.player_cards, $('.cards'));
+            var message = 'Игроком использована карта лидера';
+            notice(message, 1);
             break;
 
         case 3:
@@ -1108,7 +1114,8 @@ function merge (data, mode) {
                     }
                 }
             }
-
+            var message = 'Игроком использована карта лидера';
+            notice(message, 1);
             break;
 
         case 3:

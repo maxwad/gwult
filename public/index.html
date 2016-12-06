@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/html">
+    <head>
+        <title>Домашняя страница</title>
+
+        <link rel="stylesheet" href="/css/app.css"/>
+        <link href="http://fonts.googleapis.com/css?family=Roboto" rel="stylesheet" type="text/css">
+
+        <script src="/js/jquery.min.js"></script>
+        <script src="/js/check.js"></script>
+        <script src="/js/functions.js"></script>
+        <script src="/js/main.js"></script>
+    </head>
+    <body class="main">
+        <nav class="top_nav">
+            <ul>
+                <li class="home_page"><a href="/" title=""><span>Главная</span></a></li>
+                <li class="my_page"><a href="my_room.html"><span>Мой профиль</span></a></li>
+                <li class="login_page"><a href="auth.html"><span>Войти</span></a></li>
+            </ul>
+        </nav>
+        <section class="container">
+            <h3 class="list_caption">Список доступных игровых комнат</h3>
+            <div class="option_lev">
+                <div class="filter">
+                    <input type="radio" value="1" name="lvl" id='with' checked="checked"/>
+                    <label for="with" title="Игроки моего уровня и выше"></label>
+                </div>
+
+                <div class="filter">
+                    <input type="radio" value="2" name="lvl" id='only' />
+                    <label for="only" title="Игроки только моего уровня"></label>
+                </div>
+
+                <div class="filter">
+                    <input type="radio" value="3" name="lvl" id='without'/>
+                    <label for="without" title="Игроки на 2 уровня выше"></label>
+                </div>
+            </div>
+            <table class="gamers">
+                <thead>
+                    <tr>
+                        <td>#</td>
+                        <td>Игрок</td>
+                        <td>Уровень</td>
+                        <td>Игр</td>
+                        <td>% побед</td>
+                        <td>К битве</td>
+                    </tr>
+                </thead>
+                <tbody>
+
+                </tbody>
+
+            </table>
+        </section>
+    </body>
+</html>

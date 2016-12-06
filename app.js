@@ -84,9 +84,12 @@ function HelloUser(req) {
 // Функция, которая переопределяет место записи файлов на сервере
 /////////////////////////////////////////////////////////////
 function getStorage() {
+    var random = function() {
+        return Math.floor(Math.random() * (1001));
+    };
     return multer.diskStorage({
         destination: function (req, file, cb) { cb(null, 'public/imgs/' + req.body.name_form);},
-        filename: function (req, file, cb) { cb(null, file.originalname)}
+        filename: function (req, file, cb) { cb(null, random() + file.originalname)}
     });
 }
 
@@ -136,7 +139,6 @@ function rows_cards (result, table, id, sort) {
             query_to_db = "SELECT * FROM " + table + " WHERE id_fraction IN (?, 6)" + sort;
             break;
     }
-    console.log(query_to_db);
     connection.query(query_to_db, [id], function(err, rows) {
         if (err) {
             console.log("88. Ошибка при выборе карт: " + err);
@@ -169,7 +171,6 @@ function request_data(data_block, flag, obj, data_prop, answer_prop){
             data_block.data_answer = false;
             deferred.reject(data_block);
         } else {
-            console.log('66. Данные выбраны успешно');
             var index = "data_" + data_prop;
             data_block[index] = rows;
             data_block[answer_prop] = true;
@@ -185,7 +186,8 @@ function request_data(data_block, flag, obj, data_prop, answer_prop){
 /////////////////////////////////////////////////////////////
 app.get('/', function(req, res, next) {
     console.log("4. " + req.session.username);
-    res.render('index', {});
+    //res.render('index', {});
+    res.redirect("/index.html");
     next();
 });
 
@@ -241,7 +243,6 @@ app.post('/reg', function(req, res) {
 
     var hash = bcrypt.hashSync(req.body.pass);
     query_to_db = "INSERT INTO users (user_name,user_pass) VALUES( ?, ?)";
-    console.log("6. " + query_to_db);
     connection.query(query_to_db, [req.body.name, hash], function(err, result) {
         if (err) {
             res.send({answer:false});
@@ -259,7 +260,6 @@ app.post('/reg', function(req, res) {
 /////////////////////////////////////////////////////////////
 app.post('/login', function(req, res) {
     query_to_db = "SELECT user_pass, id FROM users WHERE user_name=?";
-    console.log("7. " + query_to_db);
     connection.query(query_to_db, [req.body.name], function(err, rows) {
         if (err) {
             console.log("8. Непредвиденная ошибка авторизации");
@@ -291,7 +291,6 @@ app.post('/login', function(req, res) {
 /////////////////////////////////////////////////////////////
 app.post('/check_name', function(req, res) {
     query_to_db = "SELECT * FROM users WHERE user_name=?";
-    console.log("14. " + query_to_db);
     connection.query(query_to_db, [req.body.name], function(err, rows) {
         if (err) {
             console.log("15. Ошибка при проверке наличия пользователя " + err);
@@ -317,7 +316,7 @@ app.post('/check_name', function(req, res) {
 /////////////////////////////////////////////////////////////
 
 /////////////////////////////////////////////////////////////
-// Провекрка готовности колоды игрока
+// Проверка готовности колоды игрока
 /////////////////////////////////////////////////////////////
 app.post('/deck_status', function(req, res) {
     query_to_db = "SELECT * FROM card_decks WHERE id_user=?";
@@ -328,7 +327,28 @@ app.post('/deck_status', function(req, res) {
             res.send({answer:false});
         } else {
             // Колода существует и полностью сформирована
-            res.send({answer:true});
+            res.send({answer:true, data: rows});
+        }
+    });
+
+});
+
+
+
+/////////////////////////////////////////////////////////////
+// Получение статистики по игроку
+/////////////////////////////////////////////////////////////
+app.post('/statistics', function(req, res) {
+    query_to_db = "SELECT user_name, pict, level, old_level, exp, numb_of_battle, numb_of_win FROM users  WHERE id=?";
+    connection.query(query_to_db, [req.session.user], function(err, rows) {
+        // Если ошибка, записи о пользователе нет
+        if (err || rows.length == 0) {
+            console.log("99. Ошибка. Такого пользователя нет: " + err);
+            res.send({answer:false});
+        } else {
+            // Колода существует и полностью сформирована
+            rows[0].answer = true;
+            res.send(rows[0]);
         }
     });
 
@@ -341,17 +361,15 @@ app.post('/deck_status', function(req, res) {
 /////////////////////////////////////////////////////////////
 app.post('/take_pass', function(req, res) {
     query_to_db = "SELECT * FROM list_of_battles WHERE pl1=?";
-    console.log("25. " + query_to_db);
     connection.query(query_to_db, [req.session.user], function(err, rows) {
         if (err) {
             console.log("26. Ошибка при обращении к таблице игр: " + err);
             res.send({answer:false});
         } else {
             // Проверка на число созданных комнат одного пользователя
-            if (rows.length < 3) {
-                console.log('27. Допустимо создать ещё комнату');
+            if (rows.length < 1) {
+                console.log('27. Допустимо создать комнату');
                 query_to_db = "INSERT INTO list_of_battles (pl1, pass_battle, date_battle) VALUES( ?, ?, ?)";
-                console.log("28. " + query_to_db);
                 connection.query(query_to_db, [req.session.user, req.body.pass, req.body.date], function(err, rows) {
                     if (err) {
                         console.log("29. Ошибка при создании коматы: " + err);
@@ -361,7 +379,7 @@ app.post('/take_pass', function(req, res) {
                     }
                 });
             } else {
-                console.log('30. Уже создано максимальное количество комнат');
+                console.log('30. Комната уже создана');
                 res.send({answer:false});
             }
         }
@@ -375,7 +393,6 @@ app.post('/take_pass', function(req, res) {
 /////////////////////////////////////////////////////////////
 app.post('/give_me_battle', function(req, res) {
     query_to_db = "SELECT * FROM list_of_battles WHERE pl1=?";
-    console.log("20. " + query_to_db);
     connection.query(query_to_db, [req.session.user], function(err, rows) {
         if (err ||(rows.length == 0)) {
             console.log("21. Ошибка при выводе информации о комате: " + err);
@@ -408,7 +425,6 @@ app.post('/give_me_battle', function(req, res) {
 /////////////////////////////////////////////////////////////
 app.post('/del_room', function(req, res) {
     query_to_db = "DELETE FROM list_of_battles WHERE pl1=? AND id_battle=?";
-    console.log("31. " + query_to_db);
     connection.query(query_to_db, [req.session.user, req.body.numb], function(err) {
         if (err) {
             console.log("31. Ошибка при удалении комнаты: " + err);
@@ -427,7 +443,6 @@ app.post('/del_room', function(req, res) {
 /////////////////////////////////////////////////////////////
 app.post('/join_game', function(req, res) {
     query_to_db = "SELECT * FROM list_of_battles WHERE id_battle=?";
-    console.log("33. " + query_to_db);
     connection.query(query_to_db, [req.body.numb], function(err, rows) {
         if (err) {
             console.log("34. Ошибка при поиске игры: " + err);
@@ -442,12 +457,12 @@ app.post('/join_game', function(req, res) {
                     if (row_battle.start_battle == 1) {   //   Проверяем, не занята ли уже комната
                         res.send({answer:"4"});
                     } else {
-                        if (row_battle.pass_battle != req.body.pass) {    //    Сверяем введённые пароли
+                        if (row_battle.pass_battle !== req.body.pass) {    //    Сверяем введённые пароли
+                            console.log(row_battle.pass_battle, req.body.pass);
                             res.send({answer:"5"});
                         } else {                                         //    Заполняем таблицу
                             var alias_battle = row_battle.pl1 + "_" + req.session.user;
                             query_to_db = "UPDATE list_of_battles SET pl2=?, start_battle='1', alias_battle=? WHERE id_battle=?";
-                            console.log("36. " + query_to_db);
                             connection.query(query_to_db, [req.session.user, alias_battle, req.body.numb], function(err) {
                                 if (err) {
                                     console.log("37. Ошибка при заполнении данных в таблице list_of_battles: " + err);
@@ -552,7 +567,6 @@ app.post('/take_form', multer({ storage: getStorage() }).any(), function(req, re
             break;
     }
 
-    console.log("40. " + query_to_db);
     connection.query(query_to_db, query_var, function(err) {
         if(err) {
             console.log("41. Ошибка при записи в БД: " + err);
@@ -571,7 +585,6 @@ app.post('/give_me_data', function(req, res) {
     query_to_db         = '';
     var data_block      = {};
     data_block.options_answer   = true;
-    console.log(req.body.id_tab);
     request_data(data_block, 0, [req.body.id_tab], 'rows', 'data_answer').
         then(function(result) { return request_data(result, 1, [['id', 'name'], 'classes'], 'classes', 'options_answer')}).
         then(function(result) { return request_data(result, 1, [['id', 'name'], 'fractions'], 'fractions', 'options_answer')}).
@@ -600,7 +613,6 @@ app.post('/give_me_cards', function(req, res) {
         query_var = [req.body.list_name , req.body.id_query];
         data_block.answer_type   = 2;
     }
-    console.log("80. " + query_to_db);
     connection.query(query_to_db, query_var, function(err, rows) {
         if (err) {
             console.log("81. Ошибка при выборе данных из БД: " + err);
@@ -763,6 +775,101 @@ app.post('/update_deck', function(req, res) {
 
 
 
+
+/////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////
+// Обработка главной страницы
+/////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////
+
+app.post('/gamer_list', function(req, res) {
+    var data_block = {};
+    data_block.error = 0;
+    var user_id = HelloUser(req);
+    var sign = "";
+    if(user_id != false) {
+        switch (parseInt(req.body.option)){
+            case 1:
+                sign = "AND users.level>=? AND users.level<=?+2 ";
+                break;
+
+            case 2:
+                sign = "AND users.level=? ";
+                break;
+
+            case 3:
+                sign = "AND users.level>? AND users.level<=?+2 ";
+                break;
+        }
+        function get_user_lvl () {
+           var deferred = Q.defer();
+            query_to_db = "SELECT level FROM users WHERE id = ?";
+            connection.query(query_to_db, [user_id], function(err, rows) {
+                if (err || rows.length == 0) {
+                    console.log("97. Ошибка при поиске юзера в БД: " + err);
+                    data_block.error = 1;
+                    deferred.reject(data_block);
+                } else {
+                    data_block.user_level = rows[0].level;
+                    deferred.resolve(data_block);
+                }
+            });
+            return deferred.promise;
+        }
+
+        function get_battle (data) {
+            var deferred = Q.defer();
+            query_to_db = "SELECT list_of_battles.id_battle, users.user_name, users.numb_of_battle, users.numb_of_win, users.level FROM list_of_battles, users WHERE list_of_battles.pl1<>? AND list_of_battles.pl1=users.id AND list_of_battles.pass_battle='' AND list_of_battles.start_battle='0' " + sign + "ORDER BY users.level ASC LIMIT 10";
+            connection.query(query_to_db, [user_id, data_block.user_level, data_block.user_level], function(err, rows) {
+                if (err || rows.length == 0) {
+                    console.log("98. Свободных беспарольных битв нет: " + err);
+                    data.error = 2;
+                    deferred.reject(data);
+                } else {
+                    data.result = rows;
+                    deferred.resolve(data);
+                }
+            });
+            return deferred.promise;
+        }
+
+        // Проверяем наличие колод у пользователя
+        function check_user_deck (data) {
+            var deferred = Q.defer();
+            query_to_db = "SELECT * FROM card_decks WHERE id_user = ?";
+            connection.query(query_to_db, [user_id], function(err, rows) {
+                if (err) {
+                    console.log("85. Ошибка при поиске юзера в БД: " + err);
+                    data.error = 3;
+                    deferred.reject(data);
+                } else {
+                    if(rows.length != 0 && rows[0].id_fraction != -1) {
+                            // признак "У пользователя есть готовая колода"
+                            data.deck = 1;
+                            deferred.resolve(data);
+                    } else {
+                        // признак "У пользователя нет готовой колоды"
+                        data.deck = 0;
+                        deferred.resolve(data);
+                    }
+                    res.send(data);
+                }
+            });
+            return deferred.promise;
+        }
+
+
+        get_user_lvl().
+            then(function(result) { return get_battle(result) }).
+            then(function(result) { return check_user_deck(result) }).
+            catch(function(result) { res.send(result); }).
+            done();
+    }
+});
+
+
+
+
 /////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////
 // Обработка игровой комнаты
@@ -796,7 +903,7 @@ io.on('connection', function(socket) {
     socket.on('user connect', function(user_data) {
         // Каждая битва проходит в "комнате".
         // Комната - это дочерний объект глобального объекта rooms.
-        // Данные о колодах игроков находяться в аналогичных
+        // Данные о колодах игроков находятся в аналогичных
         // "отделениях" глобального объекта decks.
         var room = "room_" + user_data.user_room;
         var user_id = user_data.user_id;
@@ -911,6 +1018,8 @@ io.on('connection', function(socket) {
                                 obj.send_to_listeners = 1;
                                 io.to(obj.players[0].socket_id).emit('take data', [obj, decks[room][0], history[room]]);
                                 io.to(obj.players[1].socket_id).emit('take data', [obj, decks[room][1], history[room]]);
+                                // отменяем техническое поражение, если игрок переподключился в срок
+                                socket.broadcast.to(room).emit('clear timeout');
                             } else {
                                 socket.to(room).emit('rivals are not complete');
                             }
@@ -938,7 +1047,18 @@ io.on('connection', function(socket) {
                 socket.join(room);
                 socket.emit('take data', [rooms[room], history[room]]);
             } else {
-                // TODO: Обработать случай, когда игрок подключился со второй вкладки в браузере
+                var old_socket, i;
+                if (user_id == rooms[room].players[0].user_id) {
+                    i = 0;
+                } else {
+                    i = 1;
+                }
+                old_socket = rooms[room].players[i].socket_id;
+                rooms[room].players[i].socket_id = socket.id;
+                socket.id = old_socket;
+                socket.leave(room);
+                io.to(socket.id).emit('go home');
+                socket.id = rooms[room].players[i].socket_id;
             }
         }
 
@@ -948,12 +1068,30 @@ io.on('connection', function(socket) {
         socket.on('disconnect', function() {
             var finded = 0;
             for(var i = 0; i < rooms[room].players.length; i++) {
-                if(rooms[room].players[i] !== undefined && rooms[room].players[i].user_id == user_id) {
+                if(rooms[room].players[i] !== undefined &&
+                    rooms[room].players[i].user_id == user_id &&
+                    rooms[room].players[i].socket_id == socket.id) {
+
                     rooms[room].players[i] = undefined;
                     rooms[room].send_to_listeners = 0;
                     rooms[room].complete--;
                     finded = 1;
                     console.log("Игрок удалён");
+                    io.to(room).emit('player out', [user_id, history[room].cards.length]);
+                    socket.leave(room);
+                    // Запись истории в БД
+                    if(rooms[room].complete == 0 && history[room] !== undefined){
+                        query_to_db = "UPDATE history SET pl1=(SELECT pl1 FROM list_of_battles WHERE id_battle = ?), pl2=(SELECT pl2 FROM list_of_battles WHERE id_battle = ?), history = ? WHERE id = ?";
+                        var hist_battle = JSON.stringify(history[room]);
+                        var query_var = [user_data.user_room, user_data.user_room, hist_battle, user_data.user_room];
+                        connection.query(query_to_db, query_var, function(err, rows) {
+                            if (err || rows.length == 0) {
+                                console.log("95. Лог игры не записан: " + err);
+                            } else {
+                                console.log("96. Лог успешно записан");
+                            }
+                        });
+                    }
                 }
             }
             if(finded == 0) {
@@ -966,8 +1104,11 @@ io.on('connection', function(socket) {
                     }
                 }
             }
+
             // Чистка мусора
-            if(rooms[room].complete == 0 && rooms[room].listeners.length == 0) {
+            if(rooms[room].complete == 0 &&
+                rooms[room].listeners.length == 0 &&
+                rooms[room] !== undefined) {
                 delete decks[room];
                 delete rooms[room];
                 delete history[room];
@@ -1013,6 +1154,7 @@ io.on('connection', function(socket) {
         var room;
         for(var i = 0; i < user_data.length; i++) {
             room = "room_" + user_data[i].user_room;
+            console.log(user_data[i].user_room);
             history[room].cards.push(user_data[i]);
             if(user_data[i].resolution == 1) {
                 history[room].resolution[user_data[i].player_index] = 1;
@@ -1069,6 +1211,79 @@ io.on('connection', function(socket) {
         }
     });
 
+    /////////////////////////////////////////////////////////////
+    // Запись результатов игры в БД и сигнал окончания игры
+    /////////////////////////////////////////////////////////////
+    socket.on('results', function(user_data) {
+        var query_var = '';
+
+        function user_stat (user_data) {
+            var deferred = Q.defer();
+            query_var = [user_data.win, user_data.exp, user_data.id];
+            query_to_db = "UPDATE users SET numb_of_battle = numb_of_battle + 1, " +
+                "numb_of_win = numb_of_win + ?, exp = exp + ? WHERE id = ?";
+            connection.query(query_to_db, query_var, function(err, rows) {
+                if (err || rows.length == 0) {
+                    console.log("91. Ошибка при поиске юзера в БД: " + err);
+                    deferred.reject(user_data.err = 1);
+                } else {
+                    console.log("92. Результат успешно записан");
+                    deferred.resolve(user_data);
+                }
+            });
+            return deferred.promise;
+        }
+
+        function write_history (user_data) {
+            var deferred = Q.defer();
+            if(user_data.exp > 1) {
+                query_to_db = "INSERT INTO history (id) VALUES(?) ON DUPLICATE KEY UPDATE id=?";
+                query_var = [user_data.room, user_data.room];
+                connection.query(query_to_db, query_var, function(err) {
+                    if (err) {
+                        console.log("93. Попытка вставки неуникального значения: " + err);
+                        deferred.reject(user_data.err = 2);
+                    } else {
+                        console.log("94. Результат игры успешно записан");
+                        deferred.resolve(user_data);
+                    }
+                });
+            }
+            return deferred.promise;
+        }
+
+        function game_over (user_data) {
+            var deferred = Q.defer();
+            var room = "room_" + user_data.room;
+            history[room].cards.push('game_over');
+            deferred.resolve(user_data);
+            return deferred.promise;
+        }
+
+        function delete_battle (user_data) {
+            var deferred = Q.defer();
+            query_to_db = "DELETE FROM list_of_battles WHERE id_battle=?";
+            query_var = [user_data.room];
+            connection.query(query_to_db, query_var, function(err) {
+                if (err) {
+                    console.log("95. Ошибка при попытке удаления комнаты: " + err);
+                    deferred.reject(user_data.err = 3);
+                } else {
+                    console.log("96. Отыгранная комната удалена");
+                    deferred.resolve(user_data);
+                }
+            });
+            return deferred.promise;
+        }
+
+        user_stat (user_data).
+            then(function(user_data){ return write_history (user_data) }).
+            then(function(user_data){ return game_over (user_data) }).
+            then(function(user_data){ return delete_battle (user_data) }).
+            catch(function(user_data) { console.log(user_data.err); }).
+            done();
+
+    });
 
 });
 

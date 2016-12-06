@@ -38,6 +38,9 @@ $(document).ready(function () {
     }
     list_of_battle();
 
+
+    // Запрос информации о состоянии колоды игрока
+
     $.ajax({
         url: "deck_status",
         method: "POST",
@@ -46,14 +49,26 @@ $(document).ready(function () {
             var bg, title;
             if (response.answer == false) {
                 bg = 'deck_unready';
-                title = 'Выша колода не готова к игре';
+                title = 'Ваша колода не готова к игре';
                 status_deck = 0;
             } else {
                 bg = 'deck_ready';
-                title = 'Выша колода готова к игре';
+                title = 'Ваша колода готова к игре';
                 status_deck = 1;
             }
             $(".status span").addClass(bg).attr('title', title);
+        }
+    });
+
+
+    // Запрос статистики по игроку
+
+    $.ajax({
+        url: "statistics",
+        method: "POST",
+        data: '',
+        success: function(response) {
+            console.log(response);
         }
     });
 

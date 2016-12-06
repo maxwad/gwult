@@ -15,7 +15,7 @@
         <nav class="top_nav">
             <ul>
                 <li class="home_page"><a href="/" title=""><span>Главная</span></a></li>
-                <li class="some_page"><a href="my_room.html"><span>Мой профиль</span></a></li>
+                <li class="my_page"><a href="my_room.html"><span>Мой профиль</span></a></li>
                 <li class="login_page"><a href="auth.html"><span>Войти</span></a></li>
             </ul>
         </nav>
@@ -63,7 +63,27 @@
                 <div class="info_battles"></div>
             </div>
             <div class="statistic right_col">
-                <h2>Статистика</h2>
+                <h2 class="username"></h2>
+                <div class="capt_user">
+                    <div class="userpict">
+                        <div class="pict" title="Кликните, чтобы заменить аватар"></div>
+                        <form id="take_pict" method="post">
+                            <input type="file" class="upload"/>
+                            <button class="upload_pict" type="submit">Применить</button>
+                        </form>
+
+
+                    </div>
+                    <div class="user_lvl">
+                        <div class="player_level" title="Ваш уровень"></div>
+                    </div>
+                </div>
+
+                <div class="st_data">
+                    <div class="all_games"></div>
+                    <div class="win_games"></div>
+                    <div class="percent_win"></div>
+                </div>
             </div>
         </div>
     </body>

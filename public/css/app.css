@@ -34,6 +34,7 @@ html {
     overflow-y: scroll;
     -webkit-text-size-adjust: 100%;
     -ms-text-size-adjust: 100%;
+    height: 100%;
 }
 
 html,
@@ -41,16 +42,19 @@ button,
 input,
 select,
 textarea {
-    font-family: 'Roboto', HelveticaCyr,Helvetica,Arial,"Liberation Sans",FreeSans,sans-serif;
+    font-family: 'Roboto', HelveticaCyr, Helvetica, Arial, sans-serif;
 }
 
 body {
-    background: #000000;
     margin: 0;
     padding: 0;
     min-width: 1000px;
-    color: #ffffff;
+    color: #fde9c9;
     font-size: 16px;
+    /* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#2994b2+22,2d4059+100 */
+    background: #2D4059; /* Old browsers */
+
+
 }
 
 ul {
@@ -59,13 +63,13 @@ ul {
 }
 
 .incorrect {
-    border: 1px solid red!important;
+    border: 1px solid #EA5455!important;
 }
 
 a {
     text-decoration: none;
     text-align: center;
-    color: #ffffff;
+    color: #fde9c9;
     cursor: pointer;
 }
 
@@ -90,18 +94,22 @@ button {
     margin: 5px auto;
     padding: 5px;
     cursor: pointer;
-    background: #9a733d;
     box-shadow: inset 0 1px 3px 0 rgba(255,255,255,.5),inset 0 -1px 0 0 rgba(0,0,0,.3),0 1px 0 0 rgba(0,0,0,.2);
     border: none;
     outline: none;
-    color: #000000;
     border-radius: 2px;
+    color: #ffffff;
+    background: rgb(41,148,178); /* Old browsers */
+    background: -moz-radial-gradient(center, ellipse cover,  rgba(41,148,178,1) 0%, rgba(45,64,89,1) 100%); /* FF3.6-15 */
+    background: -webkit-radial-gradient(center, ellipse cover,  rgba(41,148,178,1) 0%,rgba(45,64,89,1) 100%); /* Chrome10-25,Safari5.1-6 */
+    background: radial-gradient(ellipse at center,  rgba(41,148,178,1) 0%,rgba(45,64,89,1) 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#2994b2', endColorstr='#2d4059',GradientType=1 ); /* IE6-9 fallback on horizontal gradient */
 }
 
 button:hover {
     box-shadow: inset 1px 1px 3px 0 rgba(255,255,255,.3),inset 1px -1px 1px 0 rgba(0,0,0,.2),1px 2px 1px 0 rgba(0,0,0,.3);
-    color: #000000;
     background: #FFD550;
+    color: #000000;
 }
 
 input[type=text], input[type=password], textarea {
@@ -131,7 +139,8 @@ input[type=text], input[type=password], textarea {
     list-style: none;
     font-weight: bold;
     margin-bottom: 30px;
-    background: #000000;
+    color: #fde9c9;
+    background: #2d4059;
 }
 
 .top_nav ul {
@@ -146,16 +155,19 @@ input[type=text], input[type=password], textarea {
     position: relative;
     display: block;
     cursor: pointer;
+    color: #ffffff;
+    background: rgb(41, 148, 178);
+}
+
+.top_nav li:hover {
+    background: #FFD550;
+    color: #000000;
 }
 
 .top_nav li a {
     display: block;
-    color: #f2f2f2;
+    color: #000000;
     padding: 10px;
-}
-
-.top_nav li a:hover{
-    color: #D5EEFF;
 }
 
 
@@ -178,7 +190,7 @@ input[type=text], input[type=password], textarea {
     padding: 25px;
     height: 100%;
     border: none;
-    border-top: 1px solid #9a733d;
+    border-top: 1px solid #2994B2;
 }
 
 .auth input {
@@ -214,11 +226,11 @@ input[type=text], input[type=password], textarea {
 }
 
 .auth .list li:hover {
-    color: #ffffff;
+    color: #fde9c9;
 }
 
 .auth .list .active_li {
-    color: #ffffff;
+    color: #fde9c9;
 }
 
 
@@ -238,7 +250,7 @@ input[type=text], input[type=password], textarea {
 }
 
 .room .incorrect {
-    border: 1px solid red;
+    border: 1px solid #EA5455;
 }
 
 .room .left_col {
@@ -263,11 +275,11 @@ input[type=text], input[type=password], textarea {
 }
 
 .room .list li:hover {
-    color: #ffffff;
+    color: #fde9c9;
 }
 
 .room .list .active_li {
-    color: #ffffff;
+    color: #fde9c9;
 }
 
 .room .tab_block {
@@ -279,8 +291,9 @@ input[type=text], input[type=password], textarea {
 }
 
 .room .tab_block fieldset {
+    border: none;
     text-align: center;
-    border: 1px solid #9a733d;
+    border-top: 1px solid #2994B2;
     height: 170px;
 }
 
@@ -327,7 +340,7 @@ input[type=text], input[type=password], textarea {
 }
 
 .deck_unready {
-    background: red;
+    background: #EA5455;
 }
 
 .deck_ready {
@@ -338,11 +351,15 @@ input[type=text], input[type=password], textarea {
     display: block;
     margin: 5px auto;
     padding: 5px 10px;
-    background: #9a733d;
+    color: #ffffff;
+    background: rgb(41,148,178); /* Old browsers */
+    background: -moz-radial-gradient(center, ellipse cover,  rgba(41,148,178,1) 0%, rgba(45,64,89,1) 100%); /* FF3.6-15 */
+    background: -webkit-radial-gradient(center, ellipse cover,  rgba(41,148,178,1) 0%,rgba(45,64,89,1) 100%); /* Chrome10-25,Safari5.1-6 */
+    background: radial-gradient(ellipse at center,  rgba(41,148,178,1) 0%,rgba(45,64,89,1) 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#2994b2', endColorstr='#2d4059',GradientType=1 ); /* IE6-9 fallback on horizontal gradient */
     box-shadow: inset 0 1px 3px 0 rgba(255,255,255,.5),inset 0 -1px 0 0 rgba(0,0,0,.3),0 1px 0 0 rgba(0,0,0,.2);
     border: none;
     outline: none;
-    color: #000000;
     border-radius: 2px;
 }
 
@@ -380,7 +397,7 @@ input[type=text], input[type=password], textarea {
 
 .room .info_battles table tr:first-child {
     font-weight: bold;
-    border-bottom: 2px solid #9a733d;
+    border-bottom: 2px solid #2994B2;
 }
 
 .room .info_battles table tr:nth-child(3) {
@@ -434,7 +451,7 @@ input[type=text], input[type=password], textarea {
     padding: 10px 20px;
     margin-bottom: 30px;
     z-index: 3;
-    border-bottom: 1px solid #9a733d;
+    border-bottom: 1px solid #2994B2;
 }
 
 .card .list li {
@@ -450,11 +467,11 @@ input[type=text], input[type=password], textarea {
 }
 
 .card .list li:hover {
-    color: #ffffff;
+    color: #fde9c9;
 }
 
 .card .list .active_li{
-    color: #ffffff;
+    color: #fde9c9;
 }
 
 .card .tab_cont {
@@ -480,7 +497,7 @@ input[type=text], input[type=password], textarea {
 
 .card h3 {
     text-align: center;
-    color: #ffffff;
+    color: #fde9c9;
 }
 
 .card form {
@@ -515,7 +532,7 @@ input[type=text], input[type=password], textarea {
 }
 
 .card input, .card textarea, .card select {
-    background: #ba8b48;
+    background: #2994B3;
     border: none;
 }
 
@@ -531,7 +548,7 @@ input[type=text], input[type=password], textarea {
 
 .card input[type=file] {
     padding: 0;
-    color: #ffffff;
+    color: #fde9c9;
 }
 
 .card input[type=checkbox] {
@@ -565,7 +582,7 @@ input[type=text], input[type=password], textarea {
 .card .tab_cont ul {
     float: left;
     width: 40%;
-    border-left: 1px solid #ba8b48;
+    border-left: 1px solid #2994B3;
     padding-left: 10px;
 }
 
@@ -577,7 +594,7 @@ input[type=text], input[type=password], textarea {
 
 .card .tab_cont li:hover {
     display: block;
-    color: #ffffff;
+    color: #fde9c9;
     cursor: pointer;
 }
 
@@ -587,7 +604,7 @@ input[type=text], input[type=password], textarea {
     width: 60%;
     padding-left: 10px;
     font-size: 18px;
-    color: #ba8b48;
+    color: #FFD550;
     position: relative;
     overflow: hidden;
 }
@@ -610,7 +627,7 @@ input[type=text], input[type=password], textarea {
 }
 
 .card .marked {
-    color: #ffffff!important;
+    color: #fde9c9!important;
 }
 
 .card .desc_name {
@@ -643,7 +660,7 @@ input[type=text], input[type=password], textarea {
     display: block;
     margin: 20px 0;
     text-align: center;
-    color: #ba8b48;
+    color: #FFD550;
 }
 
 .card #fractions_desc_text span {
@@ -728,7 +745,7 @@ input[type=text], input[type=password], textarea {
 .deck_room .fraction_choice select {
     background: #000000;
     font-size: 16px;
-    color: #ffffff;
+    color: #fde9c9;
     border: none;
     margin: 10px auto 15px auto;
 }
@@ -742,7 +759,7 @@ input[type=text], input[type=password], textarea {
     width: 50%;
     height: 50px;
     margin: 0 auto;
-    color: #ba8b48;
+    color: #FFD550;
 }
 
 .deck_room .deck_col {
@@ -841,8 +858,8 @@ input[type=text], input[type=password], textarea {
 }
 
 .deck_room .item_card:hover img {
-    box-shadow: 0 0 7px 3px #ba8b48;
-    background: #ba8b48;
+    box-shadow: 0 0 7px 3px #2994B3;
+    background: #2994B3;
 }
 
 .deck_room .leader_img {
@@ -860,8 +877,8 @@ input[type=text], input[type=password], textarea {
 }
 
 .deck_room .item_leader:hover img {
-    box-shadow: 0 0 7px 3px #ba8b48;
-    background: #ba8b48;
+    box-shadow: 0 0 7px 3px #2994B3;
+    background: #2994B3;
     cursor: pointer;
 }
 
@@ -893,7 +910,7 @@ input[type=text], input[type=password], textarea {
 
 .deck_room .leader_choice p, .deck_room .desc_unit {
     text-align: center;
-    color:  #ba8b48;
+    color:  #2994B3;
     margin: 30px auto;
     height: 50px;
     font-size: 24px;
@@ -954,13 +971,21 @@ input[type=text], input[type=password], textarea {
     display: block;
     height: 150px;
     width: 80px;
-    background: #cccccc;
     border-radius: 3px;
     cursor: pointer;
 }
 
+.battle .leader_pic:hover {
+    box-shadow: 0 0 7px 3px #2994B3;
+    background: #2994B3;
+}
+
 .battle .player_data {
     height: 300px;
+}
+
+.battle .out {
+    opacity: 0.6;
 }
 
 .battle .player_info {
@@ -983,7 +1008,7 @@ input[type=text], input[type=password], textarea {
     border: none;
     border-radius: 50%;
     margin: 0 auto;
-    background: #ffffff;
+    background: #fde9c9;
 }
 
 .battle .fraction_pic {
@@ -1001,7 +1026,7 @@ input[type=text], input[type=password], textarea {
 .battle .battle_detail {
     flex: 3;
     height: 100%;
-    background: #fe924a;
+    background: #2D4059;
 }
 
 .battle .player_status {
@@ -1032,7 +1057,6 @@ input[type=text], input[type=password], textarea {
     display: inline-block;
     width: 40px;
     height: 40px;
-    
 }
 
 .battle .player_power {
@@ -1049,10 +1073,10 @@ input[type=text], input[type=password], textarea {
     text-align: center;
     font-weight: 900;
     color: #000000;
-    text-shadow: 2px 2px 2px  #ffffff,
-    -2px -2px 2px  #ffffff,
-    2px -2px 2px  #ffffff,
-    -2px 2px 2px  #ffffff;
+    text-shadow: 2px 2px 2px  #fde9c9,
+    -2px -2px 2px  #fde9c9,
+    2px -2px 2px  #fde9c9,
+    -2px 2px 2px  #fde9c9;
 }
 
 .battle .rival .player_power {
@@ -1061,8 +1085,8 @@ input[type=text], input[type=password], textarea {
 }
 
 .battle .home .player_power {
-    background: #D29E4B;
-    box-shadow: 0 0 2px 2px #D29E4B;
+    background: #2D4059;
+    box-shadow: 0 0 2px 2px #2D4059;
 }
 
 .battle .player_name {
@@ -1082,7 +1106,7 @@ input[type=text], input[type=password], textarea {
 .battle .fraction_name {
     padding-top: 10px;
     font-size: 14px;
-    color: #ba8b48;
+    color: #2994B3;
     line-height: 20px;
 }
 
@@ -1148,7 +1172,7 @@ input[type=text], input[type=password], textarea {
     font-size: 30px;
     padding-top: 200px;
     text-align: center;
-    background: rgba(0, 0, 0, 0.95);
+    background: rgba(0, 0, 0, 0.85);
 }
 
 .battle .row_enemy, .battle .row_home {
@@ -1178,10 +1202,10 @@ input[type=text], input[type=password], textarea {
     font-size: 24px;
     font-weight: 600;
     color: #000000;
-    text-shadow: 2px 2px 2px  #ffffff,
-    -2px -2px 2px  #ffffff,
-    2px -2px 2px  #ffffff,
-    -2px 2px 2px  #ffffff;
+    text-shadow: 1px 1px 1px  #fde9c9,
+    -1px -1px 1px  #fde9c9,
+    1px -1px 1px  #fde9c9,
+    -1px 1px 1px  #fde9c9;
     border-radius: 50%;
     line-height: 47px;
     text-align: center;
@@ -1193,7 +1217,7 @@ input[type=text], input[type=password], textarea {
 }
 
 .battle .home .str_count {
-    background: #D29E4B;
+    background: #2D4059;
 }
 
 .cards_row {
@@ -1243,7 +1267,7 @@ input[type=text], input[type=password], textarea {
     left: 2%;
     height: 22px;
     width: 22px;
-    background: #ffffff;
+    background: #fde9c9;
     color: #000000;
     line-height: 22px;
     border-radius: 50%;
@@ -1262,7 +1286,7 @@ input[type=text], input[type=password], textarea {
     height: 30px;
     width: 30px;
     line-height: 30px;
-    background: #ffffff;
+    background: #fde9c9;
     padding: 0;
     color: #000000;
     border-radius: 50%;
@@ -1271,8 +1295,8 @@ input[type=text], input[type=password], textarea {
 }
 
 .battle .cards_field div:hover img {
-    box-shadow: 0 0 7px 3px #ba8b48;
-    background: #ba8b48;
+    box-shadow: 0 0 7px 3px #2994B3;
+    background: #2994B3;
     cursor: pointer;
 }
 
@@ -1306,7 +1330,7 @@ input[type=text], input[type=password], textarea {
 }
 
 .battle .exit {
-    display: block;
+    display: none;
     margin: 20px auto;
     padding: 5px 40px;
 }
@@ -1385,8 +1409,8 @@ input[type=text], input[type=password], textarea {
 }
 
 .battle .cards div:hover img {
-    box-shadow: 0 0 7px 3px #ba8b48;
-    background: #ba8b48;
+    box-shadow: 0 0 7px 3px #2994B3;
+    background: #2994B3;
     cursor: pointer;
 }
 
@@ -1421,8 +1445,8 @@ input[type=text], input[type=password], textarea {
 }
 
 .battle .card_rewiev img:hover {
-    box-shadow: 0 0 7px 3px #ba8b48;
-    background: #ba8b48;
+    box-shadow: 0 0 7px 3px #2994B3;
+    background: #2994B3;
     cursor: pointer;
 }
 
@@ -1445,7 +1469,7 @@ input[type=text], input[type=password], textarea {
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    background: #ba8b48;
+    background: #2994B3;
     z-index: 7;
 }
 
@@ -1495,7 +1519,7 @@ input[type=text], input[type=password], textarea {
 }
 
 .battle .results_body table .table_head td {
-    border-bottom: 2px solid  #ba8b48;
+    border-bottom: 2px solid  #2994B3;
 }
 
 .battle .results_body .to_home {
@@ -1506,7 +1530,7 @@ input[type=text], input[type=password], textarea {
 }
 
 .battle .results_body .win {
-    color: #ba8b48;
+    color: #2994B3;
 }
 
 .battle .fold {
@@ -1518,7 +1542,7 @@ input[type=text], input[type=password], textarea {
     top: 0;
     left: 35px;
     padding-left: 70px;
-    background: #ffffff;
+    background: #fde9c9;
     z-index: 7;
     opacity: 0.3;
     text-align: center;
@@ -1562,8 +1586,8 @@ input[type=text], input[type=password], textarea {
 }
 
 .battle .choice img:hover {
-    box-shadow: 0 0 7px 3px #ba8b48;
-    background: #ba8b48;
+    box-shadow: 0 0 7px 3px #2994B3;
+    background: #2994B3;
     cursor: pointer;
 }
 
@@ -1575,10 +1599,136 @@ input[type=text], input[type=password], textarea {
     height: 40px;
     width: 40px;
     line-height: 40px;
-    background: #ffffff;
+    background: #fde9c9;
     padding: 0;
     color: #000000;
     border-radius: 50%;
     text-align: center;
     font-weight: 900;
 }
+
+
+
+/*=================================   MAIN PAGE  =======================================*/
+
+
+.main .list_caption {
+    text-align: center;
+    font-size: 30px;
+    font-weight: 500;
+}
+
+.main .option_lev {
+    width: 50%;
+    display: flex;
+    margin: 0 auto 30px auto;
+}
+
+.main .filter {
+    display: flex;
+    justify-content: center;
+    flex: 1;
+    cursor: pointer;
+}
+
+.main .filter input, .main .filter label {
+    margin: auto 5px;
+    cursor: pointer;
+}
+
+.main .filter input {
+    width: 5%;
+    opacity: 0;
+}
+
+.main .filter label {
+    width: 80px;
+    height: 40px;
+}
+
+.main .filter input:checked + label {
+    color: #FFD550;
+}
+
+.main .filter #with + label {
+    background: url('../imgs/others/gamers.png') left center no-repeat;
+    background-size: contain;
+}
+
+.main .filter #only + label {
+    background: url('../imgs/others/gamer_less.png') left center no-repeat;
+    background-size: contain;
+}
+
+.main .filter #without + label {
+    background: url('../imgs/others/gamer_more.png') left center no-repeat;
+    background-size: contain;
+}
+
+.main .filter #with:checked + label, .main .filter:hover #with + label {
+    background: url('../imgs/others/gamers_h.png') left center no-repeat;
+    background-size: contain;
+}
+
+.main .filter #only:checked + label, .main .filter:hover #only + label {
+    background: url('../imgs/others/gamer_less_h.png') left center no-repeat;
+    background-size: contain;
+}
+
+.main .filter #without:checked + label, .main .filter:hover #without + label {
+    background: url('../imgs/others/gamer_more_h.png') left center no-repeat;
+    background-size: contain;
+}
+
+.main .message {
+    text-align: center;
+}
+
+.main .gamers {
+    margin: 0 auto;
+    width: 50%;
+    table-layout: fixed;
+    text-align: center;
+    vertical-align: middle;
+    border-collapse: collapse;
+    border-spacing: 0;
+}
+
+.main .gamers tr {
+    height: 40px;
+}
+
+.main .gamers thead tr {
+    color: #FFD550;
+    font-size: 18px;
+    border-bottom: 2px solid #FFD550;
+}
+
+.main .gamers tr:nth-child(even) td {
+    background: #3b4e69;
+    color: #ffffff;
+}
+
+.main .gamers .join_to_battle {
+    width: 40px;
+    height: 40px;
+    box-shadow: none;
+    background: url('../imgs/others/enter.png') center center no-repeat;
+}
+
+.main .gamers .join_to_battle:hover {
+    background: url('../imgs/others/enter_hover.png') center center no-repeat;
+}
+
+
+.main .gamers .no_deck {
+    width: 40px;
+    height: 40px;
+    box-shadow: none;
+    background: url('../imgs/others/delete.png') center center no-repeat;
+}
+
+.main .gamers .no_deck:hover {
+    background: url('../imgs/others/delete_hover.png') center center no-repeat;
+}
+

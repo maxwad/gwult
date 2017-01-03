@@ -1,0 +1,61 @@
+.active-votes-container {
+    position: fixed;
+    padding: 5px 10px;
+}
+
+.voting-container {
+    width: 400px;
+    margin: 0 auto;
+    border: 1px solid;
+    padding: 10px 20px;
+}
+
+.voting-form-section {
+    margin-bottom: 5px;
+}
+
+.voting-form-section > label > span {
+    min-width: 70px;
+    display: inline-block;
+}
+
+.voting-form-footer {
+    margin-top: 10px;
+}
+
+.votes-list-container {
+    margin: 20px auto 0;
+    width: 50%;
+    min-width: 800px;
+}
+
+.activity-section, .delete-section {
+    display: inline-block;
+    margin-right: 10px;
+    margin-bottom: 10px;
+}
+
+.votes-list-container .vote-option {
+    margin-bottom: 10px;
+    border-bottom: 1px solid;
+}
+
+.voted-num {
+    font-size: 11px;
+}
+
+.votes {
+    text-align: center;
+}
+
+.vote-item {
+    padding: 10px;
+    min-width: 200px;
+    border: 2px solid white;
+    text-align: left;
+    margin-bottom: 10px;
+}
+
+.vote-item.active {
+    background: rgba(255,255,255, .1);
+}

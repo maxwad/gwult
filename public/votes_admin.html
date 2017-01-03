@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Создание голосований</title>
+
+    <link rel="stylesheet" href="/css/app.css"/>
+    <link rel="stylesheet" href="/css/voting.css"/>
+    <link href="http://fonts.googleapis.com/css?family=Roboto" rel="stylesheet" type="text/css">
+
+    <script src="/js/jquery.min.js"></script>
+    <script src="/js/check.js"></script>
+</head>
+    <body class="votes-admin">
+        <div class="active-votes-container">
+            <h3>Активное голосование</h3>
+            <div class="active-vote-name"></div>
+        </div>
+        <div class="voting-container">
+            <h2 class="voting-form-header">Создание Голосования</h2>
+            <form class="voting-form">
+                <div class="voting-form-section vote-name">
+                    <label><span>Название</span><input type="text"></label>
+                </div>
+                <div class="voting-form-options"></div>
+
+                <div class="voting-form-footer">
+                    <button type="button" data-action="add-option">Добавить опцию</button>
+                    <button type="button" data-action="save">Сохранить</button>
+                    <button type="reset" data-action="reset">Очистить</button>
+                </div>
+            </form>
+        </div>
+
+        <div class="votes-list-container">
+            <h2>Список Голосований</h2>
+            <div class="votes-list"></div>
+        </div>
+        <script>window.gwult = {};</script>
+        <script src="/js/voting/events-handler.js"></script>
+        <script src="/js/voting/request-helper.js"></script>
+        <script src="/js/voting/vote-entity.js"></script>
+        <script src="/js/voting/active-vote-container.js"></script>
+        <script src="/js/voting/votes-list.js"></script>
+        <script src="/js/voting/votes-manager.js"></script>
+        <script src="/js/voting/init.js"></script>
+    </body>
+</html>

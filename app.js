@@ -867,56 +867,6 @@ app.post('/gamer_list', function(req, res) {
     }
 });
 
-/////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////
-// Запросы для голосований
-/////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////
-app.get('/get_votes', function (req, res) {
-    var query_to_db = 'SELECT a.id as id, a.name as vote_name, a.is_active, b.id as option_id, b.name as option_name,' +
-        'b.votes_num as num FROM votes a JOIN vote_options b ON a.id = b.vote_id;';
-    connection.query(query_to_db, null, function(err, result) {
-        res.send(result);
-    });
-});
-
-app.post('/add_vote', function (req, res) {
-    var vote = req.body,
-        addVoteQuery = 'INSERT INTO votes (name, is_active) values (?, false)',
-        addOptionsQuery = 'INSERT INTO vote_options (vote_id, name) values ?';
-
-    connection.query(addVoteQuery, [vote.name], function(err, result) {
-        var voteId = result.insertId,
-            optionsData = req.body.options.map(function(name) { return [voteId, name]; });
-        connection.query(addOptionsQuery, [optionsData], function(err, result) {
-            res.send(result);
-        });
-    });
-});
-
-app.post('/set_vote_active', function (req, res) {
-    var vote = req.body;
-    var setAllInactive = 'UPDATE votes SET is_active=0';
-    var setVoteActiveQuery = 'UPDATE votes SET is_active=? WHERE id=?';
-    var booleanMap = { 'true': 1, 'false': 0 };
-    connection.query(setAllInactive, null, function() {
-        connection.query(setVoteActiveQuery, [booleanMap[vote.isActive], vote.id], function(err, result) {
-            res.send(result);
-        });
-    });
-});
-
-app.post('/remove_vote', function (req, res) {
-    var vote = req.body;
-    var removeOptionsQuery = 'DELETE FROM vote_options WHERE vote_id=?';
-    var removeVoteQuery = 'DELETE FROM votes WHERE id=?';
-    connection.query(removeOptionsQuery, [vote.id], function() {
-        connection.query(removeVoteQuery, [vote.id], function(err, result) {
-            res.send(result);
-        });
-    });
-});
-
 
 
 

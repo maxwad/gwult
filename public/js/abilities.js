@@ -484,6 +484,7 @@ function medic (data, mode) {
                                 .append(
                                     $('<img/>').attr({
                                         'src':          "../" + data.retreat_home[i].pict,
+                                        'data-desc':    data.retreat_home[i].desc_func,
                                         'title':        data.retreat_home[i].name
                                     })
                                 )

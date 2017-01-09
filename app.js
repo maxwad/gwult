@@ -107,13 +107,16 @@ function delete_pict (prop, name_table, id_card) {
         if (err) {
             console.log("84. Ошибка при выборе файла для удаления: " + err);
         } else {
-            fs.unlink("public/" + rows[0][prop], function (err) {
-                if (err) {
-                    console.log("85. Ошибка при удалении файла: " + err);
-                } else {
-                    console.log("86. Файл успешно удалён");
-                }
-            });
+            if(rows[0] !== undefined) {
+                fs.unlink("public/" + rows[0][prop], function (err) {
+                    if (err) {
+                        console.log("85. Ошибка при удалении файла: " + err);
+                    } else {
+                        console.log("86. Файл успешно удалён");
+                    }
+                });
+            }
+
         }
     });
 }
@@ -269,7 +272,6 @@ app.post('/login', function(req, res) {
                 res.send({answer:false});
             } else {
                 console.log('10. Такой пользователь есть');
-                console.log(rows[0].user_pass);
                 var test_pass =  rows[0].user_pass;
                 if(!bcrypt.compareSync(req.body.pass, test_pass)) {
                     console.log("12. Не совпадают пароли");
@@ -355,6 +357,42 @@ app.post('/statistics', function(req, res) {
 });
 
 
+/////////////////////////////////////////////////////////////
+// Удаление пометки "Новый уровень"
+/////////////////////////////////////////////////////////////
+app.post('/update_lvl', function(req) {
+    query_to_db = "UPDATE users SET old_level=level WHERE id=?";
+    connection.query(query_to_db, [req.session.user], function(err) {
+        // Если ошибка, записи о пользователе нет
+        if (err) {
+            console.log("100. Ошибка: " + err);
+        }
+    });
+});
+
+
+////////////////////////////////////////////////////////////////
+// Редактирование аватара
+////////////////////////////////////////////////////////////////
+app.post('/take_avatar', multer({ storage: getStorage() }).any(), function(req, res) {
+    // Чтобы удалить старую картинку, нужно сначала запомнить её путь,
+    // иначе он будет перезаписан в процессе сохранения новых данных в БД
+    if(req.files) {
+        if(req.files[0] != undefined) {
+            req.body.pict = (req.files[0].destination + "/" + req.files[0].filename).replace('public/','');
+            delete_pict ("pict", "users", req.session.user);
+            query_to_db = "UPDATE users SET pict=? WHERE id=?";
+            connection.query(query_to_db, [req.body.pict, req.session.user], function(err) {
+                if(err) {
+                    console.log("102. Ошибка при редактировании аватара: " + err);
+                    res.send({answer:false});
+                } else {
+                    res.send({answer:true, pict: req.body.pict});
+                }
+            });
+        }
+    }
+});
 
 /////////////////////////////////////////////////////////////
 // Создание комнаты
@@ -1011,6 +1049,47 @@ io.on('connection', function(socket) {
                             return deferred.promise;
                         }
 
+                        // Функция дополняет объект игрока
+                        function info_player_1 (obj, player) {
+                            var deferred = Q.defer();
+                            if(obj.players[0] !== undefined && player != 0) {
+                                query_to_db = "SELECT pict, level, old_level, exp FROM users WHERE id = ?";
+                                connection.query(query_to_db, [obj.players[0].user_id], function(err, rows) {
+                                    if (err || rows.length == 0) {
+                                        console.log("102. Ошибка при поиске юзера в БД: " + err);
+                                        deferred.reject(obj);
+                                    } else {
+                                        obj.players[0].user_level     = rows[0].level;
+                                        obj.players[0].user_old_level = rows[0].old_level;
+                                        obj.players[0].user_exp       = rows[0].exp;
+                                        obj.players[0].user_pict      = rows[0].pict;
+                                        deferred.resolve(obj);
+                                    }
+                                });
+                            }
+                            return deferred.promise;
+                        }
+
+                        function info_player_2 (obj, player) {
+                            var deferred = Q.defer();
+                            if(obj.players[1] !== undefined && player != 0) {
+                                query_to_db = "SELECT pict, level, old_level, exp FROM users WHERE id = ?";
+                                connection.query(query_to_db, [obj.players[1].user_id], function(err, rows) {
+                                    if (err || rows.length == 0) {
+                                        console.log("102. Ошибка при поиске юзера в БД: " + err);
+                                        deferred.reject(obj);
+                                    } else {
+                                        obj.players[1].user_level     = rows[0].level;
+                                        obj.players[1].user_old_level = rows[0].old_level;
+                                        obj.players[1].user_exp       = rows[0].exp;
+                                        obj.players[1].user_pict      = rows[0].pict;
+                                        deferred.resolve(obj);
+                                    }
+                                });
+                            }
+                            return deferred.promise;
+                        }
+
                         // Функция отправляет данные подключённым сокетам
                         function send_info (socket, obj){
                             var deferred = Q.defer();
@@ -1034,6 +1113,8 @@ io.on('connection', function(socket) {
                             then(function(result) { return rows_cards(data_player, "units", deck_player.id_fraction, " ORDER BY strength DESC") }).
                             then(function(result) { return rows_cards(data_player, "leaders", deck_player.id_fraction,"") }).
                             then(function(result) { return initial_player(player, rows, rooms[room], socket) }).
+                            then(function(result) { return info_player_1(rooms[room], player) }).
+                            then(function(result) { return info_player_2(rooms[room], player) }).
                             then(function(result) { return send_info(socket, rooms[room]) }).
                             catch(function(result) { console.log(result); }).
                             done();
@@ -1067,51 +1148,53 @@ io.on('connection', function(socket) {
         /////////////////////////////////////////////////////////////
         socket.on('disconnect', function() {
             var finded = 0;
-            for(var i = 0; i < rooms[room].players.length; i++) {
-                if(rooms[room].players[i] !== undefined &&
-                    rooms[room].players[i].user_id == user_id &&
-                    rooms[room].players[i].socket_id == socket.id) {
+            if(rooms[room] !== undefined) {
+                for(var i = 0; i < rooms[room].players.length; i++) {
+                    if(rooms[room].players[i] !== undefined &&
+                        rooms[room].players[i].user_id == user_id &&
+                        rooms[room].players[i].socket_id == socket.id) {
 
-                    rooms[room].players[i] = undefined;
-                    rooms[room].send_to_listeners = 0;
-                    rooms[room].complete--;
-                    finded = 1;
-                    console.log("Игрок удалён");
-                    io.to(room).emit('player out', [user_id, history[room].cards.length]);
-                    socket.leave(room);
-                    // Запись истории в БД
-                    if(rooms[room].complete == 0 && history[room] !== undefined){
-                        query_to_db = "UPDATE history SET pl1=(SELECT pl1 FROM list_of_battles WHERE id_battle = ?), pl2=(SELECT pl2 FROM list_of_battles WHERE id_battle = ?), history = ? WHERE id = ?";
-                        var hist_battle = JSON.stringify(history[room]);
-                        var query_var = [user_data.user_room, user_data.user_room, hist_battle, user_data.user_room];
-                        connection.query(query_to_db, query_var, function(err, rows) {
-                            if (err || rows.length == 0) {
-                                console.log("95. Лог игры не записан: " + err);
-                            } else {
-                                console.log("96. Лог успешно записан");
-                            }
-                        });
-                    }
-                }
-            }
-            if(finded == 0) {
-                for(var j = 0; j < rooms[room].listeners.length; j++) {
-                    if(rooms[room].listeners[j].user_id == user_id) {
-                        rooms[room].listeners.splice(j, 1);
+                        rooms[room].players[i] = undefined;
+                        rooms[room].send_to_listeners = 0;
+                        rooms[room].complete--;
+                        finded = 1;
+                        console.log("Игрок удалён");
+                        io.to(room).emit('player out', [user_id, history[room].cards.length]);
                         socket.leave(room);
-                        console.log("Зритель удалён");
-                        break;
+                        // Запись истории в БД
+                        if(rooms[room].complete == 0 && history[room] !== undefined){
+                            query_to_db = "UPDATE history SET pl1=(SELECT pl1 FROM list_of_battles WHERE id_battle = ?), pl2=(SELECT pl2 FROM list_of_battles WHERE id_battle = ?), history = ? WHERE id = ?";
+                            var hist_battle = JSON.stringify(history[room]);
+                            var query_var = [user_data.user_room, user_data.user_room, hist_battle, user_data.user_room];
+                            connection.query(query_to_db, query_var, function(err, rows) {
+                                if (err || rows.length == 0) {
+                                    console.log("95. Лог игры не записан: " + err);
+                                } else {
+                                    console.log("96. Лог успешно записан");
+                                }
+                            });
+                        }
                     }
                 }
-            }
+                if(finded == 0) {
+                    for(var j = 0; j < rooms[room].listeners.length; j++) {
+                        if(rooms[room].listeners[j].user_id == user_id) {
+                            rooms[room].listeners.splice(j, 1);
+                            socket.leave(room);
+                            console.log("Зритель удалён");
+                            break;
+                        }
+                    }
+                }
 
-            // Чистка мусора
-            if(rooms[room].complete == 0 &&
-                rooms[room].listeners.length == 0 &&
-                rooms[room] !== undefined) {
-                delete decks[room];
-                delete rooms[room];
-                delete history[room];
+                // Чистка мусора
+                if(rooms[room].complete == 0 &&
+                    rooms[room].listeners.length == 0 &&
+                    rooms[room] !== undefined) {
+                    delete decks[room];
+                    delete rooms[room];
+                    delete history[room];
+                }
             }
         });
     });
@@ -1154,7 +1237,6 @@ io.on('connection', function(socket) {
         var room;
         for(var i = 0; i < user_data.length; i++) {
             room = "room_" + user_data[i].user_room;
-            console.log(user_data[i].user_room);
             history[room].cards.push(user_data[i]);
             if(user_data[i].resolution == 1) {
                 history[room].resolution[user_data[i].player_index] = 1;
@@ -1219,9 +1301,9 @@ io.on('connection', function(socket) {
 
         function user_stat (user_data) {
             var deferred = Q.defer();
-            query_var = [user_data.win, user_data.exp, user_data.id];
+            query_var = [user_data.win, user_data.exp, user_data.level, user_data.id];
             query_to_db = "UPDATE users SET numb_of_battle = numb_of_battle + 1, " +
-                "numb_of_win = numb_of_win + ?, exp = exp + ? WHERE id = ?";
+                "numb_of_win = numb_of_win + ?, exp = ?, level = ?  WHERE id = ?";
             connection.query(query_to_db, query_var, function(err, rows) {
                 if (err || rows.length == 0) {
                     console.log("91. Ошибка при поиске юзера в БД: " + err);
@@ -1248,6 +1330,8 @@ io.on('connection', function(socket) {
                         deferred.resolve(user_data);
                     }
                 });
+            } else {
+                deferred.resolve(user_data);
             }
             return deferred.promise;
         }

@@ -121,7 +121,7 @@ input[type=text], input[type=password], textarea {
     top: 39px;
     left: 50%;
     transform: translateX(-50%);
-    z-index: 10;
+    z-index: 100;
 }
 
 .message_box {
@@ -240,8 +240,9 @@ input[type=text], input[type=password], textarea {
 
 .room .content_block {
     display: flex;
-    width: 70%;
+    max-width: 1300px;
     margin: 0 auto;
+    justify-content: space-between;
 }
 
 .room .info_battles {
@@ -254,14 +255,17 @@ input[type=text], input[type=password], textarea {
 }
 
 .room .left_col {
+    padding: 0 15px;
+    max-width: 350px;
+    min-width: 250px;
     flex: 1;
-    width: 30%;
-    min-width: 300px;
  }
 
 .room .right_col {
+    padding: 0 25px;
+    min-width: 600px;
     flex: 3;
-    width: 70%;
+    overflow: hidden;
 }
 
 .room .list li {
@@ -304,6 +308,8 @@ input[type=text], input[type=password], textarea {
 
 .room #create_form label {
     color: #959595;
+    font-size: 13px;
+    padding-bottom: 5px;
 }
 
 .room .tab_block input {
@@ -328,15 +334,17 @@ input[type=text], input[type=password], textarea {
 
 .room .status {
     font-size: 24px;
-    margin: 15px auto;
+    margin: 15px auto 40px auto;
+    text-align: center;
 }
 
 .room .status span {
-    display: inline-block;
-    height: 13px;
-    width: 13px;
+    display: block;
+    height: 15px;
+    width: 15px;
     border-radius: 50%;
     cursor: pointer;
+    margin: 0 auto;
 }
 
 .deck_unready {
@@ -430,10 +438,124 @@ input[type=text], input[type=password], textarea {
     background-size: contain;
 }
 
+.room .statistic {
+    padding-top: 20px;
+    display: flex;
+    justify-content: space-around;
+}
 
+.room .username {
+    font-size: 30px;
+    color: #FFD550;
+    width: 100%;
+    margin-bottom: 30px;
 
+}
 
+.room .capt_user {
+    display: block;
+    position: relative;
+    width: 300px;
+}
 
+.room .pict {
+    display: block;
+    width: 300px;
+    margin: 0 auto;
+    height: 300px;
+}
+
+.room #take_pict {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 300px;
+}
+
+.room #upload {
+    width: 100%;
+    height: 300px;
+    outline: none;
+    opacity: 0;
+    cursor: pointer;
+}
+
+.room .upload_pict {
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translate(-50%, 60px);
+    display: none;
+    padding: 5px 15px;
+}
+
+.room .player_level {
+    position: absolute;
+    top: 0;
+    right: 0;
+    text-align: center;
+    font-size: 50px;
+    font-weight: 700;
+    color: #FFD550;
+    background: #000000;
+    padding: 5px 10px;
+    transform: translate(20%, -10%);
+}
+
+.room .level_next {
+    width: 100%;
+    margin: 0;
+    height: 10px;
+    background: #2994B2;
+    cursor: pointer;
+}
+
+.room .scale {
+    height: 10px;
+    background: #FFD550;
+}
+
+.room .games_block {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
+
+.room .all_games, .room .win_games {
+    width: 100px;
+    height: 100px;
+    line-height: 100px;
+    text-align: center;
+    font-size: 30px;
+    border-radius: 50%;
+    margin: 15px 25px;
+    cursor: pointer;
+}
+
+.room .win_games {
+    border: 2px solid #FFD550;
+    color: #FFD550;
+}
+
+.room .all_games {
+    border: 2px solid #2994B2;
+    color: #2994B2;
+}
+
+.room .percent_win {
+    width: 120px;
+    height: 120px;
+    border: 3px solid #2994B2;
+    line-height: 120px;
+    text-align: center;
+    font-size: 30px;
+    font-weight: 700;
+    border-radius: 50%;
+    margin: 0 auto;
+    cursor: pointer;
+    color: #FFD550;
+}
 
 /*=================================   CARD PAGE  =======================================*/
 
@@ -1014,7 +1136,7 @@ input[type=text], input[type=password], textarea {
 .battle .fraction_pic {
     display: block;
     position: absolute;
-    top: 50%;
+    top: 65%;
     left: 5%;
     width: 50px;
     height: 50px;
@@ -1100,13 +1222,6 @@ input[type=text], input[type=password], textarea {
     overflow: hidden;
     word-break: break-all;
     height: 50%;
-    line-height: 20px;
-}
-
-.battle .fraction_name {
-    padding-top: 10px;
-    font-size: 14px;
-    color: #2994B3;
     line-height: 20px;
 }
 
@@ -1502,7 +1617,7 @@ input[type=text], input[type=password], textarea {
 }
 
 .battle .results_body h2 {
-    margin-bottom: 100px;
+    margin-bottom: 50px;
     font-size: 50px;
 }
 
@@ -1532,6 +1647,18 @@ input[type=text], input[type=password], textarea {
 .battle .results_body .win {
     color: #2994B3;
 }
+
+.battle .results_body .win {
+    color: #2994B3;
+}
+
+.battle .exp_block {
+    text-align: center;
+    font-size: 40px;
+    color: #FFD550;
+    margin-bottom: 50px;
+}
+
 
 .battle .fold {
     display: flex;
@@ -1731,4 +1858,3 @@ input[type=text], input[type=password], textarea {
 .main .gamers .no_deck:hover {
     background: url('../imgs/others/delete_hover.png') center center no-repeat;
 }
-

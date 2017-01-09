@@ -24,23 +24,23 @@
         <div class="content_block">
             <div class="form_area left_col">
                 <div class="deck_status">
-                    <div class="status">Статус Вашей колоды: <span></span></div>
-                    <a href="decks_room.html">Перейти к колоде карт</a>
-                    <a href="card.html">Создать карты</a>
+                    <div class="status">Статус колоды: <span></span></div>
+                    <a title="" class="to_deck" href="decks_room.html">Перейти к колоде карт</a>
+                    <a title="" class="to_cards" href="card.html">Создать карты</a>
                 </div>
 
                 <div class="tab_block">
                     <div class="list">
                         <ul>
                             <li class="tab create_tab active_li">Создать</li>
-                            <li class="tab join_tab">Присоединиться</li>
+                            <li class="tab join_tab">К битве!</li>
                         </ul>
                     </div>
                     <div class="tab_cont visible">
                         <div class="create_block">
                             <form method="post" action="" name="create_form" id="create_form">
                                 <fieldset>
-                                    <label for="create_pass">Задайте пароль для новой комнаты или оставьте пустым для беспарольного доступа:</label>
+                                    <label for="create_pass">Задайте пароль для новой комнаты или оставьте пустым для всеобщего доступа:</label>
                                     <input type="password" name="create_pass" id="create_pass" placeholder="Пароль">
                                     <button name="create_button" id="create_button" value="">Создать комнату</button>
                                 </fieldset>
@@ -63,26 +63,28 @@
                 <div class="info_battles"></div>
             </div>
             <div class="statistic right_col">
-                <h2 class="username"></h2>
-                <div class="capt_user">
-                    <div class="userpict">
-                        <div class="pict" title="Кликните, чтобы заменить аватар"></div>
-                        <form id="take_pict" method="post">
-                            <input type="file" class="upload"/>
-                            <button class="upload_pict" type="submit">Применить</button>
-                        </form>
-
-
-                    </div>
-                    <div class="user_lvl">
-                        <div class="player_level" title="Ваш уровень"></div>
+                <div class="stat_detail">
+                    <h2 class="username"></h2>
+                    <div class="wrapp_stat">
+                        <div class="percent_win"></div>
+                        <div class="games_block">
+                            <div class="win_games"></div>
+                            <div class="all_games"></div>
+                        </div>
                     </div>
                 </div>
-
-                <div class="st_data">
-                    <div class="all_games"></div>
-                    <div class="win_games"></div>
-                    <div class="percent_win"></div>
+                <div class="capt_user">
+                    <img src="" alt="" class="pict" title="" />
+                    <div class="level_next" title="">
+                        <div class="scale"></div>
+                    </div>
+                    <form id="take_pict" name="users_form" action="" enctype="multipart/form-data">
+                        <input type="hidden" name="name_form" value="users"/>
+                        <!--данное поле используется для формирования пути сохранения картинок -->
+                        <input type="file" id="upload" name="upload" accept="image/*" title="Кликните, чтобы заменить аватар"/>
+                        <button class="upload_pict">Применить</button>
+                    </form>
+                    <div class="player_level" title="Ваш уровень"></div>
                 </div>
             </div>
         </div>

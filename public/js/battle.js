@@ -33,6 +33,7 @@ function build_deck (deck, from, abilities) {
                 for(var k = 0; k < abilities.length; k++){
                     if (parseInt(from[j].id_ability) == abilities[k].id) {
                         from[j].ability = abilities[k].func;
+                        from[j].desc_func = abilities[k].description;
                     }
                 }
                 to.push(from[j]);
@@ -56,6 +57,7 @@ function show_cards (flag, from, selector) {
                         .append(
                             $('<img/>').attr({
                                 'src':          "../" + from[i].specials[j].pict,
+                                'data-desc':    from[i].specials[j].desc_func,
                                 'title':        from[i].specials[j].name
                             })
                         )
@@ -83,6 +85,7 @@ function show_cards (flag, from, selector) {
                                     .append(
                                         $('<img/>').attr({
                                             'src':          "../" + from[i][row_name[j]][prop_name[k]][l].pict,
+                                            'data-desc':    from[i][row_name[j]][prop_name[k]][l].desc_func,
                                             'title':        from[i][row_name[j]][prop_name[k]][l].name
                                         })
                                     )
@@ -115,6 +118,7 @@ function show_cards (flag, from, selector) {
                         .append(
                             $('<img/>').attr({
                                 'src':          "../" + from[i].pict,
+                                'data-desc':    from[i].desc_func,
                                 'title':        from[i].name
                             })
                         )
@@ -277,6 +281,7 @@ function fold (selector) {
 // Определение последних карт в отбое игроков
 //////////////////////////////////////////////////////////////////
 function last_card(data) {
+    $('.retreat').empty();
     var last_card = {};
     var compare = 0;
     if (data.retreat_home.length != 0) {
@@ -289,8 +294,9 @@ function last_card(data) {
         $('.retreat').eq(0).empty().append(
             $('<img/>').attr({
                 'src':          "../" + last_card.pict,
-                'title':        last_card.name,
-                'class':        'last_card'
+                'data-desc':    last_card.desc_func,
+                'class':        'last_card',
+                'title':        last_card.name
             })
         );
 
@@ -315,17 +321,16 @@ function last_card(data) {
         $('.retreat').eq(1).empty().append(
             $('<img/>').attr({
                 'src':          "../" + last_card.pict,
-                'title':        last_card.name,
-                'class':        'last_card'
+                'data-desc':    last_card.desc_func,
+                'class':        'last_card',
+                'title':        last_card.name
             })
         );
-        //if(last_card.unit == 1) {
             $('.retreat').eq(1).append(
                 $('<div/>')
                     .text(data.retreat_rival.length)
                     .addClass('fact_strength')
             );
-        //}
     }
 }
 
@@ -523,8 +528,8 @@ $(document).ready(function () {
         leaders_flag    = {},   /* флаг: использовал ли уже игрок своего лидера */
         count_moves     = {},   /* хранение номера хода игроков */
         leader_pic_$    = $('.leader_pic'),
-        fraction_name_$ = $('.fraction_name'),
         players_names_$ = $('.user_name'),
+        user_pic_$      = $('.user_pic'),
         fraction_pic_$  = $('.fraction_pic'),
         deck_cover_$    = $('.deck_cover'),
         battle_$        = $('.battle'),
@@ -536,7 +541,8 @@ $(document).ready(function () {
         count_cards_$   = $('.player_cards'),
         count_deck_$    = $('.deck_count'),
         retreat_$       = $('.last_card'),
-        exit            = $('.battle .exit');
+        exit            = $('.battle .exit'),
+        results_h2_$    = $('.results_body h2');
 
     count_moves.h   = 0;    /* номер хода игрока */
     count_moves.r   = 0;    /* номер хода соперника */
@@ -549,7 +555,6 @@ $(document).ready(function () {
     var string = window.location.toString();
     var regV = /\d+$/;
     number_of_room = parseInt(string.match(regV)[0]);
-    console.log(number_of_room);
 
     var socket = io();
 
@@ -588,8 +593,11 @@ $(document).ready(function () {
     });
 
     socket.on('battle is not exist', function(){
-        message = "Такой комнаты не существует.";
-        notice(message, 2);
+        setTimeout(function(){
+            $('.results_game').fadeIn(50,function(){});
+        }, 50);
+        results_h2_$.text("Битвы или не было, или она уже закончилась.");
+        $('.results_table').remove();
     });
 
     socket.on('rivals are not complete', function(){
@@ -609,11 +617,13 @@ $(document).ready(function () {
         $('.battle_field .not_ready').remove();
         if(data[1] == 0) {
             notice_round(1, 1);
-            resolution = data[0][player_index];
-            if(resolution == 1) {
-                status_move_$.text('ВАШ ХОД');
-            } else {
-                status_move_$.text('ХОД ПРОТИВНИКА');
+            if(player_index != -1){
+                resolution = data[0][player_index];
+                if(resolution == 1) {
+                    status_move_$.text('ВАШ ХОД');
+                } else {
+                    status_move_$.text('ХОД ПРОТИВНИКА');
+                }
             }
         }
     });
@@ -646,25 +656,32 @@ $(document).ready(function () {
                 setTimeout(function(){
                     $('.results_game').fadeIn(500, function(){});
                 }, 500);
-
-                if(player_index == -1) {
-                    $('.results_body h2').text("Победа " + user_name + "!");
-                } else {
-                    $('.results_body h2').text("Победа!").addClass('win');
-                }
                 $('.results_table').remove();
-                if(player_index != -1) {
-
+                if(player_index == -1) {
+                    results_h2_$.text("Победа " + user_name + "!");
+                } else {
+                    results_h2_$.text("Победа!").addClass('win');
                     if(data[1] > 7){
-                        exp = 3;
+                        exp = 2;
                     } else {
-                        exp = 1;
+                        exp = 0;
                     }
-
+                    results_h2_$.after($('<div/>')
+                        .addClass('exp_block')
+                        .text("Опыта получено: " + exp + "xp"));
                     var player_res = {};
-                    player_res.room = number_of_room;
-                    player_res.id   = user_id;
-                    player_res.exp  = exp;
+                    var new_exp = parseInt(work_obj[0].players[player_index].user_exp) + exp,
+                        new_level;
+                    if(new_exp >= 100) {
+                        new_exp = new_exp - 100;
+                        new_level = parseInt(work_obj[0].players[player_index].user_level) + 1;
+                    } else {
+                        new_level = parseInt(work_obj[0].players[player_index].user_level);
+                    }
+                    player_res.room   = number_of_room;
+                    player_res.id     = user_id;
+                    player_res.exp    = new_exp;
+                    player_res.level  = new_level;
                     if(exp > 0) {
                         player_res.win = 1;
                     } else {
@@ -675,7 +692,7 @@ $(document).ready(function () {
                     $('.table').remove();
                     clear_storage(number_of_room);
                 }
-            }, 60000);
+            }, 6000);
         }
     });
 
@@ -750,23 +767,22 @@ $(document).ready(function () {
                 leaders[i].ability = leaders[i].func;
 
                 leader_pic_$.eq(i).attr({
-                    src:   "../" + leaders[i].pict,
-                    title: leaders[i].name,
-                    alt:   leaders[i].name
+                    'src':          "../" + leaders[i].pict,
+                    'data-desc':    leaders[i].desc_func,
+                    'title':        leaders[i].name,
+                    'alt':          leaders[i].name
                 });
 
-                fraction_name_$.eq(i).text(fractions[i].name);
-
                 fraction_pic_$.eq(i).attr({
-                    src:   "../" + fractions[i].pict,
-                    title: fractions[i].name,
-                    alt:   fractions[i].name
+                    'src':          "../" + fractions[i].pict,
+                    'title':        fractions[i].name,
+                    'alt':          fractions[i].name
                 });
 
                 deck_cover_$.eq(i).attr({
-                    src:   "../" + fractions[i].pict_cover,
-                    title: fractions[i].name,
-                    alt:   fractions[i].name
+                    'src':          "../" + fractions[i].pict_cover,
+                    'title':        fractions[i].name,
+                    'alt':          fractions[i].name
                 });
             }
 
@@ -777,6 +793,8 @@ $(document).ready(function () {
                 player_deck.specials    = work_obj[1].specials.split(',').map(Number);
                 players_names_$.eq(0).text(work_obj[0].players[player_index].user_name);
                 players_names_$.eq(1).text(work_obj[0].players[rival_index].user_name);
+                user_pic_$.eq(0).attr('src', '../' + work_obj[0].players[player_index].user_pict);
+                user_pic_$.eq(1).attr('src', '../' + work_obj[0].players[rival_index].user_pict);
 
                 if(history.cards !== undefined) {
                     for(var j = 0; j < history.cards.length; j++) {
@@ -818,12 +836,12 @@ $(document).ready(function () {
                     }
                 }
 
-
             } else {
                 // Вывод начальных данных для зрителей
                 history = work_obj[1];
                 for(var j = 0; j < 2; j++) {
                     players_names_$.eq(j).text(work_obj[0].players[j].user_name);
+                    user_pic_$.eq(j).attr('src', '../' + work_obj[0].players[j].user_pict);
                 }
                 $('.battle .exit').remove();
             }
@@ -867,7 +885,7 @@ $(document).ready(function () {
                             setTimeout(function(){
                                 $('.results_game').fadeIn(1000,function(){});
                             }, 1000);
-                            $('.results_body h2').text("Битва закончилась").addClass('win');
+                            results_h2_$.text("Битва закончилась").addClass('win');
                             $('.results_table').remove();
                             clear_storage(number_of_room);
                             break;
@@ -983,12 +1001,15 @@ $(document).ready(function () {
                 }
 
             } else {
-                resolution = history.resolution[player_index];
-                if(resolution == 1) {
-                    status_move_$.text('ВАШ ХОД');
-                } else {
-                    status_move_$.text('ХОД ПРОТИВНИКА');
+                if(player_index != -1){
+                    if(resolution == 1) {
+                        status_move_$.text('ВАШ ХОД');
+                    } else {
+                        status_move_$.text('ХОД ПРОТИВНИКА');
+                    }
                 }
+                resolution = history.resolution[player_index];
+
             }
         }
     });
@@ -1009,11 +1030,6 @@ $(document).ready(function () {
         }
     });
 
-
-    // Блокировка контекстного меню на карточках
-    battle_$.on("contextmenu", ".block_rewiev img", function() {
-        return false;
-    });
 
     // Замена карт при формировании игровой колоды
     battle_$.on("dblclick", ".block_rewiev div", function() {
@@ -1337,18 +1353,22 @@ $(document).ready(function () {
 
                 if(health_home == 0){
                     if(player_index == -1) {
-                        $('.results_body h2').text("Победа " + work_obj[0].players[alias_rival].user_name + "!");
+                        if(health_rival != 0) {
+                            results_h2_$.text("Победа " + work_obj[0].players[alias_rival].user_name + "!");
+                        } else {
+                            results_h2_$.text("Ничья!");
+                        }
                     } else {
-                        $('.results_body h2').text("Поражение!");
+                        results_h2_$.text("Поражение!");
                     }
                     if (health_rival != 0) {
                         td_head_$.eq(2).addClass('win');
                     }
                 } else {
                     if(player_index == -1) {
-                        $('.results_body h2').text("Победа " + work_obj[0].players[alias_player].user_name + "!");
+                        results_h2_$.text("Победа " + work_obj[0].players[alias_player].user_name + "!");
                     } else {
-                        $('.results_body h2').text("Победа!").addClass('win');
+                        results_h2_$.text("Победа!").addClass('win');
                     }
                     if (health_home != 0) {
                         td_head_$.eq(1).addClass('win');
@@ -1374,26 +1394,76 @@ $(document).ready(function () {
                         .append($('<td/>').text(round_results[i][1]).addClass(class_rival))
                     )
                 }
-                if(win_count == 2) {
-                    exp = 2;
-                }
-                if(win_count == 2 && length == 2) {
-                    exp++;
-                }
-                if(win_count == 1 && length == 3) {
-                    exp++;
-                }
 
                 if(end_of_game == 1 && player_index != -1) {
+                    exp = 0;
+                    var h_level = parseInt(work_obj[0].players[player_index].user_level),
+                        r_level = parseInt(work_obj[0].players[rival_index].user_level);
+                    if(length == 3){
+                        //победа
+                        if(win_count == 2) {
+                            exp = 2;
+                        }
+
+                        //выигрыш одного раунда из 3
+                        if(win_count == 1) {
+                            exp = 1;
+                        }
+
+                        //победа сильнейшего соперника
+                        if(win_count == 2 && r_level > h_level) {
+                            exp++;
+                        }
+                    }
+                    if(length == 2){
+                        //чистая победа
+                        if(win_count == 2) {
+                            exp = 3;
+                        }
+
+                        //выигрыш раунда после ничьи
+                        if(win_count == 1) {
+                            exp = 2;
+                        }
+
+                        //ничья в обоих раундах
+                        if(win_count == 0 && health_home == 0 && health_rival == 0) {
+                            exp = 1;
+                        }
+
+                        //чистая победа сильнейшего соперника
+                        if(win_count == 2 && r_level > h_level) {
+                            exp++;
+                        }
+
+                        //победа сильнейшего соперника
+                        if(win_count == 1 && r_level > h_level) {
+                            exp++;
+                        }
+                    }
+
+                    results_h2_$.after($('<div/>')
+                        .addClass('exp_block')
+                        .text("Опыта получено: " + exp + "xp"));
                     var player_res = {};
-                    player_res.room = number_of_room;
-                    player_res.id   = user_id;
-                    player_res.exp  = exp;
+
+                    var new_exp = parseInt(work_obj[0].players[player_index].user_exp) + exp,
+                        new_level;
+                    if(new_exp >= 100) {
+                        new_exp = new_exp - 100;
+                        new_level = h_level + 1;
+                    } else {
+                        new_level = h_level;
+                    }
                     if(exp > 1) {
                         player_res.win = 1;
                     } else {
                         player_res.win = 0;
                     }
+                    player_res.room   = number_of_room;
+                    player_res.id     = user_id;
+                    player_res.exp    = new_exp;
+                    player_res.level  = new_level;
                     socket.emit('results', player_res);
                     exp = 0;
                     clear_storage(number_of_room);
@@ -1411,9 +1481,16 @@ $(document).ready(function () {
                 clear_battlefield (data_on_table);
                 count_strength (battle_arr, player_power_$);
                 show_cards (1, battle_arr);
+                $('.fold').remove();
+                for(var i = 0; i < 2; i++){
+                    if(deck_complete.length > 0){
+                        player_cards.push(deck_complete[0]);
+                        deck_complete.splice(0, 1);
+                    }
+                }
+                show_cards (0, player_cards, $('.cards'));
                 var counts_data = new Counts_data();
                 socket.emit('counts', counts_data);
-                $('.fold').remove();
                 var data = {};
                 data.retreat_home  = retreat_home;
                 data.count_move_h  = count_moves.h;
@@ -1535,6 +1612,14 @@ $(document).ready(function () {
 
     battle_$.on("click", ".del", function() {
         localStorage.clear();
+    });
+
+    battle_$.on("contextmenu", "img", function() {
+        message = $(this).attr('data-desc');
+        if(message != undefined) {
+            notice(message, 1);
+        }
+        return false;
     });
 
 });

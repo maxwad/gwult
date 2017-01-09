@@ -15,12 +15,8 @@ $(document).ready(function () {
             method: "POST",
             data: '',
             success: function(response) {
-                if (response.answer == false) {
-                    message = "У Вас нет созданных комнат.";
-                    notice(message, 1);
-                    info_battles.empty();
-                } else {
-                    info_battles.empty();
+                info_battles.empty();
+                if (response.answer != false) {
                     info_battles.append("<h2>Список Ваших комнат</h2>" +
                         "<table><tr><td></td><td>Комната</td><td>Пароль</td><td></td></tr></table>");
                     $.each(response.data_rows, function(index){
@@ -61,6 +57,7 @@ $(document).ready(function () {
     });
 
 
+
     // Запрос статистики по игроку
 
     $.ajax({
@@ -69,8 +66,88 @@ $(document).ready(function () {
         data: '',
         success: function(response) {
             console.log(response);
+            if(response.answer == true){
+                var url,
+                    scale = response.exp,
+                    unscale = 100 - scale,
+                    percent = 0;
+                if(response.numb_of_battle != 0) {
+                    percent = (response.numb_of_win*100/response.numb_of_battle).toFixed(1);
+                }
+                if(response.pict == '' || response.pict == null) {
+                    url = "../imgs/users/noname.png";
+                } else {
+                    url = "../" + response.pict;
+                }
+                $('.username').text(response.user_name);
+                $('.pict').attr('src', url);
+                $('.player_level').text(response.level);
+                $('.level_next').attr('title', unscale + ' exp до нового уровня!');
+                $('.scale').css('width', scale + "%");
+                $('.all_games').text(response.numb_of_battle).attr('title', 'Всего сыграно');
+                $('.win_games').text(response.numb_of_win).attr('title', 'Побед');
+                $('.percent_win').text(percent + '%').attr('title', 'Процент побед');
+                if(response.level > response.old_level){
+                    $('.player_level').css('box-shadow', '0 0 5px 5px #FFD550').attr('title', 'Новый уровень!');
+                    $.ajax({
+                        url: "update_lvl",
+                        method: "POST",
+                        data: '',
+                        success: function() {
+                        }
+                    });
+                }
+            } else {
+                var message = 'Ошибка. Попробуйте перезагрузить страницу.';
+                notice(message, 2);
+            }
         }
     });
+
+
+    $('#upload').change(function () {
+        $('.upload_pict').css('display', 'block');
+    });
+
+    ////////////////////////////////////////////////////////////////
+    // запись новых или отредактированных данных в БД
+    ////////////////////////////////////////////////////////////////
+
+    $("#take_pict").submit(function(e) {
+        var form_data = new FormData(this);
+        form_data.append('name_form', 'users');
+        $.ajax({
+            url: "take_avatar",
+            method: "POST",
+            data: form_data,
+            contentType: false,
+            cache: false,
+            processData:false,
+            success: function(response) {
+                console.log(response);
+                if(response.answer == true) {
+                    message = "Редактирование выполнено успешно";
+                    notice(message, 1);
+                    $('.upload_pict').css('display', 'none');
+                    $('#join_form').trigger("reset");
+                    if(response.pict == '' || response.pict == null) {
+                        url = "../imgs/users/noname.png";
+                    } else {
+                        url = "../" + response.pict;
+                    }
+                    $('.pict').attr('src', url);
+                } else {
+                    message = "Ошибка при записи в базу данных";
+                    notice(message, 2);
+                    return false;
+                }
+            }
+        });
+        this.reset();
+        e.preventDefault();
+        return false;
+    });
+
 
     link.click(function () {
         var index = $(this).index();
@@ -79,6 +156,7 @@ $(document).ready(function () {
         $(this).addClass('active_li');
         $(tab_content[index]).addClass('visible');
     });
+
 
     //Создание игровой комнаты
     $("#create_button").click(function(e) {
@@ -100,7 +178,7 @@ $(document).ready(function () {
                 data: user_data,
                 success: function(response) {
                     if (response.answer == false) {
-                        message = "Не удалось создать комнату. Максимально допустимое число созданных комнат: 3.";
+                        message = "У вас уже создана игровая комната.";
                         notice(message, 2);
                         create_pass.val('');
                     } else {

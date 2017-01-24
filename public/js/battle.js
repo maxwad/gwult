@@ -484,6 +484,174 @@ $(document).ready(function () {
         this.count_deck     = deck_complete.length;
     }
 
+    function Timer_data() {
+        this.user_room      = number_of_room;
+        this.player_index   = player_index;
+        this.rival_index    = rival_index;
+        this.resolution     = resolution;
+        this.time           = time;
+
+    }
+
+//////////////////////////////////////////////////////////////////
+// Запуск таймеров хода игроков
+//////////////////////////////////////////////////////////////////
+    function timer_move2(mode, type, number_of_room) {
+        // mode: 1 - новый таймер    2 - страница обновлялась
+        // type: 1 - таймер игрока   2 - таймер соперника
+
+        var timer_obj = {},
+            time = 0,
+            random,
+            key,
+            check,
+            selector;
+        if(mode == 1){
+            time = check = 60;
+            if(type == 2) {
+                time = check = 70;
+            }
+        } else {
+            if(localStorage['timer_' + number_of_room]){
+                timer_obj = JSON.parse(localStorage['timer_' + number_of_room]);
+                time   = parseFloat(timer_obj.time);
+                random = parseFloat(timer_obj.random);
+                key    = parseFloat(timer_obj.key);
+                check  = ((((key - 4819) / 17) + 6) * 2) / (random * 16);
+            } else {
+                $('.pass').click();
+            }
+        }
+
+        if(check == time){
+                timer = setInterval(function() {
+                time--;
+                random = Math.floor(Math.random() * (101));
+                key = ((((time * random * 16) / 2) - 6) * 17) + 4819;
+                timer_obj.time = time;
+                timer_obj.random = random;
+                timer_obj.key = key;
+                localStorage['timer_' + number_of_room] = JSON.stringify(timer_obj);
+                if(time < 100) {
+                    if(type == 1){
+                        selector = ".home .user_info";
+                    } else {
+                        selector = ".rival .user_info";
+                    }
+                    if($('.timer').length == 0){
+                        $(selector).append($('<div/>').addClass('timer'));
+                    }
+                    $('.timer').text(time);
+                }
+                if(time == 0) {
+                    clear_timer_move(number_of_room);
+                    if(type == 1) {
+                        //если вдруг в это время открыто поле воскрешения карты
+                        $('.choice .card_on_table').eq(0).trigger("click");
+                        //если вдруг в это время активна карта Командирский рог
+                        $('.row_home .battle_row').eq(0).trigger("click");
+                        //если вдруг в это время активна карта Чучела
+                        $('.home .cards_field .card_on_table').eq(0).trigger("click");
+                        //если вдруг в это время отурыто поле замены карт
+                        $('.card_rewiev .skip').eq(0).trigger("click");
+                        $('.pass').click();
+                    }
+                }
+            }, 1000);
+        } else {
+            $('.pass').click();
+        }
+    }
+
+//////////////////////////////////////////////////////////////////
+// Запуск таймеров хода игроков
+// mode: 0 - новый ход, 1 - из истории
+//////////////////////////////////////////////////////////////////
+    function timer_move(mode) {
+        $('.timer').remove();
+        clearInterval(timer);
+        if(player_index != -1) {
+            if(mode == 1){
+                time = 60;
+            } else {
+                if(resolution == 1){
+                    time = history.timer[player_index];
+                } else {
+                    time = history.timer[rival_index];
+                }
+            }
+            var selector = '';
+            if(resolution == 1) {
+                selector = ".home .user_info";
+            } else {
+                selector = ".rival .user_info";
+            }
+        } else {
+            if(history.resolution[0] == 0){
+                selector = ".rival .user_info";
+                if(mode == 1){
+                    time = 60;
+                } else {
+                    if(localStorage['timer_' + number_of_room]){
+                        time   = parseFloat(localStorage['timer_' + number_of_room]);
+                    } else {
+                        time = history.timer[1];
+                    }
+                }
+            } else {
+                selector = ".home .user_info";
+                if(mode == 1){
+                    time = 60;
+                } else {
+                    if(localStorage['timer_' + number_of_room]){
+                        time   = parseFloat(localStorage['timer_' + number_of_room]);
+                    } else {
+                        time = history.timer[0];
+                    }
+                }
+            }
+        }
+
+        timer = setInterval(function() {
+            time--;
+            if(player_index == -1) {
+                localStorage['timer_' + number_of_room] = time;
+            }
+            if(time < 100) {
+                if($('.timer').length == 0){
+                    $(selector).append($('<div/>').addClass('timer'));
+                }
+                $('.timer').text(time);
+            }
+            if(time == 0) {
+                $('.timer').remove();
+                clearInterval(timer);
+                if(player_index == -1) {
+                    localStorage.removeItem('timer_' + number_of_room);
+                }
+                if((resolution == 1 || temp_resolution == 1) && player_index != -1) {
+                    //если вдруг в это время открыто поле воскрешения карты
+                    $('.choice .card_on_table').eq(0).trigger("click");
+                    //если вдруг в это время активна карта Командирский рог
+                    $('.row_home .battle_row').eq(0).trigger("click");
+                    //если вдруг в это время активна карта Чучела
+                    $('.home .cards_field .card_on_table').eq(0).trigger("click");
+                    //если вдруг в это время отурыто поле замены карт
+                    $('.card_rewiev .skip').eq(0).trigger("click");
+                    $('.pass').click();
+                }
+            }
+        }, 1000);
+    }
+
+//////////////////////////////////////////////////////////////////
+// Удаление таймеров хода игроков
+//////////////////////////////////////////////////////////////////
+    function clear_timer_move() {
+        $('.timer').remove();
+        clearInterval(timer);
+    }
+
     var i,                      /* счётчик */
         length,                 /* граница счётчика */
         selector,               /* переменная для хранения селектора*/
@@ -494,6 +662,9 @@ $(document).ready(function () {
         alias_player,           /* переменная с индексом игрока */
         alias_rival,            /* переменная с индексом противника */
         out,                    /* таймер */
+        timer,                  /* таймер */
+        timer_out,              /* таймер */
+        time,                   /* счётчик таймера */
         memory_ability  = '',   /* переменная для хранения выполняющейся способности */
         memory_id       = '',   /* переменная для хранения id играемой карты */
         memory_card     = {},   /* переменная для хранения карты */
@@ -519,12 +690,15 @@ $(document).ready(function () {
         count_repl      = 0,    /* количество заменённых карт */
         resolution      = 0,    /* разрешение на ход */
         temp_resolution = 0,    /* хранение состояния разрешения*/
+        dsc_resolution  = -1,    /* блокировка разрешения при разрыве соединения с соперником*/
         give_up_home    = 0,    /* флаг ПАС для игрока */
         give_up_rival   = 0,    /* флаг ПАС для противника */
         health_home     = 2,    /* жизни игрока */
         health_rival    = 2,    /* жизни соперника */
         end_of_game     = 0,    /* флаг конца игры */
         exp             = 0,    /* очки опыта */
+        r_level         = 0,    /* уровень соперника */
+        h_level         = 0,    /* уровень игрока */
         leaders_flag    = {},   /* флаг: использовал ли уже игрок своего лидера */
         count_moves     = {},   /* хранение номера хода игроков */
         leader_pic_$    = $('.leader_pic'),
@@ -541,7 +715,7 @@ $(document).ready(function () {
         count_cards_$   = $('.player_cards'),
         count_deck_$    = $('.deck_count'),
         retreat_$       = $('.last_card'),
-        exit            = $('.battle .exit'),
+        pass            = $('.battle .pass'),
         results_h2_$    = $('.results_body h2');
 
     count_moves.h   = 0;    /* номер хода игрока */
@@ -558,6 +732,7 @@ $(document).ready(function () {
 
     var socket = io();
 
+    //TODO: убрать этот кусок в релизе
     if(localStorage['count_repl_' + number_of_room]) {
         count_repl = localStorage['count_repl_' + number_of_room];
     }
@@ -583,8 +758,14 @@ $(document).ready(function () {
 
 
     socket.on('disconnect', function(){
-        message = "Потеряна связь с сервером, пожалуйста, перегрузите страницу";
-        notice(message, 2);
+        setTimeout(function(){
+            if(player_index != -1) {
+                var timer_data = new Timer_data();
+                socket.emit('timer', timer_data);
+            }
+            message = "Потеряна связь с сервером, пожалуйста, перегрузите страницу";
+            notice(message, 2);
+        }, 1000);
     });
 
     socket.on('user without deck', function(){
@@ -619,6 +800,7 @@ $(document).ready(function () {
             notice_round(1, 1);
             if(player_index != -1){
                 resolution = data[0][player_index];
+                timer_move(1);
                 if(resolution == 1) {
                     status_move_$.text('ВАШ ХОД');
                 } else {
@@ -633,29 +815,49 @@ $(document).ready(function () {
             var id_loose = data[0],
                 user_name,
                 i,
-                selector;
+                selector_field,
+                selector_user;
             for(i = 0; i < 2; i++) {
                 if(work_obj[0].players[i].user_id != id_loose){
                     user_name = work_obj[0].players[i].user_name;
                     break;
                 }
             }
-
-            selector = '.rival.player_data';
-            if(player_index == -1 && i == 1){
-                selector = '.home.player_data';
+            if(player_index != -1) {
+                var timer_data = new Timer_data();
+                socket.emit('timer', timer_data);
             }
-            $(selector).addClass('out');
+
+            $('.timer').remove();
+            clearInterval(timer);
+            dsc_resolution = resolution;
+            resolution = 0;
+            selector_field = '.rival.player_data';
+            selector_user  = ".rival .user_info";
+            if(player_index == -1 && i == 1){
+                selector_field = '.home.player_data';
+                selector_user = ".home .user_info";
+            }
+            $(selector_field).addClass('out');
             message = "Потеряно соединение с игроком. Техническая победа через 60 секунд. Не перезагружайте страницу.";
             if(player_index == -1) {
                 message = "Потеряно соединение с игроком. Не перезагружайте страницу."
             }
             notice(message, 2);
+            var time_out;
+            time_out = 60;
+            timer_out = setInterval(function() {
+                time_out--;
+                if($('.timer2').length == 0){
+                    $(selector_user).append($('<div/>').addClass('timer2'));
+                }
+                $('.timer2').text(time_out);
+            }, 1000);
             out = setTimeout(function(){
                 end_of_game = 1;
                 setTimeout(function(){
                     $('.results_game').fadeIn(500, function(){});
-                }, 500);
+                }, 1000);
                 $('.results_table').remove();
                 if(player_index == -1) {
                     results_h2_$.text("Победа " + user_name + "!");
@@ -692,20 +894,86 @@ $(document).ready(function () {
                     $('.table').remove();
                     clear_storage(number_of_room);
                 }
-            }, 6000);
+            }, 60000);
         }
     });
 
     socket.on('clear timeout', function(){
         console.log('Переподключение игрока');
         clearTimeout(out);
+        clearInterval(timer_out);
+        $('.timer2').remove();
         $('.player_data').removeClass('out');
+        timer_move(2);
         if(player_index != -1) {
             message = "Ваш соперник вернулся в игру.";
             notice(message, 1);
+            if(dsc_resolution != -1) {
+                resolution = dsc_resolution;
+            }
+            if(resolution == 1) {
+                status_move_$.text('ВАШ ХОД');
+            } else {
+                status_move_$.text('ХОД ПРОТИВНИКА');
+            }
         }
     });
 
+    socket.on('player exit', function(data){
+        var looser_id = data.looser,
+            user_name,
+            i,
+            selector;
+        for(i = 0; i < 2; i++) {
+            if(work_obj[0].players[i].user_id != looser_id){
+                user_name = work_obj[0].players[i].user_name;
+                break;
+            }
+        }
+        resolution = 0;
+        clearInterval(timer);
+        $('.timer').remove();
+        end_of_game = 1;
+        setTimeout(function(){
+            $('.results_game').fadeIn(500, function(){});
+        }, 1000);
+        $('.results_table').remove();
+        if(player_index == -1) {
+            results_h2_$.text("Противник сдался! Победа " + user_name + "!");
+        } else {
+            results_h2_$.text("Противник сдался! Победа!").addClass('win');
+            if(health_rival < 2){
+                exp = 3;
+            } else {
+                exp = 2;
+            }
+            if(r_level > h_level) {
+                exp++;
+            }
+            results_h2_$.after($('<div/>')
+                .addClass('exp_block')
+                .text("Опыта получено: " + exp + "xp"));
+            var player_res = {};
+            var new_exp = parseInt(work_obj[0].players[player_index].user_exp) + exp,
+                new_level;
+            if(new_exp >= 100) {
+                new_exp = new_exp - 100;
+                new_level = parseInt(work_obj[0].players[player_index].user_level) + 1;
+            } else {
+                new_level = parseInt(work_obj[0].players[player_index].user_level);
+            }
+            player_res.room   = number_of_room;
+            player_res.id     = user_id;
+            player_res.exp    = new_exp;
+            player_res.level  = new_level;
+            player_res.win    = 1;
+            socket.emit('results', player_res);
+            exp = 0;
+            $('.table').remove();
+            clear_storage(number_of_room);
+        }
+
+    });
 
     socket.on('take data', function(msg){
         console.log(msg);
@@ -733,7 +1001,7 @@ $(document).ready(function () {
                 case parseInt(work_obj[0].players[0].user_id):
                     player_index  = 0;
                     rival_index   = 1;
-                    exit.css('display', 'block');
+                    pass.css('display', 'block');
                     break;
 
                 case parseInt(work_obj[0].players[1].user_id):
@@ -753,7 +1021,7 @@ $(document).ready(function () {
                     temp            = fractions[0];
                     fractions[0]    = fractions[1];
                     fractions[1]    = temp;
-                    exit.css('display', 'block');
+                    pass.css('display', 'block');
                     break;
 
                 default:
@@ -793,8 +1061,18 @@ $(document).ready(function () {
                 player_deck.specials    = work_obj[1].specials.split(',').map(Number);
                 players_names_$.eq(0).text(work_obj[0].players[player_index].user_name);
                 players_names_$.eq(1).text(work_obj[0].players[rival_index].user_name);
-                user_pic_$.eq(0).attr('src', '../' + work_obj[0].players[player_index].user_pict);
-                user_pic_$.eq(1).attr('src', '../' + work_obj[0].players[rival_index].user_pict);
+                if(work_obj[0].players[player_index].user_pict == '' || work_obj[0].players[player_index].user_pict == null){
+                    user_pic_$.eq(0).attr('src', "../imgs/users/noname.png");
+                } else {
+                    user_pic_$.eq(0).attr('src', '../' + work_obj[0].players[player_index].user_pict);
+                }
+                if(work_obj[0].players[rival_index].user_pict == '' || work_obj[0].players[rival_index].user_pict == null){
+                    user_pic_$.eq(1).attr('src', "../imgs/users/noname.png");
+                } else {
+                    user_pic_$.eq(1).attr('src', '../' + work_obj[0].players[rival_index].user_pict);
+                }
+                h_level = parseInt(work_obj[0].players[player_index].user_level);
+                r_level = parseInt(work_obj[0].players[rival_index].user_level);
 
                 if(history.cards !== undefined) {
                     for(var j = 0; j < history.cards.length; j++) {
@@ -817,10 +1095,16 @@ $(document).ready(function () {
                             deck_complete.splice(0,1);
                          }
                         show_cards(0, player_cards, block_rewiev_$);
+                        // TODO: добавить в релизе
+                        //localStorage['count_repl_' + number_of_room] = count_repl;
+                        //localStorage['player_cards_' + number_of_room] = JSON.stringify(player_cards);
+                        //localStorage['deck_complete_' + number_of_room] = JSON.stringify(deck_complete);
+
                         // Блокируем изменение созданной колоды
                         choose_flag = 1;
                     }
                 } else {
+                    // TODO: изменить условия проверок в релизе
                     player_cards = JSON.parse(localStorage['player_cards_' + number_of_room]);
                     deck_complete = JSON.parse(localStorage['deck_complete_' + number_of_room]);
                     if(choose_flag == 0 && localStorage['count_repl_' + number_of_room] == 2) {
@@ -841,8 +1125,13 @@ $(document).ready(function () {
                 history = work_obj[1];
                 for(var j = 0; j < 2; j++) {
                     players_names_$.eq(j).text(work_obj[0].players[j].user_name);
-                    user_pic_$.eq(j).attr('src', '../' + work_obj[0].players[j].user_pict);
+                    if(work_obj[0].players[j].user_pict == '' || work_obj[0].players[j].user_pict == null){
+                        user_pic_$.eq(j).attr('src', "../imgs/users/noname.png");
+                    } else {
+                        user_pic_$.eq(j).attr('src', '../' + work_obj[0].players[j].user_pict);
+                    }
                 }
+                $('.battle .pass').remove();
                 $('.battle .exit').remove();
             }
             var counts_data = new Counts_data();
@@ -972,45 +1261,48 @@ $(document).ready(function () {
                     data.count_move_r  = count_moves.r;
                     last_card(data);
                 }
-                if(player_index == -1) {
-                    give_up_home = history.give_up_status[0];
-                    give_up_rival = history.give_up_status[1];
-                } else {
-                    give_up_home = history.give_up_status[player_index];
-                    give_up_rival = history.give_up_status[rival_index];
-                    resolution = history.resolution[player_index];
-
-                    if(resolution == 1 && give_up_rival == 1) {
-                        status_move_$.text('ВАШ ХОД. ПРОТИВНИК СДАЛСЯ');
-                    }
-                    if(resolution == 1 && give_up_rival != 1) {
-                        status_move_$.text('ВАШ ХОД');
-                    }
-                    if(give_up_home == 1) {
-                        status_move_$.text('ХОД ПРОТИВНИКА. ВЫ СДАЛИСЬ');
-                    }
-                    if(resolution == 0 && give_up_home != 1) {
-                        status_move_$.text('ХОД ПРОТИВНИКА');
-                    }
-                }
-                if(give_up_home == 1) {
-                    fold('.row_home');
-                }
-                if(give_up_rival == 1){
-                    fold('.row_enemy');
-                }
 
             } else {
                 if(player_index != -1){
+                    // Не могу вспомнить, зачем эта строка
+                    resolution = history.resolution[player_index];
                     if(resolution == 1) {
                         status_move_$.text('ВАШ ХОД');
                     } else {
                         status_move_$.text('ХОД ПРОТИВНИКА');
                     }
                 }
+                // Не могу вспомнить, зачем эта строка
+                // resolution = history.resolution[player_index];
+            }
+            if(player_index == -1) {
+                give_up_home = history.give_up_status[0];
+                give_up_rival = history.give_up_status[1];
+            } else {
+                give_up_home = history.give_up_status[player_index];
+                give_up_rival = history.give_up_status[rival_index];
                 resolution = history.resolution[player_index];
 
+                if(resolution == 1 && give_up_rival == 1) {
+                    status_move_$.text('ВАШ ХОД. ПРОТИВНИК СДАЛСЯ');
+                }
+                if(resolution == 1 && give_up_rival != 1) {
+                    status_move_$.text('ВАШ ХОД');
+                }
+                if(give_up_home == 1) {
+                    status_move_$.text('ХОД ПРОТИВНИКА. ВЫ СДАЛИСЬ');
+                }
+                if(resolution == 0 && give_up_home != 1) {
+                    status_move_$.text('ХОД ПРОТИВНИКА');
+                }
             }
+            if(give_up_home == 1) {
+                fold('.row_home');
+            }
+            if(give_up_rival == 1){
+                fold('.row_enemy');
+            }
+            timer_move(2);
         }
     });
 
@@ -1068,8 +1360,8 @@ $(document).ready(function () {
         i_am_ready (socket, user_id, username, number_of_room, player_index);
     });
 
-    // Ходы игроков
 
+    // Ходы игроков
     battle_$.on("click", ".cards div, .home .player_leader", function() {
         memory_ability = '';
         memory_id      = '';
@@ -1142,14 +1434,18 @@ $(document).ready(function () {
             if(give_up_rival == 1) {
                 resolution = 1;
                 status_move_$.text('ВАШ ХОД. ПРОТИВНИК СДАЛСЯ');
+                timer_move(1);
             } else {
                 resolution = 0;
                 status_move_$.text('ХОД ПРОТИВНИКА');
+                if(this_card.ability != 'medic'){
+                    timer_move(1);
+                }
             }
             if(player_cards.length == 0 && leaders_flag.h == 1) {
                 give_up_home = 1;
                 resolution = 0;
-                $('.exit').click();
+                $('.pass').click();
             }
 
             var arr_data                  = [];
@@ -1193,14 +1489,17 @@ $(document).ready(function () {
     socket.on('step from', function(user_data){
         count_moves.r++;
         give_up_rival = user_data.give_up;
-        if(give_up_home != 1) {
-            status_move_$.text('ВАШ ХОД');
+        if(player_index != -1){
+            if(give_up_home != 1) {
+                status_move_$.text('ВАШ ХОД');
+            }
         }
         for(var i = 0; i < user_data.length; i++) {
             var field_name, position;
             if(player_index == -1) {
                 position = user_data[i].player_index;
                 status_move_$.text('');
+                history.resolution = user_data[i].resolution_h;
             } else {
                 position = 1;
             }
@@ -1268,10 +1567,11 @@ $(document).ready(function () {
         }
         localStorage['player_cards_' + number_of_room] = JSON.stringify(player_cards);
         localStorage['deck_complete_' + number_of_room] = JSON.stringify(deck_complete);
+        timer_move(1);
     });
 
     // Кнопка "ПАС"
-    battle_$.on("click", ".exit", function() {
+    battle_$.on("click", ".pass", function() {
         status_move_$.text('ХОД ПРОТИВНИКА. ВЫ СДАЛИСЬ');
         give_up_home            = 1;
         var user_data           = {};
@@ -1286,6 +1586,8 @@ $(document).ready(function () {
         memory_ability = '';
         memory_id      = '';
         memory_card    = {};
+        resolution     = 0;
+        timer_move(1);
     });
 
     // Конец раунда
@@ -1297,6 +1599,7 @@ $(document).ready(function () {
                 status_move_$.text('ВАШ ХОД. ПРОТИВНИК СДАЛСЯ');
                 fold('.row_enemy');
             } else {
+                history.resolution = user_data.resolution;
                 if(user_data.player == 0){
                     fold('.row_home');
                 }
@@ -1304,6 +1607,7 @@ $(document).ready(function () {
                     fold('.row_enemy');
                 }
             }
+            timer_move(1);
         } else {
             $('.cards div').removeClass('move');
             round_results.push([battle_arr[0].total, battle_arr[1].total]);
@@ -1342,6 +1646,8 @@ $(document).ready(function () {
             if(health_home == 0 || health_rival == 0) {
                 resolution = 0;
                 end_of_game = 1;
+                $('.timer').remove();
+                clearInterval(timer);
                 setTimeout(function(){
                     $('.results_game').fadeIn(1000,function(){});
                 }, 1000);
@@ -1397,8 +1703,6 @@ $(document).ready(function () {
 
                 if(end_of_game == 1 && player_index != -1) {
                     exp = 0;
-                    var h_level = parseInt(work_obj[0].players[player_index].user_level),
-                        r_level = parseInt(work_obj[0].players[rival_index].user_level);
                     if(length == 3){
                         //победа
                         if(win_count == 2) {
@@ -1508,6 +1812,7 @@ $(document).ready(function () {
                         status_move_$.text('ХОД ПРОТИВНИКА');
                     }
                 }
+                timer_move(1);
             }
         }
     });
@@ -1604,9 +1909,54 @@ $(document).ready(function () {
             if(player_cards.length == 0 && leaders_flag.h == 1) {
                 give_up_home = 1;
                 resolution = 0;
-                $('.exit').click();
+                $('.pass').click();
             }
+            timer_move(1);
+        }
+    });
 
+    // Кнопка "Сдаться"
+    battle_$.on("click", ".exit", function() {
+        if(confirm("Вы уверены, что хотите сдаться?")){
+            var looser_id = work_obj[0].players[player_index].user_id;
+            resolution = 0;
+            $('.timer').remove();
+            clearInterval(timer);
+            end_of_game = 1;
+            setTimeout(function(){
+                $('.results_game').fadeIn(500, function(){});
+            }, 500);
+            $('.results_table').remove();
+            results_h2_$.text("Поражение!");
+            if(health_rival < 2) {
+                exp = 1;
+            } else {
+                exp = 0;
+            }
+            results_h2_$.after($('<div/>')
+                .addClass('exp_block')
+                .text("Опыта получено: " + exp + "xp"));
+            var player_res = {};
+            var new_exp = parseInt(work_obj[0].players[player_index].user_exp) + exp,
+                new_level;
+            if(new_exp >= 100) {
+                new_exp = new_exp - 100;
+                new_level = parseInt(work_obj[0].players[player_index].user_level) + 1;
+            } else {
+                new_level = parseInt(work_obj[0].players[player_index].user_level);
+            }
+            player_res.room   = number_of_room;
+            player_res.id     = user_id;
+            player_res.exp    = new_exp;
+            player_res.level  = new_level;
+            player_res.looser = looser_id;
+            player_res.win    = 0;
+            socket.emit('results', player_res);
+            exp = 0;
+            $('.table').remove();
+            clear_storage(number_of_room);
+        } else {
+           return false;
         }
     });
 
@@ -1620,6 +1970,10 @@ $(document).ready(function () {
             notice(message, 1);
         }
         return false;
+    });
+
+    battle_$.on("click", ".to_home", function() {
+        clear_storage(number_of_room);
     });
 
 });

@@ -960,6 +960,7 @@ io.on('connection', function(socket) {
             history[room].count_deck        = [0, 0];
             history[room].ready_status      = [0, 0];
             history[room].resolution        = [1, 0];
+            history[room].timer             = [60, -100];
             history[room].give_up_status    = [0, 0];
             history[room].round             = 1;
             history[room].mes_flag          = 0;
@@ -1165,6 +1166,7 @@ io.on('connection', function(socket) {
                         if(rooms[room].complete == 0 && history[room] !== undefined){
                             query_to_db = "UPDATE history SET pl1=(SELECT pl1 FROM list_of_battles WHERE id_battle = ?), pl2=(SELECT pl2 FROM list_of_battles WHERE id_battle = ?), history = ? WHERE id = ?";
                             var hist_battle = JSON.stringify(history[room]);
+
                             var query_var = [user_data.user_room, user_data.user_room, hist_battle, user_data.user_room];
                             connection.query(query_to_db, query_var, function(err, rows) {
                                 if (err || rows.length == 0) {
@@ -1231,6 +1233,22 @@ io.on('connection', function(socket) {
     });
 
     /////////////////////////////////////////////////////////////
+    // Обновление таймера ходов
+    /////////////////////////////////////////////////////////////
+    socket.on('timer', function(user_data) {
+        var room = "room_" + user_data.user_room;
+        if(history[room] !== undefined){
+            if(user_data.player_index != -1) {
+                if(user_data.resolution == 1) {
+                    history[room].timer[user_data.player_index] = user_data.time;
+                } else {
+                    history[room].timer[user_data.rival_index] = user_data.time;
+                }
+            }
+        }
+    });
+
+    /////////////////////////////////////////////////////////////
     // Обработка и перенаправление карт игрокам и зрителям
     /////////////////////////////////////////////////////////////
     socket.on('step to', function(user_data) {
@@ -1241,11 +1259,16 @@ io.on('connection', function(socket) {
             if(user_data[i].resolution == 1) {
                 history[room].resolution[user_data[i].player_index] = 1;
                 history[room].resolution[user_data[i].rival_index] = 0;
+                history[room].timer[user_data[i].player_index] = 60;
+                history[room].timer[user_data[i].rival_index] = -100;
             }
             if(user_data[i].resolution == 0){
                 history[room].resolution[user_data[i].player_index] = 0;
                 history[room].resolution[user_data[i].rival_index] = 1;
+                history[room].timer[user_data[i].player_index] = -100;
+                history[room].timer[user_data[i].rival_index] = 60;
             }
+            user_data[i].resolution_h = history[room].resolution;
         }
 
         socket.broadcast.to(room).emit('step from', user_data);
@@ -1261,6 +1284,8 @@ io.on('connection', function(socket) {
         history[room].count_cards[user_data.player_index] = user_data.count_cards;
         history[room].resolution[user_data.player_index] = 0;
         history[room].resolution[user_data.rival_index] = 1;
+        history[room].timer[user_data.player_index] = -100;
+        history[room].timer[user_data.rival_index] = 60;
         if(history[room].give_up_status[0] == 1 && history[room].give_up_status[1] == 1) {
             delete data.give_up;
             history[room].cards.push('give_up');
@@ -1269,26 +1294,32 @@ io.on('connection', function(socket) {
             switch (history[room].round) {
                 case 2:
                     history[room].resolution = [0, 1];
+                    history[room].timer = [-100, 60];
                     break;
 
                 case 3:
                     history[room].resolution = [1, 0];
+                    history[room].timer = [60, -100];
                     break;
 
                 case 4:
                     history[room].resolution = [0, 1];
                     history[room].round = 1;
+                    history[room].timer = [-100, 60];
                     break;
 
             }
             data.count_cards    = history[room].count_cards;
             data.resolution     = history[room].resolution;
             data.round          = history[room].round;
+            data.timer          = history[room].timer;
             data.player         = user_data.player_index;
             io.to(room).emit('won is', data);
         } else {
-            data.give_up = 1;
-            data.player  = user_data.player_index;
+            data.give_up    = 1;
+            data.timer      = history[room].timer;
+            data.resolution = history[room].resolution;
+            data.player     = user_data.player_index;
             socket.broadcast.to(room).emit('won is', data);
         }
     });
@@ -1298,6 +1329,18 @@ io.on('connection', function(socket) {
     /////////////////////////////////////////////////////////////
     socket.on('results', function(user_data) {
         var query_var = '';
+        function loose (user_data){
+            var deferred = Q.defer();
+            var room = "room_" + user_data.room;
+            if(user_data.looser !== undefined) {
+                var data = {};
+                data.looser = user_data.looser;
+                socket.broadcast.to(room).emit('player exit', data);
+                delete user_data.looser;
+            }
+            deferred.resolve(user_data);
+            return deferred.promise;
+        }
 
         function user_stat (user_data) {
             var deferred = Q.defer();
@@ -1360,10 +1403,11 @@ io.on('connection', function(socket) {
             return deferred.promise;
         }
 
-        user_stat (user_data).
-            then(function(user_data){ return write_history (user_data) }).
-            then(function(user_data){ return game_over (user_data) }).
-            then(function(user_data){ return delete_battle (user_data) }).
+        loose(user_data).
+            then(function(user_data){ return user_stat(user_data) }).
+            then(function(user_data){ return write_history(user_data) }).
+            then(function(user_data){ return game_over(user_data) }).
+            then(function(user_data){ return delete_battle(user_data) }).
             catch(function(user_data) { console.log(user_data.err); }).
             done();
 

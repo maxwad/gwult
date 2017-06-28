@@ -4,19 +4,6 @@
 // 3 - обработка карты из истории
 // 4 - установка эффекта карты
 
-function clone(obj) {
-    if(obj == null || typeof(obj) != 'object'){
-        return obj;
-    }
-    var temp = {};
-    for(var key in obj){
-        temp[key] = clone(obj[key]);
-    }
-    return temp;
-}
-
-
-
 function set_effect (battle) {
     var row_name_arr = ['close', 'range', 'siege'];
     for(var i = 0; i < 2; i++) {
@@ -33,60 +20,83 @@ function set_effect (battle) {
     }
 }
 
+// Поиск самых слабых(сильных) карт на поле
+function minmax (flag, mode, area, battle) {
+    //flag: 0 - min
+    //      1 - max
 
+    //mode: 0 - multi
+    //      1 - mono
 
-function change_weather(data, mode) {
-    for(var i = 0; i < 2; i++) {
-        var count = data.battle_arr[i].effects.length;
-        while(count != 0) {
-            count--;
-            if(mode == 1) {
-                if(data.battle_arr[i].effects[count] == 'clear_weather') {
-                    data.battle_arr[i].effects.splice(count, 1);
-                }
-            }
-            if(mode == 2) {
-                if(data.battle_arr[i].effects[count] == 'frost' ||
-                   data.battle_arr[i].effects[count] == 'fog' ||
-                   data.battle_arr[i].effects[count] == 'downpour') {
-                    data.battle_arr[i].effects.splice(count, 1);
-                }
-            }
+    //area: 0 - home area
+    //      1 - rival area
+    //      2 - all area
 
-        }
-        var k = data.battle_arr[i].specials.length;
-        while(k != 0) {
-            k--;
-            if(mode == 1) {
-                if(data.battle_arr[i].specials[k].ability == 'clear_weather') {
-                    if(i == 0){
-                        data.retreat_home.push(data.battle_arr[i].specials[k]);
+    var cards   = [],
+        counter = 0,
+        count,
+        limit   = 0,
+        row_name_arr = ['close', 'range', 'siege'],
+        strength,
+        card = {};
+
+    cards.area = [];
+    cards.fields = [];
+    cards.ids = [];
+    switch (area) {
+        case 0:
+            counter = 0;
+            limit = 1;
+            break;
+
+        case 1:
+            counter = 1;
+            limit = 2;
+            break;
+        case 2:
+            counter = 0;
+            limit = 2;
+            break;
+    }
+    if(flag == 0){
+        strength = 999999999;
+    } else {
+        strength = 0;
+    }
+    for(count = counter; count < limit; count++){
+        for(var j = 0; j < row_name_arr.length; j++){
+            for(var k = 0; k < battle[count][row_name_arr[j]].units_cards.length; k++){
+                card = battle[count][row_name_arr[j]].units_cards[k];
+                if(flag == 0){
+                    if(card.type == 'U' && card.hero != 1 && card.work_strength < strength){
+                        strength = card.work_strength;
                     }
-                    if(i == 1) {
-                        data.retreat_rival.push(data.battle_arr[i].specials[k]);
+                } else {
+                    if(card.type == 'U' && card.hero != 1 && card.work_strength > strength){
+                        strength = card.work_strength;
                     }
-                    data.battle_arr[i].specials.splice(k,1);
-                }
-            }
-            if(mode == 2) {
-                if(data.battle_arr[i].specials[k].ability == 'frost' ||
-                   data.battle_arr[i].specials[k].ability == 'fog' ||
-                   data.battle_arr[i].specials[k].ability == 'downpour') {
-                    if(i == 0){
-                        data.retreat_home.push(data.battle_arr[i].specials[k]);
-                    }
-                    if(i == 1) {
-                        data.retreat_rival.push(data.battle_arr[i].specials[k]);
-                    }
-                    data.battle_arr[i].specials.splice(k,1);
                 }
             }
         }
     }
-    last_card(data);
+
+    out: for(count = counter; count < limit; count++){
+        for(var j = 0; j < row_name_arr.length; j++){
+            for(var k = 0; k < battle[count][row_name_arr[j]].units_cards.length; k++){
+                card = battle[count][row_name_arr[j]].units_cards[k];
+                if(card.hero != 1 && card.work_strength == strength){
+                    cards.area.push(count);
+                    cards.fields.push(row_name_arr[j]);
+                    cards.ids.push(card.id);
+                    if(mode == 1){
+                        break out;
+                    }
+                }
+            }
+        }
+    }
+    return cards;
 }
-
-
 
 var abilities_obj = {
 
@@ -94,8 +104,11 @@ var abilities_obj = {
     'double':          double,
     'dummy':           dummy,
     'execution':       execution,
+    'row_execution':   row_execution,
     'gain':            gain,
-    'medic':           medic,
+    'medic_units':     medic_units,
+    'medic_hero':      medic_hero,
+    'medic_specials':  medic_specials,
     'support':         support,
     'frost':           frost,
     'fog':             fog,
@@ -120,7 +133,7 @@ function agility (data, mode) {
 
 
 
-
+// Выкладывается на сторону соперника, даёт игроку 2 карты
 function spy (data, mode) {
     var row_name_arr = ['close', 'range', 'siege'];
     var card = {};
@@ -181,7 +194,7 @@ function spy (data, mode) {
 
 
 
-
+// Вызывает на поле всех юнитов с таким же именем из колоды
 function double (data, mode) {
     switch (mode) {
 
@@ -203,24 +216,6 @@ function double (data, mode) {
                     data.deck_complete.splice(i,1);
                 }
             }
-
-            var j = data.player_cards.length;
-            while(j != 0) {
-                j--;
-                if(data.player_cards[j].name == name_card) {
-                    field_name = get_field(data.player_cards[j]);
-                    data.count_moves.h++;
-                    data.player_cards[j].number_move = data.count_moves.h;
-                    data.battle_arr[0][field_name].units_cards.push(data.player_cards[j]);
-                    show_cards (1, data.battle_arr);
-                    data.battle_arr[0][field_name].total = 0;
-                    data.arr_data[data.arr_data.length] = clone(data.arr_data[0]);
-                    data.arr_data[data.arr_data.length - 1].card = data.player_cards[j];
-                    data.player_cards.splice(j,1);
-                }
-            }
-
-            show_cards (0, data.player_cards, $('.cards'));
             break;
 
         case 2:
@@ -231,90 +226,134 @@ function double (data, mode) {
     return data.arr_data;
 }
 
-
-
+// Возвращает юнит в руку
 function dummy (data, mode) {
-    var field_name;
+    var row_name_arr = ['close', 'range', 'siege'],
+        position,
+        move,
+        retreat;
     switch (mode) {
-
         case 1:
-            var found_card = {},
-                field_index,
-                row_name_arr = ['close', 'range', 'siege'];
-            for (var j = 0; j < row_name_arr.length; j++) {
-                var k = data.battle_arr[0][row_name_arr[j]].units_cards.length;
-                while(k != 0) {
-                    k--;
-                    if(data.id_replace == data.battle_arr[0][row_name_arr[j]].units_cards[k].id) {
-
-                        found_card = clone(data.battle_arr[0][row_name_arr[j]].units_cards[k]);
-                        found_card.exponent   = 1;
-                        found_card.added      = 0;
-                        found_card.multiplier = 1;
-                        found_card.multihorn  = 1;
-                        if(found_card.basic !== undefined){
-                            found_card.strength = found_card.basic;
-                            delete found_card.basic;
+            if(data.arr_data[0].card.find_flag == 1){
+                var card = {};
+                out_replace: for (var j = 0; j < row_name_arr.length; j++) {
+                    var k = data.battle_arr[0][row_name_arr[j]].units_cards.length;
+                    while(k != 0) {
+                        k--;
+                        if(data.id_replace == data.battle_arr[0][row_name_arr[j]].units_cards[k].id) {
+                            card = find_card(data.id_replace, data.units);
+                            card.work_strength += 3;
+                            // Возвращаем карту в руку
+                            data.player_cards.push(card);
+                            // На стол ставим Чучело и превращаем его в юнит
+                            data.battle_arr[0][row_name_arr[j]].units_cards[k] = clone(data.arr_data[0].card);
+                            // Отправляем Чучело
+                            data.arr_data[0].card = clone(data.battle_arr[0][row_name_arr[j]].units_cards[k]);
+                            data.arr_data[0].card.id_replace = data.id_replace;
+                            // Чучело на столе превращаем в юнит
+                            data.battle_arr[0][row_name_arr[j]].units_cards[k].type = 'U';
+                            data.battle_arr[0][row_name_arr[j]].units_cards[k].hero = 1;
+                            data.battle_arr[0][row_name_arr[j]].units_cards[k].new_strength = 1;
+                            data.battle_arr[0][row_name_arr[j]].units_cards[k].work_strength = 1;
+                            data.battle_arr[0][row_name_arr[j]].units_cards[k].number_move = data.count_moves.h;
+                            // Удаляем Чучело из руки
+                            data.player_cards.splice(data.memory_id, 1);
+                            break out_replace;
                         }
-                        if(found_card.ability == 'amount'){
-                            found_card.strength = 0;
-                        }
-                        found_card.fact_strength = found_card.strength;
-                        data.arr_data[0].card = data.player_cards[data.memory_id];
-                        data.arr_data[data.arr_data.length] = clone(data.arr_data[0]);
-                        data.arr_data[1].card = clone(found_card);
-                        data.arr_data[1].card.delete = 1;
-                        data.arr_data[1].card.from_dummy  = 1;
-                        data.arr_data[1].card.delete_field = data.player_index;
-
-                        data.player_cards.push(found_card);
-                        data.player_cards[data.memory_id].unit          = 1;
-                        data.player_cards[data.memory_id].position      = k;
-                        data.player_cards[data.memory_id].strength      = 0;
-                        data.player_cards[data.memory_id].fact_strength = 0;
-                        if(found_card.id_class == 7) {
-                            data.player_cards[data.memory_id].id_class = found_card.change_class;
-                            delete found_card.change_class;
-                        } else {
-                            data.player_cards[data.memory_id].id_class = found_card.id_class;
-                        }
-
-                        var delete_data              = {};
-                        delete_data.ind              = 0;
-                        delete_data.field_name       = row_name_arr[j];
-                        delete_data.card             = data.battle_arr[0][row_name_arr[j]].units_cards[k];
-                        delete_data.battle_arr       = data.battle_arr;
-                        delete_data.retreat_home     = data.retreat_home;
-                        delete_data.retreat_rival    = data.retreat_rival;
-                        delete_data.card.from_dummy  = 1;
-                        delete_card(delete_data);
-
-                        data.battle_arr[0][row_name_arr[j]].units_cards[k] = data.player_cards[data.memory_id];
-
-                        data.player_cards.splice(data.memory_id, 1);
-                        break;
                     }
                 }
+            } else {
+                data.player_cards.splice(data.memory_id, 1);
+                data.retreat_home.push(clone(data.arr_data[0].card));
+                last_card(data);
             }
-            count_strength (data.battle_arr, $('.player_power'));
+
+            count_strength (data, $('.player_power'));
             show_cards (1, data.battle_arr);
             show_cards (0, data.player_cards, $('.cards'));
             break;
 
         case 2:
-            var ind = data.position;
-            field_name = get_field(data.card);
-            data.battle_arr[ind][field_name].units_cards[data.card.position] = data.card;
-            var index = data.battle_arr[ind][field_name].units_cards.length - 1;
-            data.battle_arr[ind][field_name].units_cards.splice(index, 1);
+            position = data.position;
+            if(position == 0){
+                retreat = data.retreat_home;
+                move = data.count_moves.h;
+            } else {
+                retreat = data.retreat_rival;
+                move = data.count_moves.r;
+            }
+
+            // Если Чучело сыграно не вхолостую
+            if(data.card.id_replace !== undefined){
+                out_replace: for (var j = 0; j < row_name_arr.length; j++) {
+                    var k = data.battle_arr[position][row_name_arr[j]].units_cards.length;
+                    while(k != 0) {
+                        k--;
+                        if(data.card.id_replace == data.battle_arr[position][row_name_arr[j]].units_cards[k].id) {
+                            // Ставим Чучело на стол
+                            data.battle_arr[position][row_name_arr[j]].units_cards[k] = clone(data.card);
+                            // Чучело на столе превращаем в юнит
+                            data.battle_arr[position][row_name_arr[j]].units_cards[k].type = 'U';
+                            data.battle_arr[position][row_name_arr[j]].units_cards[k].hero = 1;
+                            data.battle_arr[position][row_name_arr[j]].units_cards[k].new_strength = 1;
+                            data.battle_arr[position][row_name_arr[j]].units_cards[k].work_strength = 1;
+                            data.battle_arr[position][row_name_arr[j]].units_cards[k].number_move = move;
+
+                            break out_replace;
+                        }
+                    }
+                }
+                if(data.player_index != -1){
+                    for(var i = 0; i < data.deck_complete.length; i++){
+                        if(data.deck_complete[i].hero != 1 && data.deck_complete[i].type != 'S'){
+                            data.player_cards.push(data.deck_complete[i]);
+                            data.deck_complete.splice(i, 1);
+                            break;
+                        }
+                    }
+                    show_cards (0, data.player_cards, $('.cards'));
+                }
+            } else {
+                retreat.push(clone(data.card));
+                retreat[retreat.length - 1].number_move = move;
+                last_card(data);
+            }
 
             break;
 
         case 3:
-            field_name = get_field(data.item_history.card);
-            data.battle_arr[data.position][field_name].units_cards[data.item_history.card.position] = data.item_history.card;
-            var index = data.battle_arr[data.position][field_name].units_cards.length - 1;
-            data.battle_arr[data.position][field_name].units_cards.splice(index, 1);
+            position = data.position;
+            if(position == 0){
+                retreat = data.retreat_home;
+                move = data.count_moves.h;
+            } else {
+                retreat = data.retreat_rival;
+                move = data.count_moves.r;
+            }
+            // Если Чучело сыграно не вхолостую
+            if(data.item_history.card.id_replace !== undefined){
+                out_replace: for (var j = 0; j < row_name_arr.length; j++) {
+                    var k = data.battle_arr[position][row_name_arr[j]].units_cards.length;
+                    while(k != 0) {
+                        k--;
+                        if(data.item_history.card.id_replace == data.battle_arr[position][row_name_arr[j]].units_cards[k].id) {
+                            // Ставим Чучело на стол
+                            data.battle_arr[position][row_name_arr[j]].units_cards[k] = clone(data.item_history.card);
+                            // Чучело на столе превращаем в юнит
+                            data.battle_arr[position][row_name_arr[j]].units_cards[k].type = 'U';
+                            data.battle_arr[position][row_name_arr[j]].units_cards[k].hero = 1;
+                            data.battle_arr[position][row_name_arr[j]].units_cards[k].new_strength = 1;
+                            data.battle_arr[position][row_name_arr[j]].units_cards[k].work_strength = 1;
+                            data.battle_arr[position][row_name_arr[j]].units_cards[k].number_move = move;
+                            break out_replace;
+                        }
+                    }
+                }
+            } else {
+                retreat.push(clone(data.item_history.card));
+                retreat[retreat.length - 1].number_move = move;
+                last_card(data);
+            }
             break;
 
         case 4:
@@ -324,675 +363,594 @@ function dummy (data, mode) {
 }
 
 
-
+//Удаляет с поля самые сильные юниты
 function execution (data, mode) {
-    var row_name_arr = ['close', 'range', 'siege'];
+    var cards,
+        count,
+        row_units = [],
+        position;
+
     switch (mode) {
         case 1:
-            var strength     = 0,
-                arr_player   = [],
-                arr_field    = [],
-                arr_card_id  = [];
-
-            if(data.arr_data[0].card.name == 'Казнь') {
-                data.retreat_home.push(clone(data.arr_data[0].card));
-                for(var i = 0; i < 2; i++){
-                    for(var j = 0; j < row_name_arr.length; j++){
-                        for(var k = 0; k < data.battle_arr[i][row_name_arr[j]].units_cards.length; k++){
-                            var card = data.battle_arr[i][row_name_arr[j]].units_cards[k];
-                            if(card.hero != 1 && card.fact_strength > strength){
-                                strength = card.fact_strength;
-                            }
-                        }
-                    }
-                }
-                for(var i = 0; i < 2; i++){
-                    for(var j = 0; j < row_name_arr.length; j++){
-                        for(var k = 0; k < data.battle_arr[i][row_name_arr[j]].units_cards.length; k++){
-                            var card = data.battle_arr[i][row_name_arr[j]].units_cards[k];
-                            if(card.hero != 1 && card.fact_strength == strength){
-                                arr_player.push(i);
-                                arr_field.push(row_name_arr[j]);
-                                arr_card_id.push(card.id);
-                            }
-                        }
-                    }
-                }
-            } else {
-                var field_name = get_field(data.arr_data[0].card);
-                var total_field = 0;
-                for(var k = 0; k < data.battle_arr[1][field_name].units_cards.length; k++){
-                    var test = data.battle_arr[1][field_name].units_cards[k];
-                    if(test.unit == 1){
-                        total_field += test.fact_strength;
-                    }
-                }
-                if (total_field >= 10) {
-                    for(var l = 0; l < data.battle_arr[1][field_name].units_cards.length; l++){
-                        var card = data.battle_arr[1][field_name].units_cards[l];
-                        if(card.hero != 1 && card.fact_strength > strength){
-                            strength = card.fact_strength;
-                        }
-                    }
-                    for(var m = 0; m < data.battle_arr[1][field_name].units_cards.length; m++){
-                        var del_card = data.battle_arr[1][field_name].units_cards[m];
-                        if(del_card.hero != 1 && del_card.fact_strength == strength){
-                            arr_player.push(1);
-                            arr_field.push(field_name);
-                            arr_card_id.push(del_card.id);
-                        }
-                    }
-                }
-            }
-            var count = arr_player.length;
-            while(count != 0) {
-                count--;
-                var cards = data.battle_arr[arr_player[count]][arr_field[count]].units_cards;
-                var i = cards.length;
-                while(i != 0) {
-                    i--;
-                    if(cards[i].id == arr_card_id[count]) {
-                        data.arr_data[data.arr_data.length] = clone(data.arr_data[0]);
-                        data.arr_data[data.arr_data.length - 1].card = clone(cards[i]);
-                        data.arr_data[data.arr_data.length - 1].card.delete = 1;
-                        if(arr_player[count] == 0){
-                            data.arr_data[data.arr_data.length - 1].player_index = data.player_index;
-                        } else {
-                            data.arr_data[data.arr_data.length - 1].player_index = data.rival_index;
-                        }
-                        var delete_data           = {};
-                        delete_data.ind           = arr_player[count];
-                        delete_data.field_name    = arr_field[count];
-                        delete_data.card          = cards[i];
-                        delete_data.battle_arr    = data.battle_arr;
-                        delete_data.retreat_home  = data.retreat_home;
-                        delete_data.retreat_rival = data.retreat_rival;
-                        delete_card(delete_data);
-                    }
-                }
-            }
+            data.retreat_home.push(clone(data.arr_data[0].card));
             break;
 
         case 2:
-            if(data.card.name == 'Казнь') {
-                if(data.player_index == data.from_player) {
-                    data.retreat_home.push(clone(data.card));
-                } else {
-                    if(data.player_index == -1) {
-                        if(data.from_player == 0) {
-                            data.retreat_home.push(clone(data.card));
-                        } else {
-                            data.retreat_rival.push(clone(data.card));
-                        }
-                    } else {
-                        data.retreat_rival.push(clone(data.card));
-                    }
-                }
+            position = data.position;
+            if(position == 0){
+                data.retreat_home.push(clone(data.card));
+            } else {
+                data.retreat_rival.push(clone(data.card));
             }
             break;
 
         case 3:
-            if(data.item_history.card.name == 'Казнь') {
-                if(data.player_index == data.item_history.player_index) {
-                    data.retreat_home.push(clone(data.item_history.card));
-                } else {
-                    if(data.player_index == -1) {
-                        if(data.item_history.player_index == 0) {
-                            data.retreat_home.push(clone(data.item_history.card));
-                        } else {
-                            data.retreat_rival.push(clone(data.item_history.card));
-                        }
-                    } else {
-                        data.retreat_rival.push(clone(data.item_history.card));
-                    }
-                }
+            position = data.position;
+            if(position == 0){
+                data.retreat_home.push(clone(data.item_history.card));
+            } else {
+                data.retreat_rival.push(clone(data.item_history.card));
             }
             break;
-
-        case 4:
-            break;
     }
+
+    cards = minmax(1, 0, 2, data.battle_arr);
+    count = cards.ids.length;
+    while(count != 0) {
+        count--;
+        row_units = data.battle_arr[cards.area[count]][cards.fields[count]].units_cards;
+        for(var i = 0; i < row_units.length; i++){
+            if(row_units[i].id == cards.ids[count]) {
+                row_units[i].work_strength = 0;
+            }
+        }
+    }
+
     last_card(data);
     return data.arr_data;
 }
 
-
-
-function medic (data, mode) {
+// Сжигает сильнейший отряд противника и игрока в зеркальном ряду
+function row_execution (data, mode) {
+    var cards,
+        card,
+        strength = 0,
+        row_units,
+        search,
+        mirror;
     switch (mode) {
         case 1:
-            var count = 0;
-            for(var j = 0; j < data.retreat_home.length; j++) {
-                if(data.retreat_home[j].unit == 1 &&
-                    data.retreat_home[j].hero != 1 &&
-                    data.retreat_home[j].name != 'Чучело'){
-                    count++;
-                }
+            search = 1;
+            mirror = 0;
+            break;
+
+        case 2:
+            search = 0;
+            mirror = 1;
+            if(data.player_index == -1 && data.position == 0){
+                search = 1;
+                mirror = 0;
             }
-            if(count != 0) {
+            break;
+
+        case 3:
+            if(data.position == 0){
+                search = 1;
+                mirror = 0;
+            } else {
+                search = 0;
+                mirror = 1;
+            }
+            break;
+   }
+    // Находим сильнейшую карту нужного игрока и сжигаем её
+    cards = minmax(1, 1, search, data.battle_arr);
+    // Если у противника нет карт, ничего не сжигаем
+    if(cards.ids.length != 0){
+        row_units = data.battle_arr[search][cards.fields[0]].units_cards;
+        for(var i = 0; i < row_units.length; i++){
+            if(cards.ids[0] == row_units[i].id){
+                row_units[i].work_strength = 0;
+                break;
+            }
+        }
+        // Находим сильнейшую карту в зеркальном ряду
+        for(var k = 0; k < data.battle_arr[mirror][cards.fields[0]].units_cards.length; k++){
+            card = data.battle_arr[mirror][cards.fields[0]].units_cards[k];
+            if(card.type == 'U' && card.hero != 1 && card.work_strength > strength){
+                strength = card.work_strength;
+            }
+        }
+        // Сжигаем её
+        row_units = data.battle_arr[mirror][cards.fields[0]].units_cards;
+        for(var i = 0; i < row_units.length; i++){
+            if(row_units[i].work_strength == strength){
+                row_units[i].work_strength = 0;
+                break;
+            }
+        }
+    }
+
+    return data.arr_data;
+}
+
+
+
+function medic (type_medic, side, data, mode) {
+    var work_array = [],
+        retreat,
+        position,
+        stop = 0;
+
+    switch (mode) {
+        case 1:
+            if(side == 0) {
+                retreat = data.retreat_home;
+            } else {
+                retreat = data.retreat_rival;
+            }
+
+            switch (type_medic) {
+                case 'medic_units':
+                    for(var j = 0; j < retreat.length; j++) {
+                        if(retreat[j].type == 'U' &&
+                            retreat[j].hero != 1){
+                            work_array.push(retreat[j]);
+                        }
+                    }
+                    break;
+
+                case 'medic_hero':
+                    for(var j = 0; j < retreat.length; j++) {
+                        if(retreat[j].type == 'U' &&
+                            retreat[j].hero == 1){
+                            work_array.push(retreat[j]);
+                        }
+                    }
+                    break;
+
+                case 'medic_specials':
+                    for(var j = 0; j < retreat.length; j++) {
+                        if(retreat[j].type == 'S'){
+                            work_array.push(retreat[j]);
+                        }
+                    }
+                    break;
+            }
+
+            if(work_array.length != 0) {
                 $('.battle').append(
                     $('<div/>').addClass('choice')
                 );
-                for (var i = 0; i < data.retreat_home.length; i++) {
-                    if(data.retreat_home[i].unit == 1 &&
-                        data.retreat_home[i].hero != 1 &&
-                        data.retreat_home[i].name != 'Чучело') {
-                        $('.choice').append(
-                            $('<div/>').attr('data-item', i)
-                                .attr('data-id-card', data.retreat_home[i].id)
-                                .addClass('card_on_table')
-                                .append(
-                                    $('<img/>').attr({
-                                        'src':          "../" + data.retreat_home[i].pict,
-                                        'data-desc':    data.retreat_home[i].desc_func,
-                                        'title':        data.retreat_home[i].name
-                                    })
-                                )
-                        );
-                        if(data.retreat_home[i].unit == 1) {
-                            $('.choice').children().eq(i).append(
-                                $('<div/>').
-                                    text(data.retreat_home[i].fact_strength)
-                                    .attr('data-item', i)
-                                    .addClass('fact_strength')
-                            );
-                        }
-                    }
-                }
-                return false;
+                show_cards(0, work_array, $('.choice'));
+                stop = 1;
             }
             break;
 
         case 2:
-            break;
-
-        case 3:
-            break;
-
-        case 4:
-            break;
-
-        case 6:
-            var card = data.retreat_home[data.item_card];
-            var clone_card = clone(card);
-            data.player_cards.push(card);
-            data.retreat_home.splice(data.item_card, 1);
-            last_card(data);
-
-            clone_card.delete = 1;
-            clone_card.from_medic = 1;
-            data.arr_data[data.arr_data.length] = clone(data.arr_data[0]);
-            data.arr_data[data.arr_data.length - 1].card = clone_card;
-            break;
-    }
-    $('.choice').remove();
-    show_cards (0, data.player_cards, $('.cards'));
-    return data.arr_data;
-}
-
-
-
-function gain (data, mode) {
-    var field_name;
-    switch (mode) {
-        case 1:
-            field_name = get_field(data.arr_data[0].card);
-            data.battle_arr[0][field_name].effects.push(data.arr_data[0].card.ability);
-            break;
-
-        case 2:
-            var ind = data.position;
-            field_name = get_field(data.card);
-            data.battle_arr[ind][field_name].effects.push(data.card.ability);
-            break;
-
-        case 3:
-            field_name = get_field(data.item_history.card);
-            if(data.player_index == data.item_history.player_index){
-                data.battle_arr[0][field_name].effects.push(data.item_history.card.ability);
-            } else {
-                if(data.player_index == -1){
-                    data.battle_arr[data.item_history.player_index][field_name].effects.push(data.item_history.card.ability);
+            position = data.position;
+            if(position == 0){
+                if(side == 0){
+                    retreat = data.retreat_home;
                 } else {
-                    data.battle_arr[1][field_name].effects.push(data.item_history.card.ability);
+                    retreat = data.retreat_rival;
                 }
-            }
-            break;
-
-        case 4:
-            var gain = 0;
-            var row = ['close', 'range', 'siege'];
-            for(var i = 0; i < 2; i++){
-                for(var j = 0; j < row.length; j++){
-                    for(var k = 0; k < data[i][row[j]].effects.length; k++) {
-                        if(data[i][row[j]].effects[k] == 'gain') {
-                            gain++;
-                        }
-                        if(data[i][row[j]].units_cards.length > 1){
-                            for(var l = 0; l < data[i][row[j]].units_cards.length; l++){
-                                if(data[i][row[j]].units_cards[l].hero != 1 &&
-                                    data[i][row[j]].units_cards[l].name != 'Чучело') {
-                                    data[i][row[j]].units_cards[l].added = gain;
-                                }
-                            }
-                        }
-
-                    }
-                    gain = 0;
-                }
-            }
-            break;
-
-        case 5:
-            for(var m = 0; m < data.units_cards.length; m++){
-                data.units_cards[m].added = 0;
-            }
-            break;
-    }
-    return data.arr_data;
-}
-
-
-
-function commander_horn (data, mode) {
-    var field_name;
-    switch (mode) {
-        case 1:
-            if(data.arr_data[0].card.name != 'Лютик'){
-                data.arr_data[0].card.id_class = data.arr_data[0].card.field_horn;
-            }
-            field_name = get_field(data.arr_data[0].card);
-            if(data.arr_data[0].card.name != 'Лютик'){
-                delete data.arr_data[0].card.id_class;
-                data.battle_arr[0][field_name].row_specials.push(data.arr_data[0].card);
-                for(var i = 0; i < data.player_cards.length; i++){
-                    if(data.player_cards[i].id == data.arr_data[0].card.id){
-                        data.player_cards.splice(i, 1);
-                        break;
-                    }
-                }
-            }
-            data.battle_arr[0][field_name].effects.push('commander_horn');
-            show_cards (0, data.player_cards, $('.cards'));
-            count_strength (data.battle_arr, $('.player_power'));
-            show_cards (1, data.battle_arr);
-            break;
-
-        case 2:
-            var ind = data.position;
-            if(data.card.name != 'Лютик'){
-                data.card.id_class = data.card.field_horn;
-            }
-            field_name = get_field(data.card);
-            if(data.card.name != 'Лютик'){
-                delete data.card.id_class;
-                data.battle_arr[ind][field_name].row_specials.push(data.card);
-            }
-            data.battle_arr[ind][field_name].effects.push('commander_horn');
-            count_strength (data.battle_arr, $('.player_power'));
-            show_cards (1, data.battle_arr);
-            break;
-
-        case 3:
-            var ind = data.position;
-
-            if(data.item_history.card.name != 'Лютик'){
-                data.item_history.card.id_class = data.item_history.card.field_horn;
-            }
-            field_name = get_field(data.item_history.card);
-            if(data.item_history.card.name != 'Лютик'){
-                delete data.item_history.card.id_class;
-                data.battle_arr[ind][field_name].row_specials.push(data.item_history.card);
-            }
-            data.battle_arr[ind][field_name].effects.push('commander_horn');
-            count_strength (data.battle_arr, $('.player_power'));
-            show_cards (1, data.battle_arr);
-            break;
-
-        case 4:
-            var row = ['close', 'range', 'siege'];
-            for(var i = 0; i < 2; i++){
-                for(var j = 0; j < row.length; j++){
-                    for(var k = 0; k < data[i][row[j]].effects.length; k++) {
-                        if(data[i][row[j]].effects[k] == 'commander_horn') {
-                            for(var l = 0; l < data[i][row[j]].units_cards.length; l++){
-                                if(data[i][row[j]].units_cards[l].hero != 1) {
-                                    data[i][row[j]].units_cards[l].multihorn = 2;
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-            break;
-
-        case 5:
-            for(var m = 0; m < data.units_cards.length; m++){
-                data.units_cards[m].multihorn = 1;
-            }
-    }
-
-    return data.arr_data;
-}
-
-
-
-function support (data, mode) {
-    var field_name;
-    switch (mode) {
-        case 1:
-            field_name = get_field(data.arr_data[0].card);
-            data.battle_arr[0][field_name].effects.push('support');
-            break;
-
-        case 2:
-            var ind = data.position;
-            field_name = get_field(data.card);
-            data.battle_arr[ind][field_name].effects.push('support');
-            break;
-
-        case 3:
-            var ind = data.position;
-            field_name = get_field(data.item_history.card);
-            data.battle_arr[ind][field_name].effects.push('support');
-            break;
-
-        case 4:
-            var row = ['close', 'range', 'siege'];
-            var count = 0;
-            for(var i = 0; i < 2; i++){
-                for(var j = 0; j < row.length; j++){
-                    for(var k = 0; k < data[i][row[j]].effects.length; k++) {
-                        if(data[i][row[j]].effects[k] == 'support') {
-                            count++;
-                        }
-                    }
-                    if(count > 1) {
-                        var cards     = data[i][row[j]].units_cards;
-                        var arr_names = [];
-                        var arr_sup   = [];
-                        for(var p = 0; p < cards.length; p++){
-                            if(cards[p].ability == 'support'){
-                                arr_names.push(cards[p].name);
-                            }
-                        }
-                        var count_sup = 0;
-                        for (var r = 0; r < arr_names.length; r++){
-                            for(var q = 0; q < arr_names.length; q++){
-                                if (arr_names[r] == arr_names[q]){
-                                    count_sup++;
-                                }
-                            }
-                            if(count_sup > 1) {
-                                arr_sup.push(arr_names[r]);
-                            }
-                            count_sup = 0;
-                        }
-                        for(var t = 0; t < arr_sup.length; t++) {
-                            for(var l = 0; l < cards.length; l++) {
-                                if(cards[l].ability == 'support' && cards[l].name == arr_sup[t]) {
-                                    cards[l].multiplier = 2;
-                                }
-                            }
-                        }
-                    }
-                    count = 0;
-                }
-            }
-            break;
-
-        case 5:
-            var count = 0;
-            for(var m = 0; m < data.effects.length; m++){
-                if(data.effects[m] == 'support') {
-                    count++;
-                }
-            }
-            if(count - 1 < 2) {
-                for(var n = 0; n < data.units_cards.length; n++){
-                    data.units_cards[n].multiplier = 1;
-                }
-            }
-            break;
-    }
-
-    return data.arr_data;
-}
-
-
-
-function frost (data, mode) {
-    switch (mode) {
-        case 1:
-            data.battle_arr[0].effects.push(data.arr_data[0].card.ability);
-            data.battle_arr[0].specials.push(data.arr_data[0].card);
-            change_weather(data, 1);
-            break;
-
-        case 2:
-            var ind = data.position;
-            data.battle_arr[ind].effects.push(data.card.ability);
-            data.battle_arr[ind].specials.push(data.card);
-            change_weather(data, 1);
-            break;
-
-        case 3:
-            var ind = data.position;
-            data.battle_arr[ind].effects.push(data.item_history.card.ability);
-            data.battle_arr[ind].specials.push(data.item_history.card);
-            change_weather(data, 1);
-            break;
-
-        case 4:
-            var row = ['close'];
-            var exponent = 0;
-            for (var i = 0; i < 2; i++) {
-                for(var k = 0; k < row.length; k++){
-                    for (var j = 0; j < data[i][row[k]].units_cards.length; j++) {
-                        if(data[i][row[k]].units_cards[j].hero != 1 && data[i][row[k]].units_cards[j].strength != 0) {
-                            data[i][row[k]].units_cards[j].exponent = exponent;
-                        }
-                    }
-                }
-            }
-            break;
-    }
-    return data.arr_data;
-}
-
-
-
-function fog (data, mode) {
-    switch (mode) {
-        case 1:
-            data.battle_arr[0].effects.push(data.arr_data[0].card.ability);
-            data.battle_arr[0].specials.push(data.arr_data[0].card);
-            change_weather(data, 1);
-            break;
-
-        case 2:
-            var ind = data.position;
-            data.battle_arr[ind].effects.push(data.card.ability);
-            data.battle_arr[ind].specials.push(data.card);
-            change_weather(data, 1);
-            break;
-
-        case 3:
-            var ind = data.position;
-            data.battle_arr[ind].effects.push(data.item_history.card.ability);
-            data.battle_arr[ind].specials.push(data.item_history.card);
-            change_weather(data, 1);
-            break;
-
-        case 4:
-            var row = ['range'];
-            var exponent = 0;
-            for (var i = 0; i < 2; i++) {
-                for(var k = 0; k < row.length; k++){
-                    for (var j = 0; j < data[i][row[k]].units_cards.length; j++) {
-                        if(data[i][row[k]].units_cards[j].hero != 1 && data[i][row[k]].units_cards[j].strength != 0) {
-                            data[i][row[k]].units_cards[j].exponent = exponent;
-                        }
-                    }
-                }
-            }
-            break;
-    }
-
-    return data.arr_data;
-}
-
-
-
-function downpour (data, mode) {
-    switch (mode) {
-        case 1:
-            data.battle_arr[0].effects.push(data.arr_data[0].card.ability);
-            data.battle_arr[0].specials.push(data.arr_data[0].card);
-            change_weather(data, 1);
-            break;
-
-        case 2:
-            var ind = data.position;
-            data.battle_arr[ind].effects.push(data.card.ability);
-            data.battle_arr[ind].specials.push(data.card);
-            change_weather(data, 1);
-            break;
-
-        case 3:
-            var ind = data.position;
-            data.battle_arr[ind].effects.push(data.item_history.card.ability);
-            data.battle_arr[ind].specials.push(data.item_history.card);
-            change_weather(data, 1);
-            break;
-
-        case 4:
-            var row = ['siege'];
-            var exponent = 0;
-            for (var i = 0; i < 2; i++) {
-                for(var k = 0; k < row.length; k++){
-                    for (var j = 0; j < data[i][row[k]].units_cards.length; j++) {
-                        if(data[i][row[k]].units_cards[j].hero != 1 && data[i][row[k]].units_cards[j].strength != 0) {
-                            data[i][row[k]].units_cards[j].exponent = exponent;
-                        }
-                    }
-                }
-            }
-            break;
-    }
-
-    return data.arr_data;
-}
-
-
-
-function clear_weather (data, mode) {
-    switch (mode) {
-        case 1:
-            data.battle_arr[0].effects.push(data.arr_data[0].card.ability);
-            data.battle_arr[0].specials.push(data.arr_data[0].card);
-            change_weather(data, 2);
-            break;
-
-        case 2:
-            var ind = data.position;
-            data.battle_arr[ind].effects.push(data.card.ability);
-            data.battle_arr[ind].specials.push(data.card);
-            change_weather(data, 2);
-            break;
-
-        case 3:
-            var ind = data.position;
-            data.battle_arr[ind].effects.push(data.item_history.card.ability);
-            data.battle_arr[ind].specials.push(data.item_history.card);
-            change_weather(data, 2);
-            break;
-
-        case 4:
-            var row = ['close', 'range', 'siege'];
-            var exponent = 1;
-            for (var i = 0; i < 2; i++) {
-                for(var k = 0; k < row.length; k++){
-                    for (var j = 0; j < data[i][row[k]].units_cards.length; j++) {
-                        if(data[i][row[k]].units_cards[j].hero != 1 && data[i][row[k]].units_cards[j].strength != 0) {
-                            data[i][row[k]].units_cards[j].exponent = exponent;
-                        }
-                    }
-                }
-            }
-            break;
-
-    }
-
-    return data.arr_data;
-}
-
-
-function amount (data, mode) {
-    var field_name;
-    switch (mode) {
-        case 1:
-            field_name = get_field(data.arr_data[0].card);
-            data.battle_arr[0][field_name].effects.push(data.arr_data[0].card.ability);
-            break;
-
-        case 2:
-            var ind = data.position;
-            field_name = get_field(data.card);
-            data.battle_arr[ind][field_name].effects.push(data.card.ability);
-            break;
-
-        case 3:
-            field_name = get_field(data.item_history.card);
-            if(data.player_index == data.item_history.player_index){
-                data.battle_arr[0][field_name].effects.push(data.item_history.card.ability);
             } else {
-                if(data.player_index == -1){
-                    data.battle_arr[data.item_history.player_index][field_name].effects.push(data.item_history.card.ability);
+                if(side == 0){
+                    retreat = data.retreat_rival;
                 } else {
-                    data.battle_arr[1][field_name].effects.push(data.item_history.card.ability);
+                    retreat = data.retreat_home;
+                }
+            }
+            for(var i = 0; i < retreat.length; i++){
+                if(data.card.id_medic == retreat[i].id){
+                   retreat.splice(i, 1);
+                   break;
                 }
             }
             break;
 
-        case 4:
-            var counter_h = 0;
-            var counter_r = 0;
-            var row = ['close', 'range', 'siege'];
-            for(var m = 0; m < 2; m++) {
-                for(var l = 0; l < row.length; l++){
-                    if(m == 0){
-                        counter_h += data[m][row[l]].units_cards.length;
-                    }
-                    if(m == 1) {
-                        counter_r += data[m][row[l]].units_cards.length;
-                    }
+        case 3:
+            position = data.position;
+            if(position == 0){
+                if(side == 0){
+                    retreat = data.retreat_home;
+                } else {
+                    retreat = data.retreat_rival;
+                }
+            } else {
+                if(side == 0){
+                    retreat = data.retreat_rival;
+                } else {
+                    retreat = data.retreat_home;
                 }
             }
-            for(var i = 0; i < 2; i++){
-                for(var j = 0; j < row.length; j++){
-                    for(var k = 0; k < data[i][row[j]].units_cards.length; k++) {
-                        if(data[i][row[j]].units_cards[k].ability == 'amount') {
-                            if(i == 0) {
-                                data[i][row[j]].units_cards[k].strength = counter_h;
-                            }
-                            if(i == 1) {
-                                data[i][row[j]].units_cards[k].strength = counter_r;
-                            }
-                        }
-                    }
-                }
-            }
-            break;
-
-        case 5:
-            for(var p = 0; p < data.units_cards.length; p++){
-                if(data.units_cards[p].ability == 'amount') {
-                    data.units_cards[p].strength = 0;
+            for(var i = 0; i < retreat.length; i++){
+                if(data.item_history.card.id_medic == retreat[i].id){
+                    retreat.splice(i, 1);
                     break;
                 }
             }
             break;
+
+        case 4:
+            if(side == 0) {
+                retreat = data.retreat_home;
+            } else {
+                retreat = data.retreat_rival;
+            }
+            for(var j = 0; j < retreat.length; j++){
+                if(retreat[j].id == data.card_id){
+                    data.arr_data[0].card.id_medic = retreat[j].id;
+                    data.player_cards.push(clone(retreat[j]));
+                    retreat.splice(j, 1);
+                    break;
+                }
+            }
+
+            last_card(data);
+            $('.choice').remove();
+            show_cards (0, data.player_cards, $('.cards'));
+            break;
+    }
+    return stop;
+}
+
+
+// Воскрешаем свой юнит
+function medic_units (data, mode) {
+    var type_medic = arguments.callee.name,
+        stop = medic(type_medic, 0, data, mode);
+    if(stop == 1){
+        return false;
+    }
+    return data.arr_data;
+}
+
+// Воскрешаем своего героя
+function medic_hero (data, mode) {
+    var type_medic = arguments.callee.name,
+        stop = medic(type_medic, 0, data, mode);
+    if(stop == 1){
+        return false;
+    }
+    return data.arr_data;
+}
+
+// Воскрешаем свою специальную карту
+function medic_specials (data, mode) {
+    var type_medic = arguments.callee.name,
+        stop = medic(type_medic, 0, data, mode);
+    if(stop == 1){
+        return false;
+    }
+    return data.arr_data;
+}
+
+
+// Делаем силу всех юнитов в ряду равной 5
+function gain (data, mode) {
+    var field_name,
+        card,
+        position;
+    switch (mode) {
+        case 1:
+            card = data.arr_data[0].card;
+            position = 0;
+            break;
+
+        case 2:
+            card = data.card;
+            position = data.position;
+            break;
+
+        case 3:
+            card = data.item_history.card;
+            position = data.position;
+            break;
+    }
+
+    field_name = get_field(card);
+    for(var i = 0; i < data.battle_arr[position][field_name].units_cards.length; i++){
+        var item_card = data.battle_arr[position][field_name].units_cards[i];
+        if(item_card.hero != 1 && item_card.type == 'U'){
+            item_card.work_strength = 5;
+        }
+    }
+
+    return data.arr_data;
+}
+
+
+// Увеличивает силу первых 3 отрядов в ряду на 5
+function commander_horn (data, mode) {
+    var field_name,
+        count = 0,
+        card,
+        item,
+        position = data.position,
+        retreat,
+        move;
+    switch (mode) {
+        case 1:
+            card = data.arr_data[0].card;
+            position = 0;
+
+            for(var i = 0; i < data.player_cards.length; i++){
+                if(data.player_cards[i].id == card.id){
+                    data.player_cards.splice(i, 1);
+                    break;
+                }
+            }
+            show_cards (0, data.player_cards, $('.cards'));
+            break;
+
+        case 2:
+            card = data.card;
+            break;
+
+        case 3:
+            card = data.item_history.card;
+            break;
+    }
+
+    card.id_class = card.field_horn;
+    field_name = get_field(card);
+    for(var i = 0; i < data.battle_arr[position][field_name].units_cards.length; i++){
+        item = data.battle_arr[position][field_name].units_cards[i];
+        if(item.type == 'U' && item.hero != 1){
+            item.work_strength += 5;
+            count++;
+            if(count == 3){
+                break;
+            }
+        }
+    }
+    delete card.id_class;
+    if(position == 0){
+        retreat = data.retreat_home;
+        move = data.count_moves.h;
+    } else {
+        retreat = data.retreat_rival;
+        move = data.count_moves.r;
+    }
+    retreat.push(find_card(card.id, data.specials));
+    retreat[retreat.length - 1].number_move = move;
+    count_strength (data, $('.player_power'));
+    show_cards (1, data.battle_arr);
+
+    return data.arr_data;
+}
+
+
+// Добавляет всем отрядам в ряду с такой же способностью +1
+function support (data, mode) {
+    var field_name,
+        card,
+        item,
+        position = data.position;
+    switch (mode) {
+        case 1:
+            position = 0;
+            card = data.arr_data[0].card;
+            break;
+
+        case 2:
+            card = data.card;
+            break;
+
+        case 3:
+            card = data.item_history.card;
+            break;
+    }
+
+    field_name = get_field(card);
+    for(var i = 0; i < data.battle_arr[position][field_name].units_cards.length; i++){
+        item = data.battle_arr[position][field_name].units_cards[i];
+        if(item.type == 'U' && item.hero != 1 && item.ability == 'support'){
+            item.work_strength += 1;
+        }
+    }
+    return data.arr_data;
+}
+
+
+function weather (type_weather, data, mode) {
+    var position = 0,
+        row = [],
+        weather_flag = 0;
+    switch (type_weather) {
+        case "frost":
+           row = ['close'];
+            break;
+
+        case "fog":
+            row = ['range'];
+            break;
+
+        case "downpour":
+            row = ['siege'];
+            break;
+
+        case "clear_weather":
+            row = ['close', 'range', 'siege'];
+            break;
+    }
+
+    // Пушим эффект погоды в объект и перемещаем карту в сброс
+    switch (mode) {
+        case 1:
+            if(row.length == 1) {
+                if(data.battle_arr[0][row[0]].effects[0] == type_weather){
+                    data.battle_arr[0][row[0]].effects[0] = data.arr_data[0].card.ability;
+                    data.battle_arr[1][row[0]].effects[0] = data.arr_data[0].card.ability;
+                } else {
+                    data.battle_arr[0][row[0]].effects.unshift(data.arr_data[0].card.ability);
+                    data.battle_arr[1][row[0]].effects.unshift(data.arr_data[0].card.ability);
+                }
+            }
+            data.retreat_home.push(clone(data.arr_data[0].card));
+            last_card(data);
+            break;
+
+        case 2:
+            position = data.position;
+            if(row.length == 1) {
+                if(data.battle_arr[0][row[0]].effects[0] == type_weather){
+                    data.battle_arr[0][row[0]].effects[0] = data.card.ability;
+                    data.battle_arr[1][row[0]].effects[0] = data.card.ability;
+                } else {
+                    data.battle_arr[0][row[0]].effects.unshift(data.card.ability);
+                    data.battle_arr[1][row[0]].effects.unshift(data.card.ability);
+                }
+            }
+            if(position == 0){
+                data.retreat_home.push(clone(data.card));
+            } else {
+                data.retreat_rival.push(clone(data.card));
+            }
+            last_card(data);
+            break;
+
+        case 3:
+            position = data.position;
+            if(row.length == 1) {
+                if(data.battle_arr[0][row[0]].effects[0] == type_weather){
+                    data.battle_arr[0][row[0]].effects[0] = data.item_history.card.ability;
+                    data.battle_arr[1][row[0]].effects[0] = data.item_history.card.ability;
+                } else {
+                    data.battle_arr[0][row[0]].effects.unshift(data.item_history.card.ability);
+                    data.battle_arr[1][row[0]].effects.unshift(data.item_history.card.ability);
+                }
+            }
+            if(position == 0){
+                data.retreat_home.push(clone(data.item_history.card));
+            } else {
+                data.retreat_rival.push(clone(data.item_history.card));
+            }
+            last_card(data);
+            break;
+    }
+    // Если это дебаф, то бьём по юнитам
+    if(row.length == 1){
+        for (var i = 0; i < 2; i++) {
+            for(var k = 0; k < row.length; k++){
+                for (var j = 0; j < data.battle_arr[i][row[k]].units_cards.length; j++) {
+                    var card = data.battle_arr[i][row[k]].units_cards[j];
+                    if(card.hero != 1 && card.work_strength != 0 && card.weather === undefined) {
+                        card.weather = Math.round(Math.round(card.work_strength/2)/2);
+                        card.work_strength = Math.round(card.work_strength/2);
+                    }
+                }
+            }
+        }
+
+    } else {
+        // Если это Чистое небо, то лечим юнита
+        for(var i = 0; i < 2; i++){
+            for(var k = 0; k < row.length; k++){
+                for (var j = 0; j < data.battle_arr[i][row[k]].effects.length; j++) {
+                    var effect = data.battle_arr[i][row[k]].effects[j];
+                    if(effect == 'frost' || effect == 'fog' || effect == 'downpour') {
+                        weather_flag = 1;
+                        data.battle_arr[i][row[k]].effects.splice(j,1);
+                    }
+                }
+            }
+        }
+        if(weather_flag == 1){
+            for (var i = 0; i < 2; i++) {
+                    for(var k = 0; k < row.length; k++){
+                    for (var j = 0; j < data.battle_arr[i][row[k]].units_cards.length; j++) {
+                        var card = data.battle_arr[i][row[k]].units_cards[j];
+                        if(card.hero != 1 && card.work_strength != 0 && card.weather !== undefined) {
+                            card.work_strength += card.weather;
+                            card.weather = undefined;
+                        }
+                    }
+                }
+            }
+        } else {
+            // Если Чистое небо сыграно на стол без погоды
+            for(var k = 0; k < row.length; k++){
+                for (var j = 0; j < data.battle_arr[position][row[k]].units_cards.length; j++) {
+                    var card = data.battle_arr[position][row[k]].units_cards[j];
+                    if(card.hero != 1 && card.work_strength != 0) {
+                        card.work_strength += 2;
+                        break;
+                    }
+                }
+            }
+        }
+    }
+    return data;
+}
+
+function frost (data, mode) {
+    var type_weather = arguments.callee.name;
+    weather (type_weather, data, mode);
+    return data.arr_data;
+}
+
+function fog (data, mode) {
+    var type_weather = arguments.callee.name;
+    weather (type_weather, data, mode);
+    return data.arr_data;
+}
+
+function downpour (data, mode) {
+    var type_weather = arguments.callee.name;
+    weather (type_weather, data, mode);
+    return data.arr_data;
+}
+
+function clear_weather (data, mode) {
+    var type_weather = arguments.callee.name;
+    weather (type_weather, data, mode);
+    return data.arr_data;
+}
+
+
+// Установить силу равной количеству юнитов "не героев" на столе
+function amount (data, mode) {
+    var field_name,
+        count = 0,
+        card,
+        item,
+        position = data.position,
+        row = ['close', 'range', 'siege'];
+
+    switch (mode) {
+        case 1:
+            position = 0;
+            card = data.arr_data[0].card;
+            break;
+
+        case 2:
+            card = data.card;
+            break;
+
+        case 3:
+            card = data.item_history.card;
+            break;
+    }
+
+    for(var j = 0; j < row.length; j++){
+        for(var i = 0; i < data.battle_arr[position][row[j]].units_cards.length; i++){
+            item = data.battle_arr[position][row[j]].units_cards[i];
+            if(item.type == 'U' && item.hero != 1){
+                count++;
+            }
+        }
+    }
+    if(count > 1){
+        field_name = get_field(card);
+        for(var k = 0; k < data.battle_arr[position][field_name].units_cards.length; k++){
+            item = data.battle_arr[position][field_name].units_cards[k];
+            if(item.type == 'U' && item.ability == 'amount'){
+                item.work_strength = count;
+            }
+        }
     }
     return data.arr_data;
 }
@@ -1004,8 +962,10 @@ function theft (data, mode) {
         case 1:
             if(data.retreat_rival.length != 0) {
                 var rand = Math.round(0 - 0.5 + Math.random() * (data.retreat_rival.length - 0 + 1));
+                if(rand == data.retreat_rival.length){
+                    rand--;
+                }
                 var card = data.retreat_rival[rand];
-                console.log(card);
                 var clone_card = clone(card);
                 data.player_cards.push(card);
                 data.retreat_rival.splice(rand, 1);
@@ -1087,8 +1047,8 @@ function merge (data, mode) {
                     var card = data.battle_arr[0][row_name_arr[j]].units_cards[k];
                     if(card.hero != 1 &&
                         card.ability == 'none' &&
-                        card.strength < strength){
-                        strength  = card.strength;
+                        card.new_strength < strength){
+                        strength  = card.new_strength;
                         field     = row_name_arr[j];
                         card_id   = card.id;
                         item      = k;
@@ -1105,12 +1065,12 @@ function merge (data, mode) {
 
         case 2:
             if(data.card.field_merge !== undefined){
-                var ind = data.position;
-                var cards = data.battle_arr[ind][data.card.field_merge].units_cards;
+                var position = data.position,
+                    cards = data.battle_arr[position][data.card.field_merge].units_cards;
                 for(var j = 0; j < cards.length; j++){
                     if(cards[j].id == data.card.card_id_merge){
                         cards[j].ability = 'merge';
-                        data.battle_arr[ind][data.card.field_merge].effects.push('merge');
+                        data.battle_arr[position][data.card.field_merge].effects.push('merge');
                         break;
                     }
                 }
@@ -1121,12 +1081,12 @@ function merge (data, mode) {
 
         case 3:
             if(data.item_history.card.field_merge !== undefined) {
-                var ind = data.position;
-                var cards = data.battle_arr[ind][data.item_history.card.field_merge].units_cards;
+                var position = data.position,
+                    cards = data.battle_arr[position][data.item_history.card.field_merge].units_cards;
                 for(var j = 0; j < cards.length; j++){
                     if(cards[j].id == data.item_history.card.card_id_merge){
                         cards[j].ability = 'merge';
-                        data.battle_arr[ind][data.item_history.card.field_merge].effects.push('merge');
+                        data.battle_arr[position][data.item_history.card.field_merge].effects.push('merge');
                         break;
                     }
                 }
@@ -1142,12 +1102,12 @@ function merge (data, mode) {
                         if(cards[k].ability == 'merge') {
                             if(k > 0 && k < cards.length - 1){
                                 if(cards[k].basic === undefined) {
-                                    cards[k].basic = cards[k].strength;
+                                    cards[k].basic = cards[k].work_strength;
                                 }
-                                cards[k].strength = cards[k - 1].strength + cards[k + 1].strength;
+                                cards[k].work_strength = cards[k - 1].work_strength + cards[k + 1].work_strength;
                             } else {
                                 if(cards[k].basic !== undefined){
-                                    cards[k].strength = cards[k].basic;
+                                    cards[k].work_strength = cards[k].basic;
                                 }
                             }
                         }
@@ -1160,7 +1120,7 @@ function merge (data, mode) {
             for(var m = 0; m < data.units_cards.length; m++){
                 if(data.units_cards[m].ability == 'merge') {
                     data.units_cards[m].ability = 'none';
-                    data.units_cards[m].strength = data.units_cards[m].basic;
+                    data.units_cards[m].work_strength = data.units_cards[m].basic;
                     delete data.units_cards[m].basic;
                 }
             }
@@ -1176,4 +1136,4 @@ function none (data, mode) {
     return data.arr_data;
 }
 
-//каждый метод должен возвращать стек карт, даже если он ничего не делал
+//Каждый метод должен возвращать стек карт, даже если он ничего не делал

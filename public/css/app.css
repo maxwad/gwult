@@ -52,7 +52,7 @@ body {
     color: #fde9c9;
     font-size: 16px;
     /* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#2994b2+22,2d4059+100 */
-    background: #2D4059; /* Old browsers */
+    background: #2D4059;
 
 
 }
@@ -127,8 +127,9 @@ input[type=text], input[type=password], textarea {
 .message_box {
     margin: 1px;
     text-align: center;
-    padding: 10px 130px;
+    padding: 20px 50px;
     background: rgba(255, 255, 255, 1);
+    color: #000000;
 }
 
 /*======================= http://colorhunt.co/c/7403 ==================================*/
@@ -136,7 +137,6 @@ input[type=text], input[type=password], textarea {
 
 .top_nav {
     width: 100%;
-    list-style: none;
     font-weight: bold;
     margin-bottom: 30px;
     color: #fde9c9;
@@ -146,11 +146,11 @@ input[type=text], input[type=password], textarea {
 .top_nav ul {
     position: relative;
     overflow: hidden;
+    display: flex;
 }
 
 .top_nav li {
-    width: 33.3333333333333%;
-    float: left;
+    flex: 1;
     box-sizing: border-box;
     position: relative;
     display: block;
@@ -967,21 +967,95 @@ input[type=text], input[type=password], textarea {
     overflow: hidden;
 }
 
-.deck_room .item_card {
+.deck_room .deck_col .card {
+    display: block;
+    position: relative;
     width: 33.33333333333333%;
     float: left;
     padding: 5px;
     border-radius: 5px;
 }
 
-.deck_room .item_card img {
+.deck_room .card_view .card {
+    display: block;
+    position: relative;
+    width: 25%;
+    max-width: 250px;
+    margin: 50px auto;
+    padding: 5px;
+    border-radius: 5px;
+}
+
+.deck_room .card:hover .img_card {
+    box-shadow: 0 0 7px 3px #2994B3;
+    background: #2994B3;
+}
+
+.deck_room .img_card {
+    display: block;
     width: 100%;
+    height: 100%;
     cursor: pointer;
 }
 
-.deck_room .item_card:hover img {
-    box-shadow: 0 0 7px 3px #2994B3;
-    background: #2994B3;
+.deck_room .strength_card {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    line-height: 30px;
+    font-size: 20px;
+    font-weight: 900;
+    text-align: center;
+    color: #000000;
+    background: #FFD550;
+    box-shadow: inset 0 0 2px 1px #d9d9d9;
+    cursor: pointer;
+}
+
+.deck_room .strength_card.up {
+     background: #2994B3;
+ }
+
+.deck_room .strength_card.down {
+    background: #ff3e3f;
+}
+
+.deck_room .class_card {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    transform: translateY(-50%);
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background: #FFD550;
+    box-shadow: inset 0 0 2px 1px #d9d9d9;
+    cursor: pointer;
+}
+
+.deck_room .ability_card {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background: #FFD550;
+    box-shadow: inset 0 0 2px 1px #d9d9d9;
+    cursor: pointer;
+}
+
+.deck_room .card_view .strength_card,
+.deck_room .card_view .class_card,
+.deck_room .card_view .ability_card {
+    width: 50px;
+    height: 50px;
+    line-height: 50px;
+    font-size: 30px;
+    cursor: inherit;
 }
 
 .deck_room .leader_img {
@@ -1004,49 +1078,48 @@ input[type=text], input[type=password], textarea {
     cursor: pointer;
 }
 
-.deck_room .leader_choice, .deck_room .card_view {
+.deck_room .leader_choice,
+.deck_room .card_view {
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(0, 0, 0, .95);
+    min-width: 500px;
+    background: #000000;
 }
 
 .deck_room .leaders_block {
     display: flex;
-    margin: 100px auto 0 auto;
+    justify-content: space-around;
+    flex-wrap: wrap;
+    margin: auto;
     width: 100%;
     min-width: 500px;
-    max-width: 1200px;
+    max-width: 1000px;
 }
 
 .deck_room .item_leader {
-    flex: 1;
-    padding: 25px;
+    width: 25%;
+    padding: 50px 25px;
+    min-width: 200px;
 }
 
-.deck_room .item_leader img{
+.deck_room .item_leader img {
     width: 100%;
 }
 
-.deck_room .leader_choice p, .deck_room .desc_unit {
+.deck_room .leader_choice p,
+.deck_room .desc_unit {
     text-align: center;
     color:  #2994B3;
     margin: 30px auto;
-    height: 50px;
-    font-size: 24px;
+    font-size: 22px;
     width: 100%;
     min-width: 500px;
-    max-width: 1200px;
+    max-width: 1000px;
     background: #000000;
     padding: 10px;
-}
-
-.deck_room .pict_unit {
-    display: block;
-    width: auto;
-    margin: 100px auto 0 auto;
 }
 
 .deck_room .desc_unit {
@@ -1354,26 +1427,9 @@ input[type=text], input[type=password], textarea {
 .cards_row {
     background: #008800;
     height: 100%;
-    display: flex;
-}
-
-.battle .special_field {
-    flex: 1;
-    min-width: 80px;
-    height: 100%;
-    background: rgba(255, 255, 255, 0.4);
-}
-
-.battle .special_field div {
-    display: block;
-    position: relative;
-    justify-content: center;
-    overflow: hidden;
-    height: 100%;
 }
 
 .battle .cards_field {
-    flex: 12;
     height: 100%;
     padding-left: 15px;
     background: rgba(255, 255, 255, 0.5);
@@ -1382,7 +1438,7 @@ input[type=text], input[type=password], textarea {
     overflow: hidden;
 }
 
-.battle .cards_field img, .battle .special_field img {
+.battle .cards_field .img_card {
     display: block;
     position: absolute;
     top: 0;
@@ -1391,41 +1447,57 @@ input[type=text], input[type=password], textarea {
     min-height: 150px;
 }
 
-.battle .table .fact_strength {
+.battle .strength_card {
     display: block;
     position: absolute;
     top: 0;
-    left: 2%;
-    height: 22px;
-    width: 22px;
+    height: 25px;
+    width: 25px;
     background: #fde9c9;
     color: #000000;
-    line-height: 22px;
-    border-radius: 50%;
-    text-align: center;
-}
-
-.battle .table .retreat .fact_strength {
-    left: 13px;
-}
-
-.battle .block_rewiev .fact_strength {
-    display: block;
-    position: absolute;
-    top: 15px;
-    left: 40px;
-    height: 30px;
-    width: 30px;
-    line-height: 30px;
-    background: #fde9c9;
-    padding: 0;
-    color: #000000;
+    line-height: 25px;
     border-radius: 50%;
     text-align: center;
     font-weight: 900;
 }
 
-.battle .cards_field div:hover img {
+.battle .class_card {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    transform: translateY(-50%);
+    width: 25px;
+    height: 25px;
+    border-radius: 50%;
+    background: #FFD550;
+    box-shadow: inset 0 0 2px 1px #d9d9d9;
+    cursor: pointer;
+}
+
+.battle .ability_card {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 25px;
+    height: 25px;
+    border-radius: 50%;
+    background: #FFD550;
+    box-shadow: inset 0 0 2px 1px #d9d9d9;
+    cursor: pointer;
+}
+
+.battle .block_review .ability_card,
+.battle .choice .ability_card,
+.battle .block_review .strength_card,
+.battle .choice .strength_card,
+.battle .block_review .class_card,
+.battle .choice .class_card {
+    height: 35px;
+    width: 35px;
+    line-height: 35px;
+}
+
+.battle .cards_field div:hover .img_card {
     box-shadow: 0 0 7px 3px #2994B3;
     background: #2994B3;
     cursor: pointer;
@@ -1473,7 +1545,8 @@ input[type=text], input[type=password], textarea {
     font-weight: 700;
 }
 
-.battle .retreat, .battle .all_cards {
+.battle .retreat,
+.battle .all_cards {
     height: 50%;
     padding: 10px;
     width: 100px;
@@ -1482,7 +1555,8 @@ input[type=text], input[type=password], textarea {
     position: relative;
 }
 
-.battle .retreat img, .battle .all_cards img {
+.battle .retreat img,
+.battle .all_cards img {
     position: absolute;
     top: 0;
     left: 50%;
@@ -1510,21 +1584,21 @@ input[type=text], input[type=password], textarea {
     width: 100%;
 }
 
-.battle .cards>div, .battle .cards_field>div{
+.battle .cards>div,
+.battle .cards_field>div{
     flex: 1;
-    max-width: 100px;
+    max-width: 80px;
     position: relative;
     z-index: 2;
-    padding: 10px 0;
-    transform: translateX(-15px);
 }
 
-.battle .cards div:hover {
+.battle .cards div:hover,
+.battle .cards_field div:hover {
     z-index: 4;
     cursor: pointer;
 }
 
-.battle .cards img {
+.battle .cards .img_card {
     display: block;
     position: absolute;
     top: 0;
@@ -1534,59 +1608,62 @@ input[type=text], input[type=password], textarea {
 }
 
 .battle .cards .move {
-    transition: all 0.3s;
+    transition: all 0.5s;
     transform: translate(-15px, -15%);
     z-index: 4;
 }
 
-.battle .cards div:hover img {
+.battle .cards div:hover .img_card {
     box-shadow: 0 0 7px 3px #2994B3;
     background: #2994B3;
     cursor: pointer;
 }
 
-.battle .card_rewiev {
+.battle .card_review {
     display: none;
     position: absolute;
     top: 0;
     right: 0;
-    height: 100%;
+    min-height: 100%;
     width: 100%;
     z-index: 10;
     background: rgba(0, 0, 0, 0.95);
+    padding-bottom: 30px;
 }
 
-.battle .block_rewiev {
+.battle .block_review {
+    display: flex;
+    justify-content: space-around;
+    flex-wrap: wrap;
     padding: 30px 10%;
-    height: 70%;
 }
 
-.battle .block_rewiev div {
-    display: inline-block;
-    width: 19%;
-    padding: 10px 35px;
-    height: 45%;
+.battle .block_review .card_on_table {
     position: relative;
+    min-width: 100px;
+    width: 170px;
+    max-width: 14%;
+    margin: 35px 3%;
 }
 
-.battle .card_rewiev img {
+.battle .card_review .img_card {
     display: block;
-    width: auto;
-    height: 100%;
+    width: 100%;
 }
 
-.battle .card_rewiev img:hover {
+.battle .card_review .img_card:hover {
     box-shadow: 0 0 7px 3px #2994B3;
     background: #2994B3;
     cursor: pointer;
 }
 
-.battle .card_rewiev h2 {
+.battle .card_review h2 {
     font-weight: 400;
     margin-top: 30px;
+    font-size: 28px;
 }
 
-.battle .card_rewiev .skip {
+.battle .card_review .skip {
     padding: 5px 20px;
     transform: translateX(-25px);
 }
@@ -1653,19 +1730,30 @@ input[type=text], input[type=password], textarea {
     border-bottom: 2px solid  #2994B3;
 }
 
-.battle .results_body .to_home {
+.action_after {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    margin-top: 100px;
+}
+
+.battle .results_body .to_home,
+.battle .results_body .thanks {
     display: block;
-    width: 150px;
-    padding: 10px;
-    margin: 100px auto 0 auto;
+    padding: 5px 10px;
+    font-size: 16px;
+}
+
+.battle .results_body .to_home {
+    color: #000000;
 }
 
 .battle .results_body .win {
-    color: #2994B3;
+    color: #FFD550;
 }
 
-.battle .results_body .win {
-    color: #2994B3;
+.battle .results_body .loose {
+    color: #ff0000;
 }
 
 .battle .exp_block {
@@ -1675,6 +1763,12 @@ input[type=text], input[type=password], textarea {
     margin-bottom: 50px;
 }
 
+.battle .rating_block {
+    text-align: center;
+    font-size: 40px;
+    color: #2994B3;
+    margin-bottom: 50px;
+}
 
 .battle .fold {
     display: flex;
@@ -1701,44 +1795,42 @@ input[type=text], input[type=password], textarea {
 
 .battle .choice {
     display: flex;
-    position: absolute;
-    align-items: center;
     justify-content: space-around;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    position: absolute;
     top: 0;
     right: 0;
-    height: 100%;
+    min-height: 100%;
     width: 100%;
     z-index: 10;
     background: rgba(0, 0, 0, 0.95);
-    padding: 30px 10%;
+    padding: 50px 30px;
 }
 
-.battle .choice div {
-    display: inline-block;
-    flex: 0;
-    padding: 10px 35px;
-    height: 380px;
-    width: 250px;
+.battle .choice .card_on_table {
     position: relative;
+    min-width: 100px;
+    width: 14%;
+    max-width: 200px;
+    margin: 35px 3%;
 }
 
-.battle .choice img {
+.battle .choice .img_card {
     display: block;
-    width: auto;
-    height: 100%;
+    width: 100%;
 }
 
-.battle .choice img:hover {
+.battle .choice .img_card:hover {
     box-shadow: 0 0 7px 3px #2994B3;
     background: #2994B3;
     cursor: pointer;
 }
 
-.battle .choice .fact_strength {
+.battle .choice .strength_card {
     display: block;
     position: absolute;
     top: 15px;
-    left: 40px;
     height: 40px;
     width: 40px;
     line-height: 40px;
@@ -1750,7 +1842,13 @@ input[type=text], input[type=password], textarea {
     font-weight: 900;
 }
 
+.battle .strength_card.up {
+    background: #2994B3;
+}
 
+.battle .strength_card.down {
+    background: #ff3e3f;
+}
 
 /*=================================   MAIN PAGE  =======================================*/
 
@@ -1873,4 +1971,660 @@ input[type=text], input[type=password], textarea {
 
 .main .gamers .no_deck:hover {
     background: url('../imgs/others/delete_hover.png') center center no-repeat;
+}
+
+
+/*==============================   WORKROOM PAGE  ====================================*/
+
+
+.work .tab_cont {
+    display: none;
+}
+
+.work .visible {
+    display: block;
+}
+
+.work .tab_block {
+    display: block;
+    position: relative;
+    width: 90%;
+    max-width: 1300px;
+    margin: 10px auto;
+}
+
+.work .list {
+    position: relative;
+    overflow: hidden;
+    padding: 10px 20px;
+    margin-bottom: 30px;
+    z-index: 3;
+    border-bottom: 1px solid #2994B2;
+}
+
+.work .list li {
+    position: relative;
+    display: inline-block;
+    width: 25%;
+    float: left;
+    cursor: pointer;
+    padding: 2px 10px;
+    text-align: center;
+    box-sizing: border-box;
+    color: #959595;
+}
+
+.work .list li:hover {
+    color: #FFD548;
+}
+
+.work .list .active_li{
+    color: #FFD548;
+}
+
+.work .points_block {
+    width: 300px;
+    margin: 0 auto;
+}
+
+.work .points_row {
+    display: flex;
+    justify-content: space-between;
+}
+
+.work .points_row div {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    line-height: 50px;
+    font-size: 30px;
+    font-weight: 900;
+    margin: 0 auto;
+    text-align: center;
+    color: #000000;
+    box-shadow: inset 0 0 2px 1px #d9d9d9;
+}
+
+.work .points_row .rait_p {
+    background: #2994B2;
+}
+
+.work .points_row .g_rait_p {
+    background: #FFD550;
+}
+
+.work .actions_row, .work .slider_actions {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+    height: 30px;
+}
+
+.work .not_visible {
+    display: none;
+}
+
+.work .visible {
+    display: block;
+}
+
+.work .actions_row button {
+    width: 100px;
+    margin: 0 10px;
+    height: 27px;
+}
+
+.work select {
+    display: block;
+    width: 250px;
+    height: 25px;
+    outline: none;
+    background: #FFD550;
+    font-size: 16px;
+    color: #000000;
+    border: none;
+    margin: 10px auto 15px auto;
+}
+
+.work #select_fraction option,
+.work #select_fraction2 option {
+    text-align: center;
+}
+
+.work .strength_block label,
+.work .unlock_block label{
+    display: block;
+    margin: 0 auto;
+    width: 250px;
+    text-align: center;
+}
+
+.work .slider_units {
+    position: relative;
+    overflow: hidden;
+}
+
+.work .cards_area {
+    width: 90%;
+    margin: 15px auto;
+    height: 270px;
+    box-shadow: 0 1px 2px 1px #000000;
+    background: #2D4059;
+    overflow: hidden;
+}
+
+.work .slides_block {
+    display: flex;
+    justify-content: space-around;
+    flex-wrap: wrap;
+    width: 100%;
+    transition: all 0.5s;
+}
+
+.work .card {
+    cursor: pointer;
+}
+
+.work .cards_area .card {
+    width: 120px;
+    position: relative;
+    margin: 20px;
+    border-radius: 7px;
+}
+
+.work .card_view .card {
+    width: 100%;
+    max-width: 250px;
+}
+
+.work .strength_card {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    line-height: 30px;
+    font-size: 20px;
+    font-weight: 900;
+    text-align: center;
+    color: #000000;
+    background: #FFD550;
+    box-shadow: inset 0 0 2px 1px #d9d9d9;
+    cursor: pointer;
+}
+
+.work .strength_card.up {
+    background: #2994B3;
+}
+
+.work .strength_card.down {
+    background: #ff3e3f;
+}
+
+
+.work .class_card {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    transform: translateY(-50%);
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background: #FFD550;
+    box-shadow: inset 0 0 2px 1px #d9d9d9;
+    cursor: pointer;
+}
+
+.work .ability_card {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background: #FFD550;
+    box-shadow: inset 0 0 2px 1px #d9d9d9;
+    cursor: pointer;
+}
+
+.work .cards_area .img_card,
+.work .card_view .img_card {
+    display: block;
+    width: 100%;
+    height: 100%;
+    cursor: pointer;
+}
+
+.work .gold {
+    box-shadow: 0 0 7px 3px #FFD550!important;
+    background: #FFD550!important;
+}
+
+.work .filter.active {
+    color: #FFD550;
+}
+
+.work .cards_area .card:hover {
+    box-shadow: 0 0 7px 3px #2994B3;
+    background: #2994B3;
+}
+
+.work .slider_actions button {
+    width: 100px;
+    margin: 0 30px;
+    height: 25px;
+}
+
+.work .units_up {
+     background: url('../imgs/others/arrow_up.png') center center no-repeat, #2994B3;
+     background-size: contain;
+ }
+
+.work .units_down {
+    background: url('../imgs/others/arrow_down.png') center center no-repeat, #2994B3;
+    background-size: contain;
+}
+
+.work .units_up:hover {
+    background: url('../imgs/others/arrow_up.png') center center no-repeat, #FFD550;
+    background-size: contain;
+}
+
+.work .units_down:hover {
+    background: url('../imgs/others/arrow_down.png') center center no-repeat, #FFD550;
+    background-size: contain;
+}
+
+.work .descr_card {
+    width: 300px;
+    margin: 50px auto 0 auto;
+}
+
+.work .descr_card .caption {
+    width: 100%;
+    text-align: center;
+    font-size: 18px;
+}
+
+.work .strength_actions {
+    display: flex;
+    justify-content: center;
+    width: 150px;
+    margin: 0 auto;
+}
+
+.work .strength_up,
+.work .strength_down {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    line-height: 0px;
+    font-size: 26px;
+    font-weight: 900;
+    text-align: center;
+    color: #000000;
+    margin: auto;
+}
+
+.work .strength_down {
+    font-size: 36px;
+}
+
+.work .strength {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    line-height: 50px;
+    font-size: 26px;
+    font-weight: 900;
+    text-align: center;
+    color: #FFD550;
+    background: #000000;
+    box-shadow: inset 0 0 2px 1px #d9d9d9;
+    margin: auto;
+}
+
+.work #unlock_form {
+    display: flex;
+}
+
+.work #unlock_form .filter_card {
+    width: 20%;
+}
+
+.work #unlock_form .slider_units {
+    width: 80%;
+}
+
+.work #unlock_form .cards_area {
+    width: 90%;
+}
+
+.work .filter_card ul {
+    padding-left: 20px;
+    color: #959595;
+    margin-top: 45px;
+}
+
+.work .filter_card ul li {
+    padding: 20px 0;
+    font-size: 18px;
+}
+
+.work .filter_card ul li:hover {
+    cursor: pointer;
+    color: #FFD548;
+}
+
+.work .tab_block .card_view {
+    position: absolute;
+    z-index: 10;
+    display: flex;
+    flex-wrap: wrap;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100%;
+    max-width: 1000px;
+    height: 100%;
+    min-height: 500px;
+    max-height: 700px;
+    background: #000000;
+    padding: 20px 100px;
+    border: 2px solid #2994B3;
+}
+
+.work .tab_block .card_view.not_visible {
+    display: none;
+}
+
+.work .card_view .card_name {
+    text-align: center;
+    font-size: 28px;
+    margin: 20px 0;
+    color: #FFD548;
+    width: 100%;
+}
+
+.work .card_view .detail_card {
+    box-sizing: border-box;
+    width: 70%;
+    padding-right: 40px;
+    margin: auto;
+}
+
+.work .card_view .pict_card {
+    width: 30%;
+    margin: auto;
+    position: relative;
+}
+
+.work .card_view .open_card button {
+    margin: 10px 30px 0 30px;
+}
+
+.work .card_view .detail_card>div {
+    position: relative;
+    overflow: hidden;
+    margin: 20px 0;
+    text-align: center;
+}
+
+.work .card_view .detail_card .prop {
+    color:  #2994B3;
+    font-size: 24px;
+    margin: 5px 0;
+}
+
+.work .card_view .detail_card .val {
+    font-size: 22px;
+}
+
+.work .card_view .ability_name_row .val {
+    color: #FFD548;
+}
+
+.work .card_view .descr_row .val {
+    padding-top: 70px;
+    font-size: 16px;
+}
+
+.work .card_view .close_card {
+    width: 100%;
+    text-align: center;
+}
+
+.work .card_view .close_it {
+    width: 150px;
+}
+
+.work .card_view .strength_card,
+.work .card_view .class_card,
+.work .card_view .ability_card {
+    width: 50px;
+    height: 50px;
+    line-height: 50px;
+    font-size: 30px;
+    cursor: inherit;
+}
+
+.work .constructor_block {
+    display: flex;
+    justify-content: space-around;
+}
+
+.work .blank_card {
+    width: 300px;
+    padding: 10px;
+    position: relative;
+    overflow: hidden;
+    margin: 0 10px;
+}
+
+.work .blank_card .row {
+    display: flex;
+    flex-wrap: wrap;
+    position: relative;
+    overflow: hidden;
+    margin: 10px 0;
+    padding: 5px 0;
+}
+
+.work .blank_card .unlock {
+    position: absolute;
+    top: 0;
+    right: 0;
+    height: 100%;
+    width: 100%;
+    background: #2994B3;
+    color: #000000;
+    text-align: center;
+    font-weight: 900;
+    display: flex;
+}
+
+.work .blank_card .unlock span {
+    display: block;
+    margin: auto;
+    padding-left: 25px;
+    background: url('../imgs/others/unlock.png') left center no-repeat;
+    background-size: contain;
+    cursor: pointer;
+}
+
+.work .blank_card .unlock:hover {
+    background: #ffd550;
+    cursor: pointer;
+}
+
+.work .blank_card input,
+.work .blank_card select {
+    width: 100%;
+    height: 25px;
+    margin: auto;
+}
+
+.work .blank_card input {
+    padding: 5px;
+}
+
+.work .blank_card .class_row {
+    width: 100%;
+    text-align: center;
+    color: #ffd550;
+}
+
+.work .blank_card .class_img {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    margin: 0 auto;
+    background: #FFD550;
+    box-shadow: inset 0 0 2px 1px #d9d9d9;
+    cursor: pointer;
+}
+
+.work .blank_card .ability_descr {
+    display: block;
+    width: 100%;
+    height: 60px;
+    overflow: auto;
+    margin-top: 10px;
+    padding: 5px;
+    font-size: 14px;
+    text-align: center;
+}
+
+.work .blank_card .strength_actions,
+.work .blank_card textarea {
+    width: 100%;
+    margin: auto;
+}
+
+.work .blank_card textarea {
+    height: 100px;
+    padding: 5px;
+}
+
+.work .blank_card .lock_card {
+    position: absolute;
+    top: 0;
+    right: 0;
+    height: 100%;
+    width: 100%;
+    background: url('../imgs/others/lock_card.png') center center no-repeat, #2994B3;
+}
+
+.work .blank_card .fixed {
+    margin-top: 20px;
+}
+
+.work .any_block {
+    width: 80%;
+    display: flex;
+    flex-wrap: wrap;
+    margin: 0 auto;
+    position: relative;
+    overflow: hidden;
+}
+
+.work .any_block .max_deck {
+    padding: 15px 0;
+    text-align: center;
+}
+
+.work .any_block .description {
+    text-align: center;
+    width: 70%;
+    margin: 20px auto;
+}
+
+.work .any_block .block {
+    width: 50%;
+    text-align: center;
+    padding: 30px 0;
+    box-sizing: border-box;
+}
+
+.work .any_block .reset_card {
+    width: 100%;
+}
+
+.work .reset_card {
+    border-top: 2px solid #2994B3;
+    border-bottom: 2px solid #2994B3;
+}
+
+.work .buy_points,
+.work .like_rival {
+    border-right: 2px solid #2994B3;
+}
+
+.work .any_block .reset_card {
+    display: flex;
+}
+
+.work .any_block .reset_actions {
+    width: 50%;
+    margin: auto;
+}
+
+.work .any_block .reset_actions label {
+    display: block;
+    width: 100%;
+    text-align: center;
+}
+
+.work .any_block .reset_actions select {
+    display: block;
+    width: 70%;
+    height: 25px;
+    margin: 15px auto;
+    text-align: center;
+}
+
+.work .any_block #buy_votes {
+    margin-top: 20px;
+}
+
+.work .any_block .votes {
+    color: #ffd550;
+}
+
+.work .any_block .reset_img {
+    width: 150px;
+    height: 290px;
+    position: relative;
+    margin: auto;
+    cursor: pointer;
+    border-radius: 7px;
+    overflow: hidden;
+}
+
+.work .any_block .reset_img .img_card {
+    width: 100%;
+}
+
+.work .reset_descr {
+    width: 100%;
+    text-align: center;
+    font-size: 18px;
+}
+
+.work .any_block .reset_all {
+    padding: 15px 0;
+}
+
+.work .any_block #max_up,
+.work .any_block #reset_all,
+.work .any_block #reset_card,
+.work .any_block #get_likes,
+.work .any_block #buy_votes {
+    width: 150px;
+    margin-top: 25px;
+}
+
+.work .any_block #reset_all {
+    background: red;
 }

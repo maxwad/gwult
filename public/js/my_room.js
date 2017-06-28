@@ -81,13 +81,13 @@ $(document).ready(function () {
                 }
                 $('.username').text(response.user_name);
                 $('.pict').attr('src', url);
-                $('.player_level').text(response.level);
+                $('.player_level').text(response.exp_level);
                 $('.level_next').attr('title', unscale + ' exp до нового уровня!');
                 $('.scale').css('width', scale + "%");
                 $('.all_games').text(response.numb_of_battle).attr('title', 'Всего сыграно');
                 $('.win_games').text(response.numb_of_win).attr('title', 'Побед');
                 $('.percent_win').text(percent + '%').attr('title', 'Процент побед');
-                if(response.level > response.old_level){
+                if(response.exp_level > response.old_exp_level){
                     $('.player_level').css('box-shadow', '0 0 5px 5px #FFD550').attr('title', 'Новый уровень!');
                     $.ajax({
                         url: "update_lvl",

@@ -121,43 +121,6 @@ function delete_pict (prop, name_table, id_card) {
     });
 }
 
-
-/////////////////////////////////////////////////////////////
-// Функция, которая отсылает пользователю массив данных:
-// фракции, спецкарты, юниты и лидеры его фракции
-/////////////////////////////////////////////////////////////
-function rows_cards (result, table, id, sort) {
-    var deferred = Q.defer();
-
-    switch (table) {
-        case "specials":
-        case "fractions":
-        case "abilities":
-            query_to_db = "SELECT * FROM " + table;
-            break;
-
-        case "leaders":
-        case "units":
-        default:
-            query_to_db = "SELECT * FROM " + table + " WHERE id_fraction IN (?, 6)" + sort;
-            break;
-    }
-    connection.query(query_to_db, [id], function(err, rows) {
-        if (err) {
-            console.log("88. Ошибка при выборе карт: " + err);
-            result.data_error = true;
-            deferred.reject(result);
-        } else {
-            result.data_error = false;
-            result[table] = rows;
-            deferred.resolve(result);
-        }
-    });
-
-    return deferred.promise;
-}
-
-
 /////////////////////////////////////////////////////////////
 // Функция, которая отсылает данные для меню и списки созданных карт
 /////////////////////////////////////////////////////////////
@@ -189,7 +152,6 @@ function request_data(data_block, flag, obj, data_prop, answer_prop){
 /////////////////////////////////////////////////////////////
 app.get('/', function(req, res, next) {
     console.log("4. " + req.session.username);
-    //res.render('index', {});
     res.redirect("/index.html");
     next();
 });
@@ -324,7 +286,7 @@ app.post('/deck_status', function(req, res) {
     query_to_db = "SELECT * FROM card_decks WHERE id_user=?";
     connection.query(query_to_db, [req.session.user], function(err, rows) {
         // Если ошибка, записи о пользователе нет или колода полностью не сформирована
-        if (err || rows.length == 0 || rows[0].leader === null) {
+        if (err || rows.length == 0 || rows[0].id_fraction == -1) {
             console.log("26. Ошибка при обращении к таблице колод: " + err);
             res.send({answer:false});
         } else {
@@ -341,15 +303,17 @@ app.post('/deck_status', function(req, res) {
 // Получение статистики по игроку
 /////////////////////////////////////////////////////////////
 app.post('/statistics', function(req, res) {
-    query_to_db = "SELECT user_name, pict, level, old_level, exp, numb_of_battle, numb_of_win FROM users  WHERE id=?";
+    query_to_db = "SELECT * FROM users  WHERE id=?";
     connection.query(query_to_db, [req.session.user], function(err, rows) {
         // Если ошибка, записи о пользователе нет
         if (err || rows.length == 0) {
-            console.log("99. Ошибка. Такого пользователя нет: " + err);
+            console.log("99. Такого пользователя не существует.");
             res.send({answer:false});
         } else {
             // Колода существует и полностью сформирована
             rows[0].answer = true;
+            delete rows[0].user_pass;
+            delete rows[0].actions;
             res.send(rows[0]);
         }
     });
@@ -361,7 +325,7 @@ app.post('/statistics', function(req, res) {
 // Удаление пометки "Новый уровень"
 /////////////////////////////////////////////////////////////
 app.post('/update_lvl', function(req) {
-    query_to_db = "UPDATE users SET old_level=level WHERE id=?";
+    query_to_db = "UPDATE users SET old_exp_level=exp_level WHERE id=?";
     connection.query(query_to_db, [req.session.user], function(err) {
         // Если ошибка, записи о пользователе нет
         if (err) {
@@ -401,7 +365,7 @@ app.post('/take_pass', function(req, res) {
     query_to_db = "SELECT * FROM list_of_battles WHERE pl1=?";
     connection.query(query_to_db, [req.session.user], function(err, rows) {
         if (err) {
-            console.log("26. Ошибка при обращении к таблице игр: " + err);
+            console.log("26. Ошибка: ");
             res.send({answer:false});
         } else {
             // Проверка на число созданных комнат одного пользователя
@@ -433,7 +397,7 @@ app.post('/give_me_battle', function(req, res) {
     query_to_db = "SELECT * FROM list_of_battles WHERE pl1=?";
     connection.query(query_to_db, [req.session.user], function(err, rows) {
         if (err ||(rows.length == 0)) {
-            console.log("21. Ошибка при выводе информации о комате: " + err);
+            console.log("21. У пользователя нет созданных комнат.");
             res.send({answer:false});
         } else {
             // Проверка срока давности битвы.
@@ -689,15 +653,15 @@ app.post('/initial', function(req, res) {
     // Получаем id пользователя
     function get_user_id () {
         var deferred = Q.defer();
-        query_to_db = "SELECT id FROM users WHERE user_name = ?";
+        query_to_db = "SELECT * FROM users WHERE user_name = ?";
         connection.query(query_to_db, [req.session.username], function(err, rows) {
             if (err || rows.length == 0) {
                 console.log("84. Ошибка при поиске юзера в БД: " + err);
                 data_block.user_error = true;
                 deferred.reject(data_block);
             } else {
-                data_block.id_user = rows[0].id;
-                deferred.resolve(data_block.id_user);
+                data_block.user = rows[0];
+                deferred.resolve(data_block.user.id);
             }
         });
         return deferred.promise;
@@ -734,17 +698,27 @@ app.post('/initial', function(req, res) {
         if(result == -1) {
             deferred.resolve(data_block);
         } else {
-            query_to_db = "INSERT INTO card_decks (id_user, id_fraction) VALUES (?, '-1')";
-            connection.query(query_to_db, [result], function(err) {
+            deck_user.units    = {};
+            deck_user.specials = {};
+            deck_user.leader   = {};
+            for(var i = 0; i < fractions.length; i++){
+                if(fractions[i].id != 6){
+                    deck_user.units['fraction_' + fractions[i].id] = [];
+                    deck_user.specials['fraction_' + fractions[i].id] = [];
+                    deck_user.leader['fraction_' + fractions[i].id] = [];
+                }
+            }
+            deck_user.units = JSON.stringify(deck_user.units);
+            deck_user.specials = JSON.stringify(deck_user.specials);
+            deck_user.leader = JSON.stringify(deck_user.leader);
+            query_to_db = "INSERT INTO card_decks (id_user, id_fraction, units, specials, leader) VALUES (?, '-1', ?, ?, ?)";
+            connection.query(query_to_db, [result, deck_user.units, deck_user.specials, deck_user.leader], function(err) {
                 if (err) {
                     console.log("86. Ошибка при записи юзера в БД: " + err);
                     data_block.user_error = true;
                     deferred.reject(data_block);
                 } else {
                     deck_user.id_fraction   = -1;
-                    deck_user.specials      = null;
-                    deck_user.units         = null;
-                    deck_user.leader        = '';
                     data_block.deck_user    = deck_user;
                     deferred.resolve(data_block);
                 }
@@ -757,14 +731,16 @@ app.post('/initial', function(req, res) {
     if(req.session.user !== undefined) {
         data_block.user = true;
 
+        data_block.units       = units;
+        data_block.specials    = specials;
+        data_block.abilities   = abilities;
+        data_block.classes     = classes;
+        data_block.fractions   = fractions;
+        data_block.leaders     = leaders;
+
         get_user_id().
             then(function(result) { return check_user_deck(result) }).
             then(function(result) { return insert_user_deck(result) }).
-            then(function(result) { return rows_cards(result, "fractions") }).
-            then(function(result) { return rows_cards(result, "abilities")}).
-            then(function(result) { return rows_cards(result, "units", deck_user.id_fraction, " ORDER BY strength DESC") }).
-            then(function(result) { return rows_cards(result, "leaders", deck_user.id_fraction,"") }).
-            then(function(result) { return rows_cards(result, "specials") }).
             then(function(result) { res.send(result); }).
             catch(function(result) { res.send(result); }).
             done();
@@ -772,19 +748,6 @@ app.post('/initial', function(req, res) {
         data_block.user = false;
         res.send(data_block);
     }
-});
-
-
-/////////////////////////////////////////////////////////////
-// Обработка запроса на изменение текущей фракции
-/////////////////////////////////////////////////////////////
-app.post('/give_me_fraction', function(req, res) {
-    var data_block      = {};
-    rows_cards(data_block, "units", req.body.fraction, " ORDER BY strength DESC").
-        then(function(result) { return rows_cards(result, "leaders", req.body.fraction,"") }).
-        then(function(result) { res.send(result); }).
-        catch(function(result) { res.send(result); }).
-        done();
 });
 
 
@@ -828,27 +791,27 @@ app.post('/gamer_list', function(req, res) {
     if(user_id != false) {
         switch (parseInt(req.body.option)){
             case 1:
-                sign = "AND users.level>=? AND users.level<=?+2 ";
+                sign = "AND users.score>=? AND users.score<=?+10 ";
                 break;
 
             case 2:
-                sign = "AND users.level=? ";
+                sign = "AND users.score=? ";
                 break;
 
             case 3:
-                sign = "AND users.level>? AND users.level<=?+2 ";
+                sign = "AND users.score>? AND users.score<=?+10 ";
                 break;
         }
         function get_user_lvl () {
            var deferred = Q.defer();
-            query_to_db = "SELECT level FROM users WHERE id = ?";
+            query_to_db = "SELECT score FROM users WHERE id = ?";
             connection.query(query_to_db, [user_id], function(err, rows) {
                 if (err || rows.length == 0) {
                     console.log("97. Ошибка при поиске юзера в БД: " + err);
                     data_block.error = 1;
                     deferred.reject(data_block);
                 } else {
-                    data_block.user_level = rows[0].level;
+                    data_block.score = rows[0].score;
                     deferred.resolve(data_block);
                 }
             });
@@ -857,8 +820,8 @@ app.post('/gamer_list', function(req, res) {
 
         function get_battle (data) {
             var deferred = Q.defer();
-            query_to_db = "SELECT list_of_battles.id_battle, users.user_name, users.numb_of_battle, users.numb_of_win, users.level FROM list_of_battles, users WHERE list_of_battles.pl1<>? AND list_of_battles.pl1=users.id AND list_of_battles.pass_battle='' AND list_of_battles.start_battle='0' " + sign + "ORDER BY users.level ASC LIMIT 10";
-            connection.query(query_to_db, [user_id, data_block.user_level, data_block.user_level], function(err, rows) {
+            query_to_db = "SELECT list_of_battles.id_battle, users.user_name, users.numb_of_battle, users.numb_of_win, users.score FROM list_of_battles, users WHERE list_of_battles.pl1<>? AND list_of_battles.pl1=users.id AND list_of_battles.pass_battle='' AND list_of_battles.start_battle='0' " + sign + "ORDER BY users.score ASC LIMIT 10";
+            connection.query(query_to_db, [user_id, data_block.score, data_block.score], function(err, rows) {
                 if (err || rows.length == 0) {
                     console.log("98. Свободных беспарольных битв нет: " + err);
                     data.error = 2;
@@ -913,12 +876,111 @@ app.post('/gamer_list', function(req, res) {
 // Обработка игровой комнаты
 /////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////
-var gwent   = http.createServer(app);
-var io      = socketio(gwent);
-var rooms   = {};
-var decks   = {};
-var history = {};
+var gwent       = http.createServer(app);
+var io          = socketio(gwent);
+var units       = [];
+var specials    = [];
+var abilities   = [];
+var classes     = [];
+var leaders     = [];
+var fractions   = [];
+var rooms       = {};
+var decks       = {};
+var history     = {};
 
+
+function get_units () {
+    var deferred = Q.defer();
+    query_to_db = "SELECT * FROM units ORDER BY id_fraction, strength DESC";
+    connection.query(query_to_db, [], function(err, rows) {
+        if (err) {
+            deferred.reject('error (units): ' + err);
+        } else {
+            units = rows;
+            deferred.resolve();
+        }
+    });
+    return deferred.promise;
+}
+
+function get_specials () {
+    var deferred = Q.defer();
+    query_to_db = "SELECT * FROM specials";
+    connection.query(query_to_db, [], function(err, rows) {
+        if (err) {
+            deferred.reject('error (specials): ' + err);
+        } else {
+            specials = rows;
+            deferred.resolve();
+        }
+    });
+    return deferred.promise;
+}
+
+function get_abilities () {
+    var deferred = Q.defer();
+    query_to_db = "SELECT * FROM abilities";
+    connection.query(query_to_db, [], function(err, rows) {
+        if (err) {
+            deferred.reject('error (abilities): ' + err);
+        } else {
+            abilities = rows;
+            deferred.resolve();
+        }
+    });
+    return deferred.promise;
+}
+
+function get_classes () {
+    var deferred = Q.defer();
+    query_to_db = "SELECT * FROM classes";
+    connection.query(query_to_db, [], function(err, rows) {
+        if (err) {
+            deferred.reject('error (classes): ' + err);
+        } else {
+            classes = rows;
+            deferred.resolve();
+        }
+    });
+    return deferred.promise;
+}
+
+function get_leaders () {
+    var deferred = Q.defer();
+    query_to_db = "SELECT * FROM leaders";
+    connection.query(query_to_db, [], function(err, rows) {
+        if (err) {
+            deferred.reject('error (leaders): ' + err);
+        } else {
+            leaders = rows;
+            deferred.resolve();
+        }
+    });
+    return deferred.promise;
+}
+
+function get_fractions () {
+    var deferred = Q.defer();
+    query_to_db = "SELECT * FROM fractions";
+    connection.query(query_to_db, [], function(err, rows) {
+        if (err) {
+            deferred.reject('error (fractions): ' + err);
+        } else {
+            fractions = rows;
+            deferred.resolve();
+        }
+    });
+    return deferred.promise;
+}
+
+get_units().
+    then(function(){ return get_specials() }).
+    then(function(){ return get_abilities() }).
+    then(function(){ return get_classes() }).
+    then(function(){ return get_leaders() }).
+    then(function(){ return get_fractions() }).
+    catch(function(err) { console.log(err); }).
+    done();
 
 
 /////////////////////////////////////////////////////////////
@@ -949,10 +1011,12 @@ io.on('connection', function(socket) {
             rooms[room]                     = {};
             rooms[room].complete            = 0;
             rooms[room].players             = [];
+            rooms[room].temp_players        = [];
             rooms[room].units               = [];
             rooms[room].leaders             = [];
             rooms[room].listeners           = [];
             rooms[room].send_to_listeners   = 0;
+            rooms[room].thanks              = [0, 0];
             decks[room]                     = [];
             history[room]                   = {};
             history[room].cards             = [];
@@ -968,8 +1032,9 @@ io.on('connection', function(socket) {
         }
         // Если не все игроки подключились к комнате
         if (rooms[room].complete != 2) {
-            var deck_player;
-            var data_player = {};
+            var deck_player,
+                id_fraction,
+                my_leader = '';
 
             // Получаем данные из таблицы битв
             query_to_db = "SELECT * FROM list_of_battles WHERE id_battle =?";
@@ -1010,6 +1075,7 @@ io.on('connection', function(socket) {
                                     deferred.reject(result);
                                 } else {
                                     deck_player = rows[0];
+                                    my_leader = deck_player.leader;
                                     deferred.resolve(result);
                                 }
                             });
@@ -1019,7 +1085,7 @@ io.on('connection', function(socket) {
                         // Функция формирует объект игрока
                         function initial_player (player, rows, obj, socket) {
                             var deferred = Q.defer();
-                            var pl, bg, leader;
+                            var pl, bg;
                             obj.complete = 2;
                             if(player == 1) {
                                 pl = rows[0].pl1;
@@ -1028,10 +1094,17 @@ io.on('connection', function(socket) {
                                 pl = rows[0].pl2;
                                 bg = false;
                             }
-                            obj.units[player - 1]   = data_player.units;
-                            for (var index = 0; index < data_player.leaders.length; index++) {
-                                if(data_player.leaders[index].id == deck_player.leader) {
-                                    obj.leaders[player - 1] = data_player.leaders[index];
+                            obj.units       = units;
+                            obj.specials    = specials;
+                            obj.abilities   = abilities;
+                            obj.classes     = classes;
+                            obj.fractions   = fractions;
+
+                            my_leader = JSON.parse(my_leader);
+
+                            for (var index = 0; index < leaders.length; index++) {
+                                if(leaders[index].id == my_leader["fraction_" + deck_player.id_fraction][0]) {
+                                    obj.leaders[player - 1] = leaders[index];
                                 }
                             }
 
@@ -1039,6 +1112,7 @@ io.on('connection', function(socket) {
                                 user_name : user_data.user_name,
                                 socket_id : socket.id,
                                 beginners : bg      };
+                            obj.temp_players[player - 1] = pl;
                             decks[room][player - 1] = deck_player;
                             console.log("Добавлен игрок");
                             for (var i = 0; i < 2; i++) {
@@ -1054,16 +1128,22 @@ io.on('connection', function(socket) {
                         function info_player_1 (obj, player) {
                             var deferred = Q.defer();
                             if(obj.players[0] !== undefined && player != 0) {
-                                query_to_db = "SELECT pict, level, old_level, exp FROM users WHERE id = ?";
+                                query_to_db = "SELECT pict, exp_level, old_exp_level, exp, liking, is_rating, score FROM users WHERE id = ?";
                                 connection.query(query_to_db, [obj.players[0].user_id], function(err, rows) {
                                     if (err || rows.length == 0) {
                                         console.log("102. Ошибка при поиске юзера в БД: " + err);
                                         deferred.reject(obj);
                                     } else {
-                                        obj.players[0].user_level     = rows[0].level;
-                                        obj.players[0].user_old_level = rows[0].old_level;
+                                        obj.players[0].user_level     = rows[0].exp_level;
+                                        obj.players[0].user_old_level = rows[0].old_exp_level;
                                         obj.players[0].user_exp       = rows[0].exp;
                                         obj.players[0].user_pict      = rows[0].pict;
+                                        obj.players[0].liking         = rows[0].liking;
+                                        obj.players[0].is_rating      = rows[0].is_rating;
+                                        obj.players[0].score          = rows[0].score;
+                                        if(rows[0].liking == 0){
+                                            rooms[room].thanks[0] = 1;
+                                        }
                                         deferred.resolve(obj);
                                     }
                                 });
@@ -1074,16 +1154,22 @@ io.on('connection', function(socket) {
                         function info_player_2 (obj, player) {
                             var deferred = Q.defer();
                             if(obj.players[1] !== undefined && player != 0) {
-                                query_to_db = "SELECT pict, level, old_level, exp FROM users WHERE id = ?";
+                                query_to_db = "SELECT pict, exp_level, old_exp_level, exp, liking, is_rating, score FROM users WHERE id = ?";
                                 connection.query(query_to_db, [obj.players[1].user_id], function(err, rows) {
                                     if (err || rows.length == 0) {
                                         console.log("102. Ошибка при поиске юзера в БД: " + err);
                                         deferred.reject(obj);
                                     } else {
-                                        obj.players[1].user_level     = rows[0].level;
-                                        obj.players[1].user_old_level = rows[0].old_level;
+                                        obj.players[1].user_level     = rows[0].exp_level;
+                                        obj.players[1].user_old_level = rows[0].old_exp_level;
                                         obj.players[1].user_exp       = rows[0].exp;
                                         obj.players[1].user_pict      = rows[0].pict;
+                                        obj.players[1].liking         = rows[0].liking;
+                                        obj.players[1].is_rating      = rows[0].is_rating;
+                                        obj.players[1].score          = rows[0].score;
+                                        if(rows[0].liking == 0){
+                                            rooms[room].thanks[1] = 1;
+                                        }
                                         deferred.resolve(obj);
                                     }
                                 });
@@ -1098,7 +1184,11 @@ io.on('connection', function(socket) {
                                 obj.send_to_listeners = 1;
                                 io.to(obj.players[0].socket_id).emit('take data', [obj, decks[room][0], history[room]]);
                                 io.to(obj.players[1].socket_id).emit('take data', [obj, decks[room][1], history[room]]);
-                                // отменяем техническое поражение, если игрок переподключился в срок
+
+                                // Отдельно отсылаем усечённую инфу уже собравшимся зрителям
+                                for(var j = 0; j < rooms[room].listeners.length; j++) {
+                                    io.to(rooms[room].listeners[j].socket_id).emit('take data', [obj, history[room]]);
+                                }
                                 socket.broadcast.to(room).emit('clear timeout');
                             } else {
                                 socket.to(room).emit('rivals are not complete');
@@ -1108,11 +1198,6 @@ io.on('connection', function(socket) {
                         }
 
                         select_user_deck(rooms[room]).
-                            then(function(result) { return rows_cards(rooms[room], "abilities")}).
-                            then(function(result) { return rows_cards(rooms[room], "specials") }).
-                            then(function(result) { return rows_cards(rooms[room], "fractions") }).
-                            then(function(result) { return rows_cards(data_player, "units", deck_player.id_fraction, " ORDER BY strength DESC") }).
-                            then(function(result) { return rows_cards(data_player, "leaders", deck_player.id_fraction,"") }).
                             then(function(result) { return initial_player(player, rows, rooms[room], socket) }).
                             then(function(result) { return info_player_1(rooms[room], player) }).
                             then(function(result) { return info_player_2(rooms[room], player) }).
@@ -1164,10 +1249,25 @@ io.on('connection', function(socket) {
                         socket.leave(room);
                         // Запись истории в БД
                         if(rooms[room].complete == 0 && history[room] !== undefined){
-                            query_to_db = "UPDATE history SET pl1=(SELECT pl1 FROM list_of_battles WHERE id_battle = ?), pl2=(SELECT pl2 FROM list_of_battles WHERE id_battle = ?), history = ? WHERE id = ?";
+                            query_to_db = "UPDATE history SET pl1=?, pl2=?, history = ? WHERE id = ?";
+                            //Очищаем историю игры от мусора перед записью в БД
+                            /*
+                            for(var i = 0; i < history[room].cards.length; i++){
+                                var card = history[room].cards[i];
+                                if(card != "give_up"){
+                                    delete card.description;
+                                    delete card.desc_ability;
+                                    delete card.pict_ability;
+                                    delete card.pict_class;
+                                }
+                            }
+                            */
                             var hist_battle = JSON.stringify(history[room]);
-
-                            var query_var = [user_data.user_room, user_data.user_room, hist_battle, user_data.user_room];
+                            var query_var = [
+                                rooms[room].temp_players[0],
+                                rooms[room].temp_players[1],
+                                hist_battle,
+                                user_data.user_room];
                             connection.query(query_to_db, query_var, function(err, rows) {
                                 if (err || rows.length == 0) {
                                     console.log("95. Лог игры не записан: " + err);
@@ -1270,7 +1370,6 @@ io.on('connection', function(socket) {
             }
             user_data[i].resolution_h = history[room].resolution;
         }
-
         socket.broadcast.to(room).emit('step from', user_data);
     });
 
@@ -1320,6 +1419,7 @@ io.on('connection', function(socket) {
             data.timer      = history[room].timer;
             data.resolution = history[room].resolution;
             data.player     = user_data.player_index;
+
             socket.broadcast.to(room).emit('won is', data);
         }
     });
@@ -1328,7 +1428,10 @@ io.on('connection', function(socket) {
     // Запись результатов игры в БД и сигнал окончания игры
     /////////////////////////////////////////////////////////////
     socket.on('results', function(user_data) {
-        var query_var = '';
+        var query_var = '',
+            old_data = {},
+            new_data = user_data;
+
         function loose (user_data){
             var deferred = Q.defer();
             var room = "room_" + user_data.room;
@@ -1342,14 +1445,87 @@ io.on('connection', function(socket) {
             return deferred.promise;
         }
 
-        function user_stat (user_data) {
+        function old_stat (user_data) {
             var deferred = Q.defer();
-            query_var = [user_data.win, user_data.exp, user_data.level, user_data.id];
-            query_to_db = "UPDATE users SET numb_of_battle = numb_of_battle + 1, " +
-                "numb_of_win = numb_of_win + ?, exp = ?, level = ?  WHERE id = ?";
-            connection.query(query_to_db, query_var, function(err, rows) {
+            query_to_db = "SELECT * FROM users WHERE id = ?";
+            connection.query(query_to_db, [user_data.id], function(err, rows) {
                 if (err || rows.length == 0) {
                     console.log("91. Ошибка при поиске юзера в БД: " + err);
+                    deferred.reject(user_data.err = 1);
+                } else {
+                    old_data = rows[0];
+                    deferred.resolve(user_data);
+                }
+            });
+            return deferred.promise;
+        }
+
+        function campare_stat (user_data) {
+            var deferred = Q.defer();
+            if(user_data.exp + old_data.exp >= 100){
+                new_data.set_exp = user_data.exp + old_data.exp - 100;
+                new_data.level_up = 1;
+            }
+            else {
+                new_data.set_exp = user_data.exp + old_data.exp;
+                new_data.level_up = 0;
+            }
+            if(new_data.set_exp > 100 ||
+                user_data.rating > 100 ||
+                (user_data.liking !== undefined && user_data.liking !== old_data.liking)){
+                user_data.err = 5;
+				var message = "Махинации с опытом, рейтингом или флагом лайков";
+                query_to_db = "INSERT INTO blacklist (id_user, reason) VALUES (?,?)";
+                connection.query(query_to_db, [user_data.id, message], function(err) {
+                    if (err) {
+                        console.log("110. Ошибка при записи юзера в БД: " + err);
+                        deferred.reject(user_data);
+                    } else {
+                        deferred.reject(user_data);
+                    }
+                });
+            } else {
+                deferred.resolve(user_data);
+            }
+            return deferred.promise;
+        }
+
+        function set_stat (user_data) {
+            var deferred = Q.defer();
+            if(old_data.rating + new_data.rating < 0){
+                new_data.rating = 0;
+            }
+            if(new_data.level_up == 1){
+                new_data.points = old_data.points + 1;
+            } else {
+                new_data.points = old_data.points;
+            }
+            if(old_data.exp_win + new_data.win >= 50){
+                new_data.exp_win = old_data.exp_win + new_data.win - 50;
+                new_data.win_points = old_data.win_points + 1;
+                new_data.win_level = old_data.win_level + 1;
+            } else {
+                new_data.exp_win = old_data.exp_win + new_data.win;
+                new_data.win_points = old_data.win_points;
+                new_data.win_level = old_data.win_level;
+            }
+            query_var = [
+                new_data.win,
+                new_data.set_exp,
+                new_data.level_up,
+                new_data.points,
+                new_data.exp_win,
+                new_data.win_points,
+                new_data.win_level,
+                new_data.rating,
+                new_data.id
+            ];
+            query_to_db = "UPDATE users SET numb_of_battle = numb_of_battle + 1, " +
+                "numb_of_win = numb_of_win + ?, exp = ?, exp_level = exp_level + ?, " +
+                "points = ?, exp_win = ?, win_points = ?, win_level=?, rating = ?  WHERE id = ?";
+            connection.query(query_to_db, query_var, function(err, rows) {
+                if (err || rows.length == 0) {
+                    console.log("91. Ошибка при записи данных в БД: " + err);
                     deferred.reject(user_data.err = 1);
                 } else {
                     console.log("92. Результат успешно записан");
@@ -1369,7 +1545,7 @@ io.on('connection', function(socket) {
                         console.log("93. Попытка вставки неуникального значения: " + err);
                         deferred.reject(user_data.err = 2);
                     } else {
-                        console.log("94. Результат игры успешно записан");
+                        console.log("94. История игры успешно записана");
                         deferred.resolve(user_data);
                     }
                 });
@@ -1404,7 +1580,9 @@ io.on('connection', function(socket) {
         }
 
         loose(user_data).
-            then(function(user_data){ return user_stat(user_data) }).
+            then(function(user_data){ return old_stat(user_data) }).
+            then(function(user_data){ return campare_stat(user_data) }).
+            then(function(user_data){ return set_stat(user_data) }).
             then(function(user_data){ return write_history(user_data) }).
             then(function(user_data){ return game_over(user_data) }).
             then(function(user_data){ return delete_battle(user_data) }).
@@ -1413,7 +1591,254 @@ io.on('connection', function(socket) {
 
     });
 
+    /////////////////////////////////////////////////////////////
+    // Обработка благодарности за игру
+    /////////////////////////////////////////////////////////////
+    socket.on('thanks', function(new_data) {
+        var old_data = {};
+        var room = "room_" + new_data.room;
+        console.log("-=-==--==-==---");
+        console.log(rooms[room].thanks);
+        console.log(new_data);
+        if(rooms[room] !== undefined && rooms[room].thanks !== undefined){
+
+            // Получаем текущую статистику
+            function get_old_data (){
+                var deferred = Q.defer();
+                query_to_db = "SELECT liking, exp_like, like_level, points FROM users WHERE id=?";
+                connection.query(query_to_db, [new_data.id], function(err, rows) {
+                    if (err) {
+                        console.log("120. Ошибка при поиске пользователя: " + err);
+                        deferred.reject(err);
+                    } else {
+                        old_data = rows[0];
+                        deferred.resolve(old_data);
+                    }
+                });
+                return deferred.promise;
+            }
+
+            function set_new_data (){
+                var deferred = Q.defer();
+                if(rooms[room].thanks[new_data.index] != 1){
+                    rooms[room].thanks[new_data.index] = 1;
+                    old_data.exp_like++;
+                    if(old_data.exp_like >= 50){
+                        old_data.exp_like -=50;
+                        old_data.level_up = 1;
+                    } else {
+                        old_data.level_up = 0;
+                    }
+                    var user_data = [
+                        old_data.exp_like,
+                        old_data.level_up,
+                        old_data.level_up,
+                        new_data.id
+                    ];
+                    query_to_db = "UPDATE users SET exp_like = ?, like_level = like_level + ?, points = points +? WHERE id = ?";
+                    connection.query(query_to_db, user_data, function(err) {
+                        if (err) {
+                            console.log("121. Ошибка при поиске пользователя: " + err);
+                            deferred.reject(err);
+                        } else {
+                            deferred.resolve();
+                        }
+                    });
+                } else {
+					var message = "Махинации с флагом лайков";
+                    query_to_db = "INSERT INTO blacklist (id_user, reason) VALUES (?,?)";
+                    connection.query(query_to_db, [new_data.my_id, message], function(err) {
+                        if (err) {
+                            deferred.reject(err);
+                        } else {
+                            deferred.reject();
+                        }
+                    });
+                }
+                return deferred.promise;
+            }
+
+            get_old_data().
+                then(function(){ return set_new_data() }).
+                catch(function(user_data) { console.log(user_data); }).
+                done();
+        }
+    });
+
 });
+
+
+/////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////
+// обработка страницы "Мастерская"
+///////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////
+app.post('/save_data', function(req, res) {
+
+    var error_obj = {},
+        old_data  = {},
+        new_data  = req.body;
+
+    error_obj.error = 0;
+
+    function get_old_data () {
+        var deferred = Q.defer();
+        query_to_db = "SELECT * FROM users WHERE id = ?";
+        connection.query(query_to_db, [req.session.user], function(err, rows) {
+            if (err || rows.length == 0) {
+                console.log("100. Ошибка при поиске юзера в БД: " + err);
+                error_obj.error = 1;
+                deferred.reject(error_obj);
+            } else {
+                old_data.liking         = rows[0].liking;
+                old_data.points         = rows[0].points;
+                old_data.win_points     = rows[0].win_points;
+                old_data.sp_points      = rows[0].sp_points;
+                old_data.sp_win_points  = rows[0].sp_win_points;
+                old_data.score          = rows[0].score;
+                deferred.resolve(old_data);
+            }
+        });
+        return deferred.promise;
+    }
+
+
+    // Проверяем наличие колод у пользователя
+    function check_user_deck () {
+        var deferred = Q.defer();
+        query_to_db = "SELECT * FROM card_decks WHERE id_user = ?";
+        connection.query(query_to_db, [req.session.user], function(err, rows) {
+            if (err) {
+                console.log("101. Ошибка при поиске юзера в БД: " + err);
+                error_obj.error = 1;
+                deferred.reject(error_obj);
+            } else {
+                if(rows.length != 0) {
+                    // признак "Пользователь есть в таблице"
+                    deferred.resolve(-1);
+                } else {
+                    deferred.resolve(1);
+                }
+            }
+        });
+        return deferred.promise;
+    }
+
+    // заносим пользователя в таблицу, если его там не было
+    function insert_user_deck (result) {
+        var deferred = Q.defer();
+        if(result == -1) {
+            deferred.resolve(old_data);
+        } else {
+            query_to_db = "INSERT INTO card_decks (id_user, id_fraction) VALUES (?, '-1')";
+            connection.query(query_to_db, [req.session.user], function(err) {
+                if (err) {
+                    console.log("101. Ошибка при записи юзера в БД: " + err);
+                    error_obj.error = 1;
+                    deferred.reject(error_obj);
+                } else {
+                    deferred.resolve(old_data);
+                }
+            });
+        }
+        return deferred.promise;
+    }
+
+    // Проверяем новые данные
+    function security () {
+        var deferred = Q.defer();
+        var old_points,
+            new_points;
+        // Контрольная сумма очков для хоть какой-то страховки от хацкеров
+        old_points = old_data.points + old_data.sp_points + old_data.win_points + old_data.sp_win_points;
+        new_points = parseInt(new_data.points) + parseInt(new_data.sp_points) + parseInt(new_data.win_points) + parseInt(new_data.sp_win_points);
+        if(old_points != new_points || new_data.size_deck < 25){
+			var message = "Махинации с очками опыта";
+            query_to_db = "INSERT INTO blacklist (id_user, reason) VALUES (?,?)";
+            connection.query(query_to_db, [req.session.user, message], function(err) {
+                if (err) {
+                    console.log("102. Ошибка при записи юзера в БД: " + err);
+                    error_obj.error = 1;
+                    deferred.reject(error_obj);
+                } else {
+                    error_obj.error = 2;
+                    deferred.reject(error_obj);
+                }
+            });
+        } else {
+            deferred.resolve(new_data);
+        }
+
+        return deferred.promise;
+    }
+
+    // Заносим новые данные
+    function insert_data () {
+        var deferred = Q.defer();
+        var data_block = [
+            parseInt(new_data.liking),
+            parseInt(new_data.points),
+            parseInt(new_data.sp_points),
+            parseInt(new_data.win_points),
+            parseInt(new_data.sp_win_points),
+            parseInt(new_data.score),
+            parseInt(new_data.size_deck),
+            new_data.actions,
+            req.session.user
+        ];
+
+        query_to_db = "UPDATE users SET liking=?, points=?, sp_points=?, win_points=?, sp_win_points=?, score=?, size_deck=?, actions=? WHERE id=?";
+        connection.query(query_to_db, data_block, function(err) {
+            if (err) {
+                console.log("104. Ошибка при записи данных в БД: " + err);
+                error_obj.error = 4;
+                deferred.reject(error_obj);
+            } else {
+                deferred.resolve(old_data);
+            }
+        });
+
+        return deferred.promise;
+    }
+
+    // Заносим новые данные
+    function upgrade_data () {
+        var deferred = Q.defer();
+
+        query_to_db = "UPDATE card_decks SET upgraded=?, unlocked=? WHERE id_user=?";
+        connection.query(query_to_db, [new_data.upgraded, new_data.unlocked, req.session.user], function(err) {
+            if (err) {
+                console.log("103. Ошибка при записи данных в БД: " + err);
+                error_obj.error = 3;
+                deferred.reject(error_obj);
+            } else {
+                deferred.resolve(old_data);
+            }
+        });
+        return deferred.promise;
+    }
+
+    // Если пользователь авторизован - запускаем
+    if(req.session.user !== undefined) {
+
+
+        get_old_data().
+            then(function(result) { return check_user_deck() }).
+            then(function(result) { return insert_user_deck(result) }).
+            then(function(result) { return security() }).
+            then(function(result) { return insert_data() }).
+            then(function(result) { return upgrade_data() }).
+            then(function(result) { res.send(error_obj); }).
+            catch(function(result) { res.send(error_obj); }).
+            done();
+    } else {
+        error_obj.error = 1;
+        res.send(error_obj);
+    }
+});
+
+
+
 
 gwent.listen(app.get('port'), function(){
     console.log('Express server listening on port ' + app.get('port'));

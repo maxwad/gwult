@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Мастерская</title>
+
+        <link rel="stylesheet" href="/css/app.css"/>
+        <link href="http://fonts.googleapis.com/css?family=Roboto" rel="stylesheet" type="text/css">
+        <script src="/js/jquery.min.js"></script>
+        <script src="/js/check.js"></script>
+        <script src="/js/functions.js"></script>
+        <script src="/js/work_room.js"></script>
+    </head>
+
+    <body class="work">
+        <nav class="top_nav">
+            <ul>
+                <li class="home_page"><a href="/" title=""><span>Главная</span></a></li>
+                <li class="my_page"><a href="my_room.html"><span>Мой профиль</span></a></li>
+				<li class="my_work_room"><a href="work_room.html"><span>Мастерская</span></a></li>
+                <li class="login_page"><a href="auth.html"><span>Войти</span></a></li>
+            </ul>
+        </nav>
+
+        <div id="message_block"></div>
+
+        <div class="work_forms">
+            <div class="points_block">
+                <div class="points_row">
+                    <div class="rait_p" title="Очки рейтинга">0</div>
+                    <div class="g_rait_p" title="Золотые очки рейтинга">0</div>
+                </div>
+                <div class="actions_row">
+                    <button class="save not_visible">Сохранить</button>
+                    <button class="cancel not_visible">Отмена</button>
+                </div>
+            </div>
+            <div class="tab_block">
+                <div class="list">
+                    <ul>
+                        <li id="strength_tab" class="tab strength_tab">Сила карт</li>
+                        <li id="unlock_tab" class="tab unlock_tab">Разблокировка карт</li>
+                        <li id="constructor_tab" class="tab constructor_tab">Конструктор</li>
+                        <li id="any_tab" class="tab any_tab">Разное</li>
+                    </ul>
+                </div>
+
+                <div class="tab_cont">
+                    <div class="strength_block">
+                        <form id="strength_form" name="strength_form" action="" enctype="multipart/form-data">
+                            <label for="select_fraction">Выберите фракцию</label>
+                            <select id="select_fraction" name="id_fraction[]" class=" select_fr select_str"></select>
+                            <div class="slider_units">
+                                <div class="cards_area">
+                                    <div class="slides_block"></div>
+                                </div>
+                                <div class="slider_actions">
+                                    <button class="units_up" title="Вверх"></button>
+                                    <button class="units_down" title="Вниз"></button>
+                                </div>
+                            </div>
+                            <div class="descr_card">
+                                <h5 class="caption">Карта</h5>
+                                <div class="strength_actions">
+                                    <button class="strength_down buy" data-value="remove_str" title="Отнять">-</button>
+                                    <div class="strength"></div>
+                                    <button class="strength_up buy" data-value="add_str" title="Добавить">+</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <div class="tab_cont">
+                    <div class="unlock_block">
+                        <form id="unlock_form" name="unlock_form" action="" enctype="multipart/form-data">
+                            <div class="filter_card">
+                                <ul>
+                                    <li id="ordinaries" class="filter ordinaries">Обычные</li>
+                                    <li id="heroes" class="filter heroes">Герои</li>
+                                    <li id="blank" class="filter blank">Заготовки</li>
+                                    <li id="specials" class="filter specials">Специальные</li>
+                                    <li id="leaders" class="filter leaders">Лидеры</li>
+                                </ul>
+                            </div>
+                            <div class="slider_units">
+                            <label for="select_fraction2">Выберите фракцию</label>
+                            <select id="select_fraction2" name="id_fraction2[] " class=" select_fr select_unl"></select>
+                                <div class="cards_area">
+                                    <div class="slides_block"></div>
+                                </div>
+                            <div class="slider_actions">
+                                <button class="units_up" title="Вверх"></button>
+                                <button class="units_down" title="Вниз"></button>
+                            </div>
+                            <div class="descr_card">
+                                <h5 class="caption">Карта</h5>
+                                <button class="buy" data-value="unlock_card">Разблокировать</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <div class="tab_cont">
+                <div class="constructor_block">
+                    <div class="blank_card blank_close">
+                        <div class="class_row row"></div>
+                        <div class="name_row row">
+                            <input class="name_blank" type="text" title="До 20 символов" />
+                            <div class="cover unlock buy" data-value="name_card"><span>Название карты</span></div>
+                        </div>
+                        <div class="ability_row row">
+                            <select id="select_ability1" name="ability1[]" class="select_abl"></select>
+                            <div class="ability_descr"></div>
+                            <div class="cover unlock buy" data-value="ability_card"><span>Способность</span></div>
+                        </div>
+                        <div class="descr_row row">
+                            <textarea class="descr_blank" title="Описание карты. До 100 символов"></textarea>
+                            <div class="cover unlock buy" data-value="descr_card"><span>Описание</span></div>
+                        </div>
+                        <button class="fixed not_visible">Зафиксировать</button>
+                        <div class="lock_card"></div>
+                    </div>
+                    <div class="blank_card blank_range">
+                        <div class="class_row row"></div>
+                        <div class="name_row row">
+                            <input class="name_blank" type="text" title="До 20 символов" />
+                            <div class="cover unlock buy" data-value="name_card"><span>Название карты</span></div>
+                        </div>
+                        <div class="ability_row row">
+                            <select id="select_ability2" name="ability2[]" class="select_abl"></select>
+                            <div class="ability_descr"></div>
+                            <div class="cover unlock buy" data-value="ability_card"><span>Способность</span></div>
+                        </div>
+                        <div class="descr_row row">
+                            <textarea class="descr_blank" title="Описание карты. До 100 символов"></textarea>
+                            <div class="cover unlock buy" data-value="descr_card"><span>Описание</span></div>
+                        </div>
+                        <button class="fixed not_visible">Зафиксировать</button>
+                        <div class="lock_card"></div>
+                    </div>
+                    <div class="blank_card blank_siege">
+                        <div class="class_row row"></div>
+                        <div class="name_row row">
+                            <input class="name_blank" type="text" title="До 20 символов" />
+                            <div class="cover unlock buy" data-value="name_card"><span>Название карты</span></div>
+                        </div>
+                        <div class="ability_row row">
+                            <select id="select_ability3" name="ability3[]" class="select_abl"></select>
+                            <div class="ability_descr"></div>
+                            <div class="cover unlock buy" data-value="ability_card"><span>Способность</span></div>
+                        </div>
+                        <div class="descr_row row">
+                            <textarea class="descr_blank" title="Описание карты. До 100 символов"></textarea>
+                            <div class="cover unlock buy" data-value="descr_card"><span>Описание</span></div>
+                        </div>
+                        <button class="fixed not_visible">Зафиксировать</button>
+                        <div class="lock_card"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tab_cont">
+                <div class="any_block">
+                    <div class="buy_points block">
+                        <div class="description">Купить очки рейтинга</div>
+                        <div class="strength_actions">
+                            <button class="strength_down votes_down" title="Отнять">-</button>
+                            <div class="strength">0</div>
+                            <button class="strength_up votes_up" title="Добавить">+</button>
+                        </div>
+                        <button id="buy_votes" title="Купить" data-value="buy_votes">Купить за <span class="votes">0</span> голосов</button>
+                    </div>
+                    <div class="max_deck block">
+                        <div class="description">Уменьшить вместительность колоды на 3 карты</div>
+                        <button id="max_down" class="buy" data-value="decrease_deck" title="Уменьшить">Уменьшить</button>
+                        <div class="description">Текущий размер: <span class="size"></span></div>
+                    </div>
+                    <div class="reset_card block">
+                        <div class="reset_actions">
+                            <label for="select_card">Выберите карту, силу которой хотите сбросить до начального уровня</label>
+                            <select id="select_card" name="id_card[]"></select>
+                            <button id="reset_card" class="buy" data-value="reset_card">Сбросить</button>
+                        </div>
+                        <div class="reset_img">
+
+                        </div>
+                    </div>
+                    <div class="like_rival block">
+                        <div class="description">Разблокировать шкалу лайков</div>
+                        <button id="get_likes"  class="buy" data-value="unlock_likes">Разблокировать</button>
+                    </div>
+                    <div class="reset_all block">
+                        <div class="description">Сбросить силу всех карт к начальным значениям</div>
+                        <button id="reset_all" class="buy" data-value="reset_all">Рискнём!</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card_view not_visible">
+                <h4 class="card_name"></h4>
+                <div class="detail_card">
+                    <div class="ability_name_row">
+                        <div class="prop">Способность:</div>
+                        <div class="val"></div>
+                    </div>
+                    <div class="ability_row">
+                        <div class="val"></div>
+                    </div>
+                    <div class="descr_row">
+                        <div class="val"></div>
+                    </div>
+                </div>
+                <div class="pict_card"></div>
+                <div class="close_card">
+                    <button class="close_it">Закрыть</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
